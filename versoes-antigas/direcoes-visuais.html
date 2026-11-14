@@ -1,0 +1,461 @@
+<title>Direções do novo painel</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Barlow:wght@400;500;600&family=Barlow+Condensed:wght@500;600;700&family=Onest:wght@400;500;600;700&display=swap">
+<style>
+/* Três direções para o painel da secretaria: A = lista de tarefas, B = ordem do dia, C = busca primeiro */
+:root{
+  --bg:#eef1f6; --surface:#ffffff; --surface2:#f6f8fb; --line:#dfe4ec; --ink:#14203a; --muted:#5b6780;
+  --navy:#16285a; --navy-ink:#ffffff; --blue:#2453a6; --blue-soft:#e6eefb; --gold:#c9a227; --gold-soft:#f7efcf;
+  --ok:#1f7a4d; --ok-soft:#e2f3ea; --warn:#9a6200; --warn-soft:#fbefd6; --bad:#b3263a; --bad-soft:#fbe4e7;
+  --shadow:0 1px 2px rgba(20,32,58,.06),0 8px 24px rgba(20,32,58,.08);
+  --f-a:"Public Sans",system-ui,sans-serif; --f-b:"Barlow",system-ui,sans-serif; --f-bd:"Barlow Condensed","Arial Narrow",sans-serif; --f-c:"Onest",system-ui,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1); --emblem:#16285a;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0d1424; --surface:#151e33; --surface2:#1b2640; --line:#2a3757; --ink:#e8edf7; --muted:#9aa7c2;
+  --navy:#0f1b3d; --navy-ink:#eef2fb; --blue:#8fb0f0; --blue-soft:#1d2c4f; --gold:#e0be4e; --gold-soft:#3a3218;
+  --ok:#6fd3a0; --ok-soft:#173527; --warn:#f0bd62; --warn-soft:#3b2d12; --bad:#ff8a9a; --bad-soft:#3d1a22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); --emblem:#e0be4e; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#0d1424; --surface:#151e33; --surface2:#1b2640; --line:#2a3757; --ink:#e8edf7; --muted:#9aa7c2;
+  --navy:#0f1b3d; --navy-ink:#eef2fb; --blue:#8fb0f0; --blue-soft:#1d2c4f; --gold:#e0be4e; --gold-soft:#3a3218;
+  --ok:#6fd3a0; --ok-soft:#173527; --warn:#f0bd62; --warn-soft:#3b2d12; --bad:#ff8a9a; --bad-soft:#3d1a22;
+  --shadow:0 1px 2px rgba(0,0,0,.3),0 8px 24px rgba(0,0,0,.35); --emblem:#e0be4e; color-scheme:dark}
+*{box-sizing:border-box}
+body{background:var(--bg);color:var(--ink);font-family:var(--f-a);font-size:15px;line-height:1.5;
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:0 48px}
+button{font:inherit;color:inherit;cursor:pointer}
+:focus-visible{outline:2px solid var(--blue);outline-offset:2px;border-radius:6px}
+h1,h2,h3,h4,p{margin:0}
+.wrap{max-width:1280px;margin:0 auto}
+
+/* seletor das direções */
+.picker{position:sticky;top:env(safe-area-inset-top,0px);z-index:40;background:var(--bg);padding-block:16px 12px;display:flex;flex-wrap:wrap;gap:12px;align-items:center;justify-content:space-between}
+body::before{content:"";position:fixed;inset:0 0 auto;height:env(safe-area-inset-top,0px);z-index:41;background:var(--bg)}
+.picker h1{font-size:18px;font-weight:700}
+.picker p{color:var(--muted);font-size:13px}
+.seg{display:flex;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:4px;gap:4px;position:relative}
+.seg button{border:0;background:none;padding:8px 14px;border-radius:9px;font-weight:600;font-size:14px;color:var(--muted);position:relative;z-index:1;transition:color .2s}
+.seg button[aria-pressed="true"]{color:var(--navy-ink)}
+.seg .thumb{position:absolute;top:4px;bottom:4px;border-radius:9px;background:var(--navy);transition:left .35s var(--ease),width .35s var(--ease)}
+.nota{background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:12px 16px;margin-bottom:16px;font-size:14px;color:var(--muted);display:flex;gap:16px;flex-wrap:wrap;align-items:baseline}
+.nota b{color:var(--ink)}
+.stage{position:relative}
+.dir{animation:dirIn .45s var(--ease)}
+@keyframes dirIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:none}}
+.frame{border-radius:16px;overflow:hidden;border:1px solid var(--line);box-shadow:var(--shadow);background:var(--surface);position:relative;min-height:720px}
+
+/* comuns */
+.av{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;font-weight:700;font-size:13px;flex:none;background:var(--blue-soft);color:var(--blue)}
+.av.lg{width:64px;height:64px;font-size:20px}
+.chip{display:inline-flex;align-items:center;gap:6px;font-size:12.5px;font-weight:600;padding:3px 10px;border-radius:999px;white-space:nowrap}
+.chip::before{content:"";width:6px;height:6px;border-radius:50%;background:currentColor}
+.s-Ativo{background:var(--ok-soft);color:var(--ok)} .s-Pendente{background:var(--warn-soft);color:var(--warn)} .s-Inativo{background:var(--surface2);color:var(--muted)}
+.btn{border:0;background:var(--blue);color:var(--surface);font-weight:600;padding:9px 16px;border-radius:10px;font-size:14px;transition:transform .15s,filter .15s;white-space:nowrap}
+.btn:hover{filter:brightness(1.08)} .btn:active{transform:scale(.97)}
+.btn.ghost{background:transparent;color:var(--blue);border:1px solid var(--line)}
+.btn.ghost:hover{background:var(--blue-soft)}
+.ic{width:20px;height:20px;flex:none;stroke:currentColor;fill:none;stroke-width:1.8;stroke-linecap:round;stroke-linejoin:round}
+.num{font-variant-numeric:tabular-nums}
+.toast{position:fixed;left:50%;bottom:calc(24px + env(safe-area-inset-bottom,0px));transform:translate(-50%,20px);opacity:0;background:var(--ink);color:var(--bg);padding:10px 18px;border-radius:10px;font-weight:600;font-size:14px;transition:.3s var(--ease);z-index:60;pointer-events:none}
+.toast.on{opacity:1;transform:translate(-50%,0)}
+
+/* tarefa saindo */
+.task{transition:opacity .35s var(--ease),transform .35s var(--ease),max-height .4s var(--ease) .15s,padding .4s var(--ease) .15s,margin .4s var(--ease) .15s;max-height:200px;overflow:hidden}
+.task.done{opacity:0;transform:translateX(24px);max-height:0;padding-block:0!important;margin:0!important;border-width:0!important}
+.stagger>*{animation:rise .5s var(--ease) both}
+.stagger>*:nth-child(2){animation-delay:.05s}.stagger>*:nth-child(3){animation-delay:.1s}.stagger>*:nth-child(4){animation-delay:.15s}.stagger>*:nth-child(5){animation-delay:.2s}.stagger>*:nth-child(6){animation-delay:.25s}.stagger>*:nth-child(7){animation-delay:.3s}.stagger>*:nth-child(8){animation-delay:.35s}
+@keyframes rise{from{opacity:.001;transform:translateY(8px)}to{opacity:1;transform:none}}
+
+/* ======== A · lista de tarefas ======== */
+.A{display:grid;grid-template-columns:232px 1fr;min-height:720px;font-family:var(--f-a)}
+.A .rail{background:var(--navy);color:var(--navy-ink);padding:20px 14px;display:flex;flex-direction:column;gap:4px;position:relative}
+.A .rail::after{content:"";position:absolute;top:0;bottom:0;right:0;width:3px;background:linear-gradient(var(--gold),var(--gold)) left/1px 100% no-repeat,linear-gradient(var(--gold),var(--gold)) right/1px 100% no-repeat}
+.brand{display:flex;gap:10px;align-items:center;margin-bottom:22px;padding-inline:6px}
+.selo{width:36px;height:36px;border-radius:50%;border:2px solid var(--gold);display:grid;place-items:center;font-weight:700;font-size:13px;color:var(--gold)}
+.brand b{font-size:15px;line-height:1.2}
+.A .nav{display:flex;align-items:center;gap:12px;padding:10px 12px;border-radius:10px;border:0;background:none;color:inherit;opacity:.78;text-align:left;font-size:14.5px;transition:background .2s,opacity .2s}
+.A .nav:hover{background:rgba(255,255,255,.07);opacity:1}
+.A .nav.on{background:rgba(255,255,255,.12);opacity:1;font-weight:600}
+.A .nav .badge{margin-left:auto;background:var(--gold);color:#16285a;font-size:12px;font-weight:700;border-radius:999px;padding:0 8px}
+.A .nav.more{margin-top:auto}
+.A main{padding:32px 36px;display:grid;grid-template-columns:minmax(0,1fr) 300px;gap:32px;align-content:start;background:var(--bg)}
+.A .hello h2{font-size:28px;font-weight:700;letter-spacing:-.01em}
+.A .hello p{color:var(--muted);margin-top:4px;font-size:16px}
+.A .tasks{margin-top:22px;display:flex;flex-direction:column;gap:10px}
+.A .task{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:14px 16px}
+.A .task:hover{border-color:color-mix(in srgb,var(--blue) 40%,var(--line))}
+.A .tico{width:40px;height:40px;border-radius:12px;display:grid;place-items:center;flex:none}
+.t-warn{background:var(--warn-soft);color:var(--warn)} .t-blue{background:var(--blue-soft);color:var(--blue)} .t-ok{background:var(--ok-soft);color:var(--ok)} .t-bad{background:var(--bad-soft);color:var(--bad)}
+.A .task h4{font-size:15px;font-weight:600}
+.A .task p{font-size:13.5px;color:var(--muted)}
+.A .task .tx{flex:1;min-width:0}
+.A .side{display:flex;flex-direction:column;gap:20px}
+.A .nums{display:grid;gap:2px;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:6px 18px}
+.A .nums div{display:flex;justify-content:space-between;align-items:baseline;padding:12px 0;border-bottom:1px solid var(--line)}
+.A .nums div:last-child{border:0}
+.A .nums span{color:var(--muted);font-size:14px}
+.A .nums b{font-size:20px;font-weight:700}
+.A h3{font-size:15px;font-weight:600;margin-bottom:10px}
+.A .people{display:flex;flex-direction:column;gap:2px}
+.A .person{display:flex;align-items:center;gap:12px;padding:8px 10px;border-radius:10px;border:0;background:none;text-align:left;width:100%;transition:background .2s}
+.A .person:hover{background:var(--surface)}
+.A .person small{display:block;color:var(--muted);font-size:12.5px}
+.A .person .tx{flex:1;min-width:0;font-size:14px;font-weight:500}
+.A .empty{display:none;text-align:left;padding:28px;border:1px dashed var(--line);border-radius:14px;color:var(--muted)}
+.A .empty b{display:block;color:var(--ink);font-size:16px;margin-bottom:4px}
+/* gaveta A */
+.scrim{position:absolute;inset:0;background:rgba(10,18,36,.35);opacity:0;pointer-events:none;transition:opacity .3s;z-index:20}
+.scrim.on{opacity:1;pointer-events:auto}
+.drawer{position:absolute;top:0;right:0;bottom:0;width:min(440px,100%);background:var(--surface);z-index:21;transform:translateX(100%);transition:transform .42s var(--ease);display:flex;flex-direction:column;box-shadow:-12px 0 40px rgba(10,18,36,.18)}
+.drawer.on{transform:none}
+.drawer header{padding:22px 22px 18px;border-bottom:1px solid var(--line);display:grid;grid-template-columns:auto 1fr auto;gap:14px;align-items:center}
+.drawer header h3{font-size:19px;font-weight:700;line-height:1.25}
+.drawer header p{color:var(--muted);font-size:13.5px}
+.x{border:0;background:var(--surface2);width:34px;height:34px;border-radius:10px;display:grid;place-items:center;align-self:start}
+.drawer .body{overflow:auto;padding:18px 22px 28px;display:flex;flex-direction:column;gap:12px}
+.callout{background:var(--warn-soft);color:var(--warn);border-radius:12px;padding:12px 14px;display:flex;gap:12px;align-items:center;font-size:14px}
+.callout span{flex:1}
+.callout .btn{background:var(--warn);color:var(--surface)}
+.acc{border:1px solid var(--line);border-radius:12px;overflow:hidden}
+.acc>button{width:100%;display:flex;align-items:center;gap:10px;padding:13px 14px;border:0;background:none;text-align:left;font-weight:600;font-size:14.5px}
+.acc>button small{font-weight:400;color:var(--muted);margin-left:auto;font-size:13px}
+.acc>button .chev{transition:transform .3s var(--ease);width:18px;height:18px}
+.acc.open>button .chev{transform:rotate(180deg)}
+.acc .in{display:grid;grid-template-rows:0fr;transition:grid-template-rows .35s var(--ease)}
+.acc.open .in{grid-template-rows:1fr}
+.acc .in>div{overflow:hidden}
+.kv{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;padding:0 14px 14px;font-size:14px}
+.kv dt{color:var(--muted)} .kv dd{margin:0}
+.bar{height:6px;border-radius:9px;background:var(--surface2);overflow:hidden;margin:2px 14px 10px}
+.bar i{display:block;height:100%;background:var(--ok);border-radius:9px}
+
+/* ======== B · ordem do dia ======== */
+.B{font-family:var(--f-b);min-height:720px;background:var(--bg)}
+.B .band{background:var(--navy);color:var(--navy-ink);padding:18px 32px 0;position:relative;overflow:hidden}
+.B .band .top{display:flex;align-items:center;gap:20px;flex-wrap:wrap}
+.B .band nav{display:flex;gap:2px;margin-left:auto;flex-wrap:wrap}
+.B .band nav button{border:0;background:none;color:inherit;opacity:.75;padding:8px 12px;font-size:15px;font-weight:500;border-radius:8px}
+.B .band nav button.on{opacity:1;background:rgba(255,255,255,.12)}
+.B .divisa{position:absolute;right:28px;bottom:-14px;width:150px;height:120px;opacity:.9;pointer-events:none}
+.B .band .title{padding:34px 0 28px;max-width:640px}
+.B .band .title small{font-size:15px;opacity:.75}
+.B .band .title h2{font-family:var(--f-bd);font-weight:700;font-size:54px;line-height:1;letter-spacing:.005em;margin-top:4px}
+.B .band .title p{margin-top:10px;font-size:17px;opacity:.85}
+.B .content{padding:28px 32px 36px;display:flex;flex-direction:column;gap:30px}
+.B h3{font-family:var(--f-bd);font-size:24px;font-weight:600;margin-bottom:12px;display:flex;align-items:baseline;gap:12px}
+.B h3 small{font-family:var(--f-b);font-size:14px;font-weight:400;color:var(--muted)}
+.B .tickets{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.B .task{background:var(--surface);border-radius:4px 14px 14px 14px;padding:16px 18px;border-top:3px solid var(--gold);display:flex;flex-direction:column;gap:8px}
+.B .task h4{font-size:16.5px;font-weight:600;line-height:1.3}
+.B .task p{color:var(--muted);font-size:14px;flex:1}
+.B .task .row{display:flex;justify-content:space-between;align-items:center}
+.B .task .row small{color:var(--muted);font-size:13px}
+.B .ids{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px}
+.B .idc{background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:12px;transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.B .idc:hover{transform:translateY(-3px);box-shadow:var(--shadow);border-color:transparent}
+.B .idc .hd{display:flex;justify-content:space-between;align-items:flex-start}
+.B .idc .posto{font-family:var(--f-bd);font-weight:700;font-size:28px;line-height:1;color:var(--emblem)}
+.B .idc b{font-size:16px;font-weight:600;line-height:1.25}
+.B .idc small{color:var(--muted);font-size:13.5px}
+.B .modal{position:absolute;inset:0;z-index:21;display:grid;place-items:center;padding:24px;pointer-events:none}
+.B .card{pointer-events:auto;width:min(720px,100%);max-height:100%;overflow:auto;background:var(--surface);border-radius:18px;box-shadow:0 30px 80px rgba(10,18,36,.35);transform-origin:var(--ox,50%) var(--oy,50%);animation:pop .45s var(--ease)}
+.B .card.out{animation:popOut .25s ease-in forwards}
+@keyframes pop{from{opacity:0;transform:scale(.6)}to{opacity:1;transform:none}}
+@keyframes popOut{to{opacity:0;transform:scale(.9)}}
+.B .cart{background:var(--navy);color:var(--navy-ink);padding:22px 24px;display:grid;grid-template-columns:auto 1fr auto;gap:18px;align-items:center;position:relative;overflow:hidden}
+.B .cart .av{background:var(--gold);color:#16285a}
+.B .cart h3{font-family:var(--f-bd);font-size:30px;margin:0;line-height:1.05;color:var(--navy-ink)}
+.B .cart p{opacity:.8;font-size:14.5px}
+.B .cart .x{background:rgba(255,255,255,.12);color:var(--navy-ink)}
+.B .cbody{padding:20px 24px 24px;display:grid;grid-template-columns:1fr 1fr;gap:18px}
+.B .cbody section{display:flex;flex-direction:column;gap:6px}
+.B .cbody h4{font-family:var(--f-bd);font-size:19px;font-weight:600}
+.B .cbody .full{grid-column:1/-1}
+.B .line{display:flex;justify-content:space-between;gap:12px;font-size:14.5px;padding:6px 0;border-bottom:1px solid var(--line)}
+.B .line span:first-child{color:var(--muted)}
+.B .docs{display:flex;flex-wrap:wrap;gap:6px}
+.B .doc{font-size:13px;padding:4px 10px;border-radius:8px;background:var(--ok-soft);color:var(--ok)}
+.B .doc.no{background:var(--warn-soft);color:var(--warn)}
+
+/* ======== C · busca primeiro ======== */
+.C{font-family:var(--f-c);min-height:720px;background:var(--surface)}
+.C .bar2{display:flex;align-items:center;gap:22px;padding:16px 32px;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.C .bar2 nav{display:flex;gap:4px;flex-wrap:wrap}
+.C .bar2 nav button{border:0;background:none;padding:7px 12px;border-radius:8px;color:var(--muted);font-weight:500;font-size:14.5px}
+.C .bar2 nav button.on{color:var(--ink);background:var(--surface2)}
+.C .bar2 .selo{border-color:var(--emblem);color:var(--emblem)}
+.C .view{padding:44px 32px 40px;max-width:900px}
+.C .view.leave{animation:viewOut .2s ease-in forwards}
+.C .view.enter{animation:viewIn .4s var(--ease)}
+@keyframes viewOut{to{opacity:0;transform:translateX(-16px)}}
+@keyframes viewIn{from{opacity:0;transform:translateX(16px)}to{opacity:1;transform:none}}
+.C h2{font-size:32px;font-weight:600;letter-spacing:-.02em;line-height:1.15}
+.C .search{margin-top:20px;position:relative}
+.C .search .ic{position:absolute;left:18px;top:50%;transform:translateY(-50%);color:var(--muted);width:22px;height:22px}
+.C .search input{width:100%;font:inherit;font-size:18px;padding:18px 18px 18px 54px;border-radius:16px;border:1.5px solid var(--line);background:var(--surface2);color:var(--ink);transition:border-color .2s,box-shadow .2s,background .2s}
+.C .search input:focus{outline:0;border-color:var(--blue);background:var(--surface);box-shadow:0 0 0 4px var(--blue-soft)}
+.C .results{margin-top:8px;display:flex;flex-direction:column}
+.C .res{display:flex;align-items:center;gap:14px;padding:10px 12px;border-radius:12px;border:0;background:none;text-align:left;width:100%;animation:rise .3s var(--ease) both;transition:background .15s}
+.C .res:hover,.C .res:focus-visible{background:var(--surface2)}
+.C .res .tx{flex:1;min-width:0}
+.C .res b{font-weight:500}
+.C .res small{display:block;color:var(--muted);font-size:13px}
+.C .hint{color:var(--muted);font-size:14px;padding:6px 12px}
+.C .need{margin-top:34px}
+.C .need h3,.C .quick h3{font-size:16px;font-weight:600;margin-bottom:12px}
+.C .pills{display:flex;flex-wrap:wrap;gap:8px}
+.C .task.pill{display:inline-flex;align-items:center;gap:10px;border:1px solid var(--line);background:var(--surface);border-radius:999px;padding:8px 14px 8px 8px;font-size:14px;transition:border-color .2s,background .2s}
+.C .task.pill:hover{border-color:var(--blue);background:var(--blue-soft)}
+.C .task.pill .n{min-width:28px;height:28px;border-radius:999px;display:grid;place-items:center;font-weight:700;font-size:13px}
+.C .task.pill.done{max-width:0;padding:0;border:0}
+.C .quick{margin-top:34px}
+.C .qgrid{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:10px}
+.C .q{border:1px solid var(--line);background:var(--surface);border-radius:14px;padding:16px;text-align:left;display:flex;flex-direction:column;gap:10px;font-weight:500;transition:border-color .2s,transform .2s var(--ease)}
+.C .q:hover{border-color:var(--blue);transform:translateY(-2px)}
+.C .q .ic{color:var(--blue)}
+/* ficha C (página) */
+.C .back{border:0;background:none;color:var(--blue);font-weight:500;display:inline-flex;gap:6px;align-items:center;padding:6px 0;margin-bottom:18px}
+.C .fp{display:grid;grid-template-columns:260px minmax(0,1fr);gap:36px}
+.C .fp aside{display:flex;flex-direction:column;gap:12px}
+.C .fp aside h2{font-size:24px}
+.C .fp aside p{color:var(--muted);font-size:14px}
+.C .fp aside .btn{margin-top:6px}
+.C .tabs{display:flex;gap:4px;border-bottom:1px solid var(--line);position:relative;margin-bottom:18px;overflow-x:auto}
+.C .tabs button{border:0;background:none;padding:10px 14px;font-weight:500;color:var(--muted);white-space:nowrap}
+.C .tabs button[aria-selected="true"]{color:var(--ink)}
+.C .tabs .ul{position:absolute;bottom:-1px;height:2px;background:var(--blue);transition:left .3s var(--ease),width .3s var(--ease)}
+.C .pane{animation:rise .35s var(--ease)}
+.C .pane .kv{padding:0;font-size:15px;gap:10px 24px}
+.C .docl{display:flex;flex-direction:column}
+.C .docl div{display:flex;justify-content:space-between;align-items:center;padding:11px 0;border-bottom:1px solid var(--line);font-size:15px}
+.C .tl{display:flex;flex-direction:column;gap:14px;font-size:14.5px}
+.C .tl div{display:grid;grid-template-columns:90px 1fr;gap:12px}
+.C .tl span{color:var(--muted)}
+
+@media (max-width:1000px){
+  .A main{grid-template-columns:1fr}
+  .B .tickets{grid-template-columns:1fr 1fr}.B .ids{grid-template-columns:1fr 1fr}
+  .C .qgrid{grid-template-columns:1fr 1fr}.C .fp{grid-template-columns:1fr}
+}
+@media (max-width:720px){
+  .A{grid-template-columns:1fr}
+  .A .rail{flex-direction:row;overflow-x:auto;padding:12px;gap:4px}
+  .A .rail::after{display:none}
+  .A .brand{margin:0 8px 0 0}.A .brand b{display:none}
+  .A .nav{flex:none}.A .nav span.l{display:none}.A .nav.more{margin-top:0}
+  .A main{padding:22px 18px}
+  .B .band{padding:14px 18px 0}.B .band .title h2{font-size:40px}.B .content{padding:22px 18px}
+  .B .tickets,.B .ids{grid-template-columns:1fr}.B .cbody{grid-template-columns:1fr}.B .divisa{width:100px;height:80px}
+  .C .bar2,.C .view{padding-inline:18px}.C h2{font-size:26px}
+  .drawer header{grid-template-columns:auto 1fr}.drawer header .x{grid-row:1;grid-column:3}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;transition-duration:.01ms!important}
+}
+</style>
+
+<div class="wrap">
+  <div class="picker">
+    <div><h1>Três caminhos para o novo painel</h1><p>Escolha um. Clique nas pessoas para abrir a ficha e nos botões das tarefas para resolver.</p></div>
+    <div class="seg" role="group" aria-label="Direção">
+      <span class="thumb"></span>
+      <button data-d="A" aria-pressed="true">A · Tarefas</button>
+      <button data-d="B" aria-pressed="false">B · Ordem do dia</button>
+      <button data-d="C" aria-pressed="false">C · Busca</button>
+    </div>
+  </div>
+  <div class="nota" id="nota"></div>
+  <div class="stage" id="stage"></div>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+const I={
+ home:'<path d="M3 11l9-7 9 7v9a1 1 0 0 1-1 1h-5v-6H9v6H4a1 1 0 0 1-1-1z"/>',
+ users:'<circle cx="9" cy="8" r="3.5"/><path d="M2.5 20c.6-3.4 3.2-5.5 6.5-5.5s5.9 2.1 6.5 5.5"/><path d="M16 4.5a3.5 3.5 0 0 1 0 7M18 14.8c2 .7 3.2 2.5 3.5 5.2"/>',
+ wallet:'<rect x="3" y="6" width="18" height="14" rx="2"/><path d="M3 10h18M16 15h2"/>',
+ inbox:'<path d="M3 13l3-8h12l3 8v6a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1z"/><path d="M3 13h5l1 3h6l1-3h5"/>',
+ mega:'<path d="M3 10v4h4l8 5V5L7 10z"/><path d="M19 9a4 4 0 0 1 0 6"/>',
+ more:'<circle cx="5" cy="12" r="1.3"/><circle cx="12" cy="12" r="1.3"/><circle cx="19" cy="12" r="1.3"/>',
+ search:'<circle cx="11" cy="11" r="7"/><path d="M20 20l-4-4"/>',
+ x:'<path d="M6 6l12 12M18 6L6 18"/>',
+ file:'<path d="M14 3H6a1 1 0 0 0-1 1v16a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V8z"/><path d="M14 3v5h5"/>',
+ check:'<path d="M5 12.5l4.5 4.5L19 7.5"/>',
+ user:'<circle cx="12" cy="8" r="4"/><path d="M4 21c.8-4 4-6.5 8-6.5s7.2 2.5 8 6.5"/>',
+ pix:'<path d="M12 3l9 9-9 9-9-9z"/><path d="M8 12h8"/>',
+ cal:'<rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/>',
+ phone:'<rect x="7" y="2.5" width="10" height="19" rx="2"/><path d="M11 18h2"/>',
+ plus:'<path d="M12 5v14M5 12h14"/>',
+ chev:'<path d="M6 9l6 6 6-6"/>',
+ back:'<path d="M15 6l-6 6 6 6"/>'
+};
+const ic=(n,c="ic")=>`<svg class="${c}" viewBox="0 0 24 24" aria-hidden="true">${I[n]}</svg>`;
+
+/* dados de exemplo (fictícios) */
+const P=[
+ {id:1,nome:"Ricardo Menezes Alves",posto:"Cap",forca:"PM",mat:"0142",sit:"Ativo",om:"5º BPM",cidade:"Aracaju",tel:"(79) 99812-4410",email:"ricardo.alves@exemplo.com",ing:"12/03/2019",deps:2,quando:"filiado em 2019"},
+ {id:2,nome:"Juliana Prado Santana",posto:"1º Ten",forca:"BM",mat:"0217",sit:"Pendente",om:"1º GBM",cidade:"Aracaju",tel:"(79) 99654-2201",email:"juliana.prado@exemplo.com",ing:"11/11/2026",deps:0,quando:"pediu pelo app ontem"},
+ {id:3,nome:"Fernanda Lima Rocha",posto:"2º Ten",forca:"PM",mat:"0230",sit:"Pendente",om:"CPTur",cidade:"Itabaiana",tel:"(79) 99120-7788",email:"fernanda.rocha@exemplo.com",ing:"12/11/2026",deps:1,quando:"pediu pelo app hoje"},
+ {id:4,nome:"Roberto Dantas Filho",posto:"Asp Of",forca:"PM",mat:"0241",sit:"Pendente",om:"APM",cidade:"São Cristóvão",tel:"(79) 99300-1450",email:"roberto.dantas@exemplo.com",ing:"13/11/2026",deps:0,quando:"pediu pelo app hoje"},
+ {id:5,nome:"Ana Beatriz Fontes",posto:"Ten Cel",forca:"PM",mat:"0051",sit:"Ativo",om:"QCG",cidade:"Aracaju",tel:"(79) 99877-3302",email:"ana.fontes@exemplo.com",ing:"02/08/2011",deps:3,quando:"filiada em 2011"},
+ {id:6,nome:"Paulo Henrique Sá",posto:"Cap",forca:"BM",mat:"0177",sit:"Ativo",om:"2º GBM",cidade:"Lagarto",tel:"(79) 99411-9020",email:"paulo.sa@exemplo.com",ing:"20/01/2021",deps:2,quando:"filiado em 2021"},
+ {id:7,nome:"Marcos Vinícius Teles",posto:"Maj",forca:"PM",mat:"0098",sit:"Ativo",om:"BPChoque",cidade:"Aracaju",tel:"(79) 99230-5566",email:"marcos.teles@exemplo.com",ing:"15/05/2015",deps:1,quando:"filiado em 2015"},
+ {id:8,nome:"Carlos Eduardo Nunes",posto:"Cel",forca:"BM",mat:"0023",sit:"Inativo",om:"Reserva",cidade:"Aracaju",tel:"(79) 99100-4433",email:"carlos.nunes@exemplo.com",ing:"10/02/2004",deps:2,quando:"desligado em 2025"}
+];
+const DOCS=[["Identidade militar",1],["CPF",1],["Comprovante de residência",1],["Ficha de filiação assinada",1],["Contracheque",0],["Foto 3x4",1]];
+const T=[
+ {ic:"user",c:"t-warn",n:3,t:"3 filiações esperando sua análise",d:"Juliana Prado, Fernanda Lima e Roberto Dantas pediram pelo app.",b:"Analisar",curto:"filiações para analisar",feito:"Filiações abertas para análise"},
+ {ic:"file",c:"t-blue",n:4,t:"4 documentos enviados para conferir",d:"Chegaram pelo app desde ontem.",b:"Conferir",curto:"documentos para conferir",feito:"Documentos conferidos"},
+ {ic:"pix",c:"t-ok",n:2,t:"2 pagamentos por PIX para confirmar",d:"R$ 240,00 informados por associados.",b:"Confirmar",curto:"PIX para confirmar",feito:"Pagamentos confirmados"},
+ {ic:"cal",c:"t-blue",n:1,t:"Reserva do salão no sábado, 22/11",d:"Pedido de Paulo Henrique Sá para 80 convidados.",b:"Responder",curto:"reserva do salão",feito:"Reserva respondida"},
+ {ic:"file",c:"t-bad",n:1,t:"Alvará dos Bombeiros vence em 12 dias",d:"Renove antes de 25/11 para não ficar irregular.",b:"Abrir",curto:"alvará vencendo",feito:"Alvará aberto"},
+ {ic:"phone",c:"t-warn",n:5,t:"5 associados ativos sem acesso ao app",d:"Mande o convite por e-mail ou WhatsApp.",b:"Convidar",curto:"sem acesso ao app",feito:"Convites preparados"}
+];
+const ini=n=>n.split(" ").filter(w=>w.length>2).slice(0,2).map(w=>w[0]).join("");
+const chip=s=>`<span class="chip s-${s}">${s}</span>`;
+const hoje="quinta-feira, 13 de novembro";
+
+const NOTAS={
+ A:`<span><b>A · Tarefas.</b> A tela inicial é uma lista do que fazer hoje, com um botão por linha. Números só três. A ficha abre de lado, com o essencial em cima e o resto em seções que abrem e fecham.</span>`,
+ B:`<span><b>B · Ordem do dia.</b> Linguagem de quartel: faixa marinho com a divisa dourada, título grande condensado, tarefas como despachos e associados como cartões de identificação. A ficha cresce a partir do cartão, com cara de carteirinha.</span>`,
+ C:`<span><b>C · Busca.</b> O que a secretaria mais faz é procurar alguém, então a busca é o começo de tudo (digite um nome). Pendências viram etiquetas pequenas. A ficha é uma página inteira com abas.</span>`
+};
+
+let D="A";const stage=document.getElementById("stage");
+function toast(m){const t=document.getElementById("toast");t.textContent=m;t.classList.add("on");clearTimeout(t._h);t._h=setTimeout(()=>t.classList.remove("on"),1800)}
+function resolve(btn){const el=btn.closest(".task");if(!el||el.classList.contains("done"))return;el.classList.add("done");toast(T[+el.dataset.t].feito);
+  setTimeout(()=>{el.remove();const box=stage.querySelector("[data-tasks]");if(box&&!box.querySelector(".task")){const e=stage.querySelector("[data-empty]");if(e)e.style.display="block";const s=stage.querySelector("[data-count]");if(s)s.textContent="Tudo em dia por aqui."}else{const s=stage.querySelector("[data-count]");const n=box?box.querySelectorAll(".task").length:0;if(s&&D==="A")s.textContent=`${n} ${n===1?"coisa pede":"coisas pedem"} sua atenção hoje.`}},600)}
+
+/* ---------- A ---------- */
+function rA(){
+  const nav=[["home","Início",1],["users","Associados"],["wallet","Financeiro",0,2],["inbox","Pedidos",0,4],["mega","Comunicados"]];
+  return `<div class="frame"><div class="A">
+  <aside class="rail"><div class="brand"><div class="selo">AM</div><b>Associação<br>Militar</b></div>
+   ${nav.map(([i,l,on,b])=>`<button class="nav ${on?"on":""}">${ic(i)}<span class="l">${l}</span>${b?`<span class="badge">${b}</span>`:""}</button>`).join("")}
+   <button class="nav more">${ic("more")}<span class="l">Mais</span></button></aside>
+  <main>
+   <section>
+    <div class="hello"><h2>Boa tarde, secretaria</h2><p data-count>${T.length} coisas pedem sua atenção hoje.</p></div>
+    <div class="tasks stagger" data-tasks>${T.map((t,i)=>`<div class="task" data-t="${i}"><div class="tico ${t.c}">${ic(t.ic)}</div><div class="tx"><h4>${t.t}</h4><p>${t.d}</p></div><button class="btn ghost" data-do>${t.b}</button></div>`).join("")}</div>
+    <div class="empty" data-empty><b>Tudo resolvido.</b>Quando chegar um pedido novo pelo app, ele aparece aqui.</div>
+   </section>
+   <aside class="side">
+    <div><h3>Em números</h3><div class="nums"><div><span>Associados ativos</span><b class="num">186</b></div><div><span>Em caixa</span><b class="num">R$ 21.340</b></div><div><span>Mensalidades de novembro pagas</span><b class="num">92%</b></div></div></div>
+    <div><h3>Chegaram há pouco</h3><div class="people">${P.slice(0,6).map(p=>`<button class="person" data-p="${p.id}"><span class="av">${ini(p.nome)}</span><span class="tx">${p.posto} ${p.nome.split(" ").slice(0,2).join(" ")}<small>${p.quando}</small></span>${chip(p.sit)}</button>`).join("")}</div></div>
+   </aside>
+  </main>
+  <div class="scrim" data-close></div>
+  <div class="drawer" role="dialog" aria-label="Ficha do associado"></div>
+  </div></div>`;
+}
+function fichaA(p){
+  const ok=DOCS.filter(d=>d[1]).length;
+  const acc=(t,sub,body,open)=>`<div class="acc ${open?"open":""}"><button data-acc>${t}<small>${sub}</small>${ic("chev","ic chev")}</button><div class="in"><div>${body}</div></div></div>`;
+  return `<header><span class="av lg">${ini(p.nome)}</span><div><h3>${p.posto} ${p.forca} ${p.nome}</h3><p>Matrícula ${p.mat}</p><div style="margin-top:6px">${chip(p.sit)}</div></div><button class="x" data-close aria-label="Fechar">${ic("x")}</button></header>
+  <div class="body">
+   <div class="callout">${ic("file")}<span>Falta o contracheque para completar a ficha.</span><button class="btn">Cobrar pelo app</button></div>
+   ${acc("Contato",p.cidade,`<dl class="kv"><dt>Celular</dt><dd>${p.tel}</dd><dt>E-mail</dt><dd>${p.email}</dd><dt>Cidade</dt><dd>${p.cidade}</dd></dl>`,1)}
+   ${acc("Dados militares",p.om,`<dl class="kv"><dt>Posto</dt><dd>${p.posto}</dd><dt>Força</dt><dd>${p.forca}</dd><dt>Unidade</dt><dd>${p.om}</dd></dl>`)}
+   ${acc("Documentos",`${ok} de 6`,`<div class="bar"><i style="width:${ok/6*100}%"></i></div><dl class="kv">${DOCS.map(d=>`<dt>${d[0]}</dt><dd>${d[1]?"Entregue":"Falta"}</dd>`).join("")}</dl>`)}
+   ${acc("Serviços","Cartão ativo",`<dl class="kv"><dt>Cartão da associação</dt><dd>Ativo desde 2022</dd><dt>Plano de saúde</dt><dd>Não contratado</dd></dl>`)}
+   ${acc("Mensalidade","em dia",`<dl class="kv"><dt>Valor</dt><dd>R$ 120,00</dd><dt>Forma</dt><dd>Desconto em folha</dd><dt>Novembro</dt><dd>Pago em 05/11</dd></dl>`)}
+   ${acc("Dependentes",String(p.deps),`<dl class="kv"><dt>Cônjuge</dt><dd>Marina Alves</dd><dt>Filho</dt><dd>Pedro Alves, 9 anos</dd></dl>`)}
+   ${acc("Histórico","12 registros",`<dl class="kv"><dt>05/11</dt><dd>Mensalidade paga</dd><dt>28/10</dt><dd>Reservou a quadra</dd><dt>02/10</dt><dd>Atualizou o endereço pelo app</dd></dl>`)}
+  </div>`;
+}
+
+/* ---------- B ---------- */
+const divisa=`<svg class="divisa" viewBox="0 0 150 120" aria-hidden="true"><g fill="none" stroke="var(--gold)" stroke-width="9" stroke-linejoin="miter"><path d="M10 50 L75 15 L140 50"/><path d="M10 80 L75 45 L140 80" opacity=".7"/><path d="M10 110 L75 75 L140 110" opacity=".45"/></g></svg>`;
+function rB(){
+  return `<div class="frame"><div class="B">
+   <div class="band"><div class="top"><div class="brand" style="margin:0"><div class="selo">AM</div><b>Associação Militar</b></div>
+    <nav>${["Início","Associados","Financeiro","Pedidos","Mais"].map((l,i)=>`<button class="${i?"":"on"}">${l}</button>`).join("")}</nav></div>
+    <div class="title"><small>${hoje[0].toUpperCase()+hoje.slice(1)}</small><h2>Ordem do dia</h2><p data-count>${T.length} despachos aguardando a secretaria.</p></div>${divisa}</div>
+   <div class="content">
+    <section><h3>Despachar hoje</h3>
+     <div class="tickets stagger" data-tasks>${T.map((t,i)=>`<div class="task" data-t="${i}"><h4>${t.t}</h4><p>${t.d}</p><div class="row"><small>${["Cadastro","Documentos","Financeiro","Reservas","Arquivo","App"][i]}</small><button class="btn" data-do>${t.b}</button></div></div>`).join("")}</div>
+     <p class="empty" data-empty style="display:none;color:var(--muted)">Nada para despachar. Bom serviço.</p></section>
+    <section><h3>Quadro de associados <small>186 ativos, 3 aguardando</small></h3>
+     <div class="ids stagger">${P.map(p=>`<button class="idc" data-p="${p.id}"><div class="hd"><span class="posto">${p.posto}</span>${chip(p.sit)}</div><div><b>${p.nome}</b><br><small>${p.forca}, ${p.om}. Matrícula ${p.mat}</small></div></button>`).join("")}</div></section>
+   </div>
+   <div class="scrim" data-close></div><div class="modal"></div>
+  </div></div>`;
+}
+function fichaB(p){
+  return `<div class="card" role="dialog" aria-label="Ficha do associado"><div class="cart"><span class="av lg">${ini(p.nome)}</span><div><p>${p.posto} ${p.forca}, ${p.om}</p><h3>${p.nome}</h3><p>Matrícula ${p.mat}. Associado desde ${p.ing}</p></div><button class="x" data-close aria-label="Fechar">${ic("x")}</button></div>
+   <div class="cbody">
+    <div class="full callout">${ic("file")}<span>Falta o contracheque para completar a ficha.</span><button class="btn">Cobrar pelo app</button></div>
+    <section><h4>Contato</h4><div class="line"><span>Celular</span><span>${p.tel}</span></div><div class="line"><span>E-mail</span><span>${p.email}</span></div><div class="line"><span>Cidade</span><span>${p.cidade}</span></div></section>
+    <section><h4>Com a associação</h4><div class="line"><span>Situação</span>${chip(p.sit)}</div><div class="line"><span>Mensalidade</span><span>Em dia, desconto em folha</span></div><div class="line"><span>Cartão da associação</span><span>Ativo</span></div></section>
+    <section class="full"><h4>Documentos</h4><div class="docs">${DOCS.map(d=>`<span class="doc ${d[1]?"":"no"}">${d[0]}</span>`).join("")}</div></section>
+    <div class="full" style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn ghost">Dependentes (${p.deps})</button><button class="btn ghost">Histórico</button><button class="btn ghost">Editar dados</button></div>
+   </div></div>`;
+}
+
+/* ---------- C ---------- */
+function rC(){
+  return `<div class="frame"><div class="C">
+   <div class="bar2"><div class="brand" style="margin:0"><div class="selo">AM</div><b>Associação Militar</b></div>
+    <nav>${["Início","Associados","Financeiro","Pedidos","Mais"].map((l,i)=>`<button class="${i?"":"on"}">${l}</button>`).join("")}</nav></div>
+   <div class="view" id="cview">${homeC()}</div>
+  </div></div>`;
+}
+function homeC(){
+  return `<h2>Quem você procura?</h2>
+   <div class="search">${ic("search")}<input id="cq" type="search" autocomplete="off" placeholder="Nome, matrícula ou CPF" aria-label="Procurar associado"></div>
+   <div class="results" id="cres"><p class="hint">Recentes</p>${resC(P.slice(0,3))}</div>
+   <div class="need"><h3 data-count>Precisa de você</h3><div class="pills" data-tasks>${T.map((t,i)=>`<button class="task pill" data-t="${i}" data-do><span class="n ${t.c}">${t.n}</span>${t.curto}</button>`).join("")}</div><p class="hint" data-empty style="display:none;padding:0">Nada pendente. Os pedidos novos do app aparecem aqui.</p></div>
+   <div class="quick"><h3>Começar algo</h3><div class="qgrid">${[["plus","Novo associado"],["wallet","Lançar despesa"],["mega","Publicar aviso"],["cal","Ver agenda do salão"]].map(([i,l])=>`<button class="q">${ic(i)}${l}</button>`).join("")}</div></div>`;
+}
+const resC=l=>l.map((p,k)=>`<button class="res" data-p="${p.id}" style="animation-delay:${k*30}ms"><span class="av">${ini(p.nome)}</span><span class="tx"><b>${p.nome}</b><small>${p.posto} ${p.forca}, matrícula ${p.mat}</small></span>${chip(p.sit)}</button>`).join("");
+function fichaC(p){
+  return `<button class="back" data-home>${ic("back")}Voltar</button>
+  <div class="fp"><aside><span class="av lg">${ini(p.nome)}</span><h2>${p.nome}</h2><p>${p.posto} ${p.forca}, ${p.om}<br>Matrícula ${p.mat}</p><div>${chip(p.sit)}</div><button class="btn">Cobrar contracheque</button><button class="btn ghost">Editar dados</button></aside>
+   <div style="min-width:0"><div class="tabs" role="tablist">${["Resumo","Documentos","Serviços","Histórico"].map((t,i)=>`<button role="tab" aria-selected="${i?"false":"true"}" data-tab="${i}">${t}</button>`).join("")}<span class="ul"></span></div><div id="cpane">${paneC(0,p)}</div></div></div>`;
+}
+function paneC(i,p){
+  if(i==0)return `<div class="pane"><dl class="kv"><dt>Celular</dt><dd>${p.tel}</dd><dt>E-mail</dt><dd>${p.email}</dd><dt>Cidade</dt><dd>${p.cidade}</dd><dt>Mensalidade</dt><dd>R$ 120,00, em dia</dd><dt>Dependentes</dt><dd>${p.deps}</dd><dt>Associado desde</dt><dd>${p.ing}</dd></dl></div>`;
+  if(i==1)return `<div class="pane docl">${DOCS.map(d=>`<div><span>${d[0]}</span>${d[1]?'<span class="chip s-Ativo">Entregue</span>':'<span class="chip s-Pendente">Falta</span>'}</div>`).join("")}</div>`;
+  if(i==2)return `<div class="pane docl"><div><span>Cartão da associação</span><span class="chip s-Ativo">Ativo</span></div><div><span>Plano de saúde</span><button class="btn ghost">Contratar</button></div></div>`;
+  return `<div class="pane tl"><div><span>05/11</span>Mensalidade de novembro paga</div><div><span>28/10</span>Reservou a quadra para 01/11, 19h</div><div><span>02/10</span>Atualizou o endereço pelo app</div><div><span>12/03/2019</span>Filiação aprovada</div></div>`;
+}
+function ulC(){const t=stage.querySelector('.C [aria-selected="true"]'),u=stage.querySelector(".C .ul");if(t&&u){u.style.left=t.offsetLeft+"px";u.style.width=t.offsetWidth+"px"}}
+function swapC(html,after){const v=document.getElementById("cview");v.classList.add("leave");setTimeout(()=>{v.innerHTML=html;v.classList.remove("leave");v.classList.add("enter");setTimeout(()=>v.classList.remove("enter"),400);after&&after()},180)}
+
+/* ---------- render / eventos ---------- */
+let curP=null;
+function render(){
+  document.getElementById("nota").innerHTML=NOTAS[D];
+  stage.innerHTML=`<div class="dir">${D==="A"?rA():D==="B"?rB():rC()}</div>`;
+  document.querySelectorAll(".seg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.d===D));moveThumb();
+}
+function moveThumb(){const b=document.querySelector(`.seg button[data-d="${D}"]`),t=document.querySelector(".seg .thumb");t.style.left=b.offsetLeft+"px";t.style.width=b.offsetWidth+"px"}
+function openP(id,src){
+  const p=P.find(x=>x.id==id);curP=p;
+  if(D==="A"){const d=stage.querySelector(".drawer");d.innerHTML=fichaA(p);stage.querySelector(".scrim").classList.add("on");requestAnimationFrame(()=>d.classList.add("on"));d.querySelector(".x").focus({preventScroll:true})}
+  if(D==="B"){const m=stage.querySelector(".modal"),fr=stage.querySelector(".B").getBoundingClientRect(),r=src.getBoundingClientRect();m.innerHTML=fichaB(p);const c=m.querySelector(".card");const cr=c.getBoundingClientRect();
+    c.style.setProperty("--ox",(r.left+r.width/2-cr.left)+"px");c.style.setProperty("--oy",(r.top+r.height/2-cr.top)+"px");stage.querySelector(".scrim").classList.add("on");c.querySelector(".x").focus({preventScroll:true})}
+  if(D==="C"){swapC(fichaC(p),ulC)}
+}
+function closeP(){
+  if(D==="A"){stage.querySelector(".drawer")?.classList.remove("on");stage.querySelector(".scrim")?.classList.remove("on")}
+  if(D==="B"){const c=stage.querySelector(".B .card");stage.querySelector(".scrim")?.classList.remove("on");if(c){c.classList.add("out");setTimeout(()=>stage.querySelector(".modal").innerHTML="",240)}}
+}
+document.addEventListener("click",e=>{
+  const s=e.target.closest(".seg button");if(s){if(s.dataset.d!==D){D=s.dataset.d;render()}return}
+  const d=e.target.closest("[data-do]");if(d){resolve(d);return}
+  const p=e.target.closest("[data-p]");if(p){openP(p.dataset.p,p);return}
+  if(e.target.closest("[data-close]")){closeP();return}
+  const a=e.target.closest("[data-acc]");if(a){a.parentElement.classList.toggle("open");return}
+  if(e.target.closest("[data-home]")){swapC(homeC());return}
+  const tb=e.target.closest("[data-tab]");if(tb){stage.querySelectorAll(".C [data-tab]").forEach(b=>b.setAttribute("aria-selected",b===tb));ulC();document.getElementById("cpane").innerHTML=paneC(+tb.dataset.tab,curP);return}
+  const q=e.target.closest(".q,.nav,.band nav button,.bar2 nav button");if(q&&!q.classList.contains("on")){toast("Nesta prévia só a tela inicial e a ficha funcionam")}
+});
+document.addEventListener("input",e=>{if(e.target.id==="cq"){const v=e.target.value.trim().toLowerCase();const l=v?P.filter(p=>(p.nome+" "+p.mat).toLowerCase().includes(v)):P.slice(0,3);
+  document.getElementById("cres").innerHTML=(v?"":'<p class="hint">Recentes</p>')+(l.length?resC(l):`<p class="hint">Ninguém com “${e.target.value}”. Confira a grafia ou procure pela matrícula.</p>`)}});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeP()});
+addEventListener("resize",()=>{moveThumb();ulC()});
+render();document.fonts?.ready.then(moveThumb);
+</script>

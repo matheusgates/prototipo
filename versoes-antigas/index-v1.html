@@ -1,0 +1,338 @@
+<title>Gestão da Associação</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Saira+Condensed:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap">
+<style>
+/* Layout: app de gestão — barra lateral com as 3 etapas do projeto, área de trabalho à direita; no celular a barra vira menu superior */
+:root{
+  --bg:#f3f4ef; --surface:#ffffff; --surface-2:#eceee6; --line:#d7dacd;
+  --fg:#1d2318; --muted:#5d6553;
+  --brand:#2f3d24; --brand-fg:#f3f4ef;
+  --accent:#a8792a; --accent-soft:#f1e6cf;
+  --ok:#2e7d4f; --ok-soft:#dcefe3; --warn:#a86a12; --warn-soft:#f6e7cc; --bad:#b0392f; --bad-soft:#f5dcd8;
+  --f-display:"Saira Condensed","Arial Narrow",Arial,sans-serif;
+  --f-body:"IBM Plex Sans",system-ui,-apple-system,"Segoe UI",sans-serif;
+  --f-mono:"IBM Plex Mono",ui-monospace,Menlo,monospace;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#14170f; --surface:#1c2116; --surface-2:#242a1d; --line:#353d2b;
+  --fg:#e6e9de; --muted:#9ba38f;
+  --brand:#0f120b; --brand-fg:#e6e9de;
+  --accent:#d3a253; --accent-soft:#3a3020;
+  --ok:#6cc08f; --ok-soft:#1f3527; --warn:#e0a548; --warn-soft:#3a2f1a; --bad:#e57b70; --bad-soft:#3d2320;
+  color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#14170f; --surface:#1c2116; --surface-2:#242a1d; --line:#353d2b;
+  --fg:#e6e9de; --muted:#9ba38f;
+  --brand:#0f120b; --brand-fg:#e6e9de;
+  --accent:#d3a253; --accent-soft:#3a3020;
+  --ok:#6cc08f; --ok-soft:#1f3527; --warn:#e0a548; --warn-soft:#3a2f1a; --bad:#e57b70; --bad-soft:#3d2320;
+  color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--f-body);font-size:14px;line-height:1.5}
+*{box-sizing:border-box}
+button,input,select,textarea{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.app{display:grid;grid-template-columns:248px minmax(0,1fr);min-height:100%}
+/* barra lateral */
+.side{background:var(--brand);color:var(--brand-fg);padding-block:20px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:16px;display:flex;flex-direction:column;gap:18px;position:sticky;top:0;height:100vh;overflow-y:auto}
+.crest{display:flex;align-items:center;gap:10px}
+.crest .mark{width:38px;height:38px;border:2px solid var(--accent);display:grid;place-items:center;font-family:var(--f-display);font-weight:700;font-size:15px;letter-spacing:.06em;color:var(--accent);clip-path:polygon(50% 0,100% 18%,100% 70%,50% 100%,0 70%,0 18%)}
+.crest b{font-family:var(--f-display);font-size:19px;font-weight:600;letter-spacing:.02em;display:block;line-height:1.1}
+.crest small{opacity:.65;font-size:11px}
+.stage{display:flex;flex-direction:column;gap:2px}
+.stage h4{margin:0 0 4px;font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.14em;text-transform:uppercase;opacity:.7;display:flex;justify-content:space-between;align-items:center;gap:8px}
+.stage h4 span{font-size:10px;letter-spacing:.08em;border:1px solid currentColor;padding:0 6px;border-radius:2px}
+.stage.now h4{opacity:1;color:var(--accent)}
+.nav{display:block;padding:7px 10px;border-radius:4px;color:inherit;text-decoration:none;opacity:.82}
+.nav:hover{background:rgba(255,255,255,.07);opacity:1}
+.nav.on{background:rgba(255,255,255,.12);opacity:1;box-shadow:inset 3px 0 0 var(--accent)}
+.side .foot{margin-top:auto;font-size:11px;opacity:.55}
+/* área principal */
+.main{padding-block:24px 48px;padding-right:max(16px,env(safe-area-inset-right,0px));padding-left:28px;min-width:0}
+.top{display:flex;justify-content:space-between;align-items:flex-end;gap:12px;flex-wrap:wrap;margin-bottom:20px}
+.top h1{font-family:var(--f-display);font-weight:700;font-size:32px;margin:0;line-height:1.05;text-wrap:balance}
+.top p{margin:4px 0 0;color:var(--muted);max-width:62ch}
+.eyebrow{font-family:var(--f-display);font-size:12px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);font-weight:600}
+.preview{display:flex;gap:10px;align-items:center;background:var(--accent-soft);border:1px dashed var(--accent);padding:10px 14px;border-radius:4px;margin-bottom:18px;font-size:13px}
+.preview b{font-family:var(--f-display);letter-spacing:.06em;text-transform:uppercase;color:var(--accent)}
+.btn{background:var(--brand);color:var(--brand-fg);border:0;border-radius:4px;padding:8px 14px;cursor:pointer;font-weight:500}
+:root[data-theme="dark"] .btn{background:var(--accent);color:#14170f}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .btn{background:var(--accent);color:#14170f}}
+.btn.ghost{background:transparent;color:var(--fg);border:1px solid var(--line)}
+.btn:hover{filter:brightness(1.08)}
+.grid{display:grid;gap:14px}
+.kpis{grid-template-columns:repeat(auto-fit,minmax(170px,1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:14px 16px}
+.kpi small{color:var(--muted);display:block;font-size:12px}
+.kpi strong{font-family:var(--f-display);font-size:30px;font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi em{font-style:normal;font-size:12px;color:var(--muted)}
+.panel{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px;min-width:0}
+.panel h3{margin:0 0 12px;font-family:var(--f-display);font-size:18px;font-weight:600}
+.two{grid-template-columns:minmax(0,1.4fr) minmax(0,1fr)}
+.roadmap{grid-template-columns:repeat(3,minmax(0,1fr))}
+.phase{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:16px;display:flex;flex-direction:column;gap:8px}
+.phase.now{border-color:var(--accent);box-shadow:inset 0 3px 0 var(--accent)}
+.phase h3{margin:0;font-family:var(--f-display);font-size:22px;font-weight:700}
+.phase ul{margin:0;padding-left:18px;color:var(--muted)}
+.phase a{margin-top:auto;color:var(--accent);font-weight:600;text-decoration:none}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px}
+.toolbar input,.toolbar select,.form input,.form select,.form textarea{background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:8px 10px}
+.toolbar input{flex:1 1 220px}
+.tablewrap{overflow-x:auto;border:1px solid var(--line);border-radius:4px;background:var(--surface)}
+table{width:100%;border-collapse:collapse;min-width:640px}
+th,td{text-align:left;padding:10px 12px;border-bottom:1px solid var(--line);vertical-align:middle}
+th{font-family:var(--f-display);font-weight:600;font-size:12px;letter-spacing:.1em;text-transform:uppercase;color:var(--muted);background:var(--surface-2)}
+tbody tr{cursor:pointer}
+tbody tr:hover{background:var(--surface-2)}
+tr:last-child td{border-bottom:0}
+.mono{font-family:var(--f-mono);font-size:12.5px;font-variant-numeric:tabular-nums}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pill{display:inline-block;font-size:12px;font-weight:600;padding:2px 8px;border-radius:999px;white-space:nowrap}
+.ok{background:var(--ok-soft);color:var(--ok)} .warn{background:var(--warn-soft);color:var(--warn)} .bad{background:var(--bad-soft);color:var(--bad)} .neutral{background:var(--surface-2);color:var(--muted)}
+.who{display:flex;align-items:center;gap:10px}
+.av{width:30px;height:30px;border-radius:50%;background:var(--surface-2);display:grid;place-items:center;font-weight:600;font-size:12px;color:var(--muted);flex:none}
+.rank{color:var(--muted);font-size:12px}
+.sample{font-size:12px;color:var(--muted);margin-top:8px}
+/* ficha lateral */
+.drawer{position:fixed;inset:0;display:flex;justify-content:flex-end;background:rgba(10,12,8,.45);z-index:20}
+.sheet{background:var(--bg);width:min(560px,100%);height:100%;overflow-y:auto;padding-block:max(20px,env(safe-area-inset-top,0px)) 32px;padding-left:20px;padding-right:max(20px,env(safe-area-inset-right,0px));display:flex;flex-direction:column;gap:14px}
+.sheet header{display:flex;justify-content:space-between;align-items:flex-start;gap:10px}
+.sheet h2{font-family:var(--f-display);font-size:26px;margin:0;line-height:1.1}
+.dl{display:grid;grid-template-columns:150px minmax(0,1fr);gap:6px 12px;margin:0}
+.dl dt{color:var(--muted)} .dl dd{margin:0}
+.docs{display:flex;flex-direction:column;gap:8px}
+.doc{display:flex;justify-content:space-between;align-items:center;gap:10px;padding:10px 12px;background:var(--surface);border:1px solid var(--line);border-radius:4px;flex-wrap:wrap}
+.form{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px}
+.form label{display:flex;flex-direction:column;gap:4px;font-size:12px;color:var(--muted)}
+.form .full{grid-column:1/-1}
+.toast{position:fixed;bottom:max(20px,env(safe-area-inset-bottom,0px));right:max(20px,env(safe-area-inset-right,0px));background:var(--brand);color:var(--brand-fg);padding:10px 16px;border-radius:4px;z-index:30}
+/* gráfico */
+.bars{display:flex;align-items:flex-end;gap:10px;height:170px;padding-top:10px}
+.bar{flex:1;display:flex;flex-direction:column;align-items:center;gap:6px;height:100%;justify-content:flex-end}
+.bar i{display:block;width:100%;max-width:38px;background:var(--brand);border-radius:2px 2px 0 0}
+:root[data-theme="dark"] .bar i{background:var(--accent)}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]) .bar i{background:var(--accent)}}
+.bar span{font-size:11px;color:var(--muted)}
+.bar b{font-size:11px;font-variant-numeric:tabular-nums}
+.list{display:flex;flex-direction:column;gap:10px}
+.item{display:flex;gap:14px;align-items:flex-start;background:var(--surface);border:1px solid var(--line);border-radius:4px;padding:12px 14px}
+.date{flex:none;width:52px;text-align:center;border:1px solid var(--line);border-radius:4px;padding:4px 0;background:var(--surface-2)}
+.date b{display:block;font-family:var(--f-display);font-size:22px;line-height:1}
+.date small{font-size:11px;text-transform:uppercase;color:var(--muted)}
+.item h4{margin:0 0 2px;font-size:15px}
+.item p{margin:0;color:var(--muted)}
+/* portal (celular) */
+.phone{width:min(340px,100%);border:10px solid var(--brand);border-radius:28px;background:var(--bg);padding:16px;display:flex;flex-direction:column;gap:12px;margin-inline:auto}
+.card-id{border-radius:10px;padding:16px;background:linear-gradient(135deg,#2f3d24,#46562f);color:#f3f4ef;position:relative;overflow:hidden}
+.card-id::after{content:"";position:absolute;right:-30px;top:-30px;width:120px;height:120px;border:2px solid rgba(211,162,83,.5);border-radius:50%}
+.card-id small{opacity:.75;font-size:11px;letter-spacing:.1em;text-transform:uppercase}
+.card-id b{display:block;font-family:var(--f-display);font-size:22px;margin-top:6px}
+.tile{display:flex;justify-content:space-between;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:8px;padding:10px 12px}
+@media (max-width:860px){
+  .app{grid-template-columns:1fr}
+  .side{position:static;height:auto;padding-right:max(16px,env(safe-area-inset-right,0px))}
+  .side .stages{display:flex;gap:16px;overflow-x:auto}
+  .stage{min-width:170px}
+  .main{padding-left:max(16px,env(safe-area-inset-left,0px))}
+  .two,.roadmap{grid-template-columns:1fr}
+  .form{grid-template-columns:1fr}
+  .dl{grid-template-columns:1fr}
+}
+@media (prefers-reduced-motion:no-preference){.sheet{animation:slide .2s ease-out}@keyframes slide{from{transform:translateX(24px);opacity:.6}}}
+</style>
+
+<div class="app">
+  <aside class="side">
+    <div class="crest"><div class="mark">AM</div><div><b>Associação Militar</b><small>nome de exemplo · protótipo</small></div></div>
+    <div class="stages">
+      <div class="stage now"><h4>Etapa 1 · Organização <span>agora</span></h4>
+        <a class="nav" href="#visao">Visão geral</a>
+        <a class="nav" href="#associados">Associados</a>
+        <a class="nav" href="#documentos">Documentos</a>
+      </div>
+      <div class="stage"><h4>Etapa 2 · Gestão <span>próxima</span></h4>
+        <a class="nav" href="#financeiro">Financeiro</a>
+        <a class="nav" href="#relatorios">Relatórios</a>
+        <a class="nav" href="#eventos">Eventos</a>
+        <a class="nav" href="#comunicados">Comunicados</a>
+      </div>
+      <div class="stage"><h4>Etapa 3 · Digitalização <span>futura</span></h4>
+        <a class="nav" href="#portal">Portal do associado</a>
+        <a class="nav" href="#solicitacoes">Solicitações online</a>
+      </div>
+    </div>
+    <div class="foot">Protótipo de apresentação. Todos os nomes e números são fictícios.</div>
+  </aside>
+  <main class="main" id="view"></main>
+</div>
+<div id="layer"></div>
+
+<script>
+const $=s=>document.querySelector(s);
+const esc=s=>String(s).replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const brl=v=>v.toLocaleString("pt-BR",{style:"currency",currency:"BRL"});
+const ini=n=>n.split(" ").filter(Boolean).slice(0,2).map(p=>p[0]).join("").toUpperCase();
+
+// Dados fictícios de exemplo
+const DOCS=["Identidade militar","CPF","Comprovante de residência","Ficha de filiação assinada","Contracheque"];
+const associados=[
+ {mat:"0001-24",nome:"Carlos Eduardo Ramos",posto:"Subtenente",forca:"Exército",om:"25º Batalhão de Caçadores",sit:"Ativo",ing:"2019-03-12",cpf:"***.412.987-**",tel:"(86) 9 9812-4410",cidade:"Teresina/PI",dep:2,mens:85,docs:[1,1,1,1,1]},
+ {mat:"0002-24",nome:"Juliana Ferreira Lima",posto:"2º Sargento",forca:"Polícia Militar",om:"1º BPM",sit:"Ativo",ing:"2020-07-02",cpf:"***.331.540-**",tel:"(86) 9 9433-1288",cidade:"Teresina/PI",dep:1,mens:85,docs:[1,1,1,0,1]},
+ {mat:"0003-24",nome:"Marcos Vinícius Sousa",posto:"Cabo",forca:"Polícia Militar",om:"5º BPM",sit:"Pendente",ing:"2026-10-28",cpf:"***.208.665-**",tel:"(86) 9 8820-7731",cidade:"Parnaíba/PI",dep:0,mens:85,docs:[1,1,0,0,0]},
+ {mat:"0004-24",nome:"Antônio Carlos Moura",posto:"1º Tenente (R)",forca:"Exército",om:"Reserva remunerada",sit:"Ativo",ing:"2014-01-20",cpf:"***.774.120-**",tel:"(86) 9 9901-3302",cidade:"Teresina/PI",dep:3,mens:120,docs:[1,1,1,1,1]},
+ {mat:"0005-24",nome:"Patrícia Gomes Alencar",posto:"Soldado",forca:"Corpo de Bombeiros",om:"2º GBM",sit:"Ativo",ing:"2022-05-15",cpf:"***.905.341-**",tel:"(86) 9 9455-6610",cidade:"Picos/PI",dep:1,mens:85,docs:[1,1,1,1,0]},
+ {mat:"0006-24",nome:"Raimundo Nonato Silva",posto:"3º Sargento",forca:"Polícia Militar",om:"Pensionista",sit:"Inativo",ing:"2011-09-03",cpf:"***.118.209-**",tel:"(86) 9 8711-0954",cidade:"Floriano/PI",dep:0,mens:0,docs:[1,1,1,1,1]},
+ {mat:"0007-24",nome:"Fernanda Rocha Batista",posto:"Capitão",forca:"Polícia Militar",om:"Comando Geral",sit:"Ativo",ing:"2018-11-30",cpf:"***.640.732-**",tel:"(86) 9 9300-2257",cidade:"Teresina/PI",dep:2,mens:120,docs:[1,1,1,1,1]},
+ {mat:"0008-24",nome:"José Wilson Pereira",posto:"Cabo",forca:"Exército",om:"25º Batalhão de Caçadores",sit:"Pendente",ing:"2026-11-04",cpf:"***.552.018-**",tel:"(86) 9 9188-4402",cidade:"Teresina/PI",dep:1,mens:85,docs:[1,0,0,0,0]},
+];
+const sitClass={Ativo:"ok",Pendente:"warn",Inativo:"neutral"};
+const docsOk=a=>a.docs.filter(Boolean).length;
+const fmtData=d=>d.split("-").reverse().join("/");
+
+function toast(t){const el=document.createElement("div");el.className="toast";el.textContent=t;document.body.append(el);setTimeout(()=>el.remove(),2600)}
+function top(eye,title,sub,right=""){return `<div class="top"><div><div class="eyebrow">${eye}</div><h1>${title}</h1>${sub?`<p>${sub}</p>`:""}</div>${right}</div>`}
+function preview(fase,txt){return `<div class="preview"><b>Prévia · ${fase}</b><span>${txt}</span></div>`}
+
+const views={
+visao(){
+  const at=associados.filter(a=>a.sit==="Ativo").length, pend=associados.filter(a=>a.sit==="Pendente").length;
+  const docPend=associados.reduce((s,a)=>s+(DOCS.length-docsOk(a)),0);
+  return top("Etapa 1 · Organização","Visão geral","Um só lugar para o cadastro dos associados, as informações e os documentos da associação.")+
+  `<div class="grid kpis">
+    <div class="kpi"><small>Associados cadastrados</small><strong>${associados.length}</strong><em>${at} ativos</em></div>
+    <div class="kpi"><small>Filiações pendentes</small><strong>${pend}</strong><em>aguardando análise</em></div>
+    <div class="kpi"><small>Documentos pendentes</small><strong>${docPend}</strong><em>em ${associados.filter(a=>docsOk(a)<DOCS.length).length} fichas</em></div>
+    <div class="kpi"><small>Dependentes</small><strong>${associados.reduce((s,a)=>s+a.dep,0)}</strong><em>vinculados</em></div>
+  </div>
+  <h3 style="font-family:var(--f-display);font-size:20px;margin:26px 0 10px">Plano de implantação</h3>
+  <div class="grid roadmap">
+    <div class="phase now"><div class="eyebrow">Etapa 1 · em construção</div><h3>Organização</h3><ul><li>Cadastro completo de associados</li><li>Controle de informações e dependentes</li><li>Documentos digitalizados e pendências</li></ul><a href="#associados">Ver associados →</a></div>
+    <div class="phase"><div class="eyebrow">Etapa 2 · próxima</div><h3>Gestão</h3><ul><li>Financeiro e mensalidades</li><li>Relatórios</li><li>Eventos</li><li>Comunicados</li></ul><a href="#financeiro">Ver prévia →</a></div>
+    <div class="phase"><div class="eyebrow">Etapa 3 · futura</div><h3>Digitalização</h3><ul><li>Portal do associado</li><li>Acesso individual com login</li><li>Solicitações online</li></ul><a href="#portal">Ver prévia →</a></div>
+  </div>
+  <div class="grid two" style="margin-top:14px">
+    <div class="panel"><h3>Últimas filiações</h3><div class="list">${associados.slice().sort((a,b)=>b.ing.localeCompare(a.ing)).slice(0,3).map(a=>`<div class="item" style="cursor:pointer" data-open="${a.mat}"><div class="av">${ini(a.nome)}</div><div><h4>${esc(a.nome)}</h4><p>${a.posto} · ${a.forca} · entrou em ${fmtData(a.ing)}</p></div><span class="pill ${sitClass[a.sit]}" style="margin-left:auto">${a.sit}</span></div>`).join("")}</div></div>
+    <div class="panel"><h3>Pendências de documentos</h3><div class="list">${associados.filter(a=>docsOk(a)<DOCS.length).map(a=>`<div class="tile" style="cursor:pointer" data-open="${a.mat}"><span>${esc(a.nome)}</span><span class="pill warn">${DOCS.length-docsOk(a)} faltando</span></div>`).join("")}</div></div>
+  </div>
+  <p class="sample">Dados de exemplo, fictícios.</p>`;
+},
+associados(){
+  return top("Etapa 1 · Organização","Associados","Cadastro, busca e ficha completa de cada associado.",`<button class="btn" id="novo">+ Novo associado</button>`)+
+  `<div class="toolbar"><input id="q" type="search" placeholder="Buscar por nome, matrícula ou OM" aria-label="Buscar">
+   <select id="fs" aria-label="Situação"><option value="">Todas as situações</option><option>Ativo</option><option>Pendente</option><option>Inativo</option></select>
+   <select id="ff" aria-label="Força"><option value="">Todas as forças</option><option>Exército</option><option>Polícia Militar</option><option>Corpo de Bombeiros</option><option>Marinha</option><option>Aeronáutica</option></select></div>
+  <div class="tablewrap"><table><thead><tr><th>Associado</th><th>Matrícula</th><th>Força / OM</th><th>Documentos</th><th>Situação</th></tr></thead><tbody id="rows"></tbody></table></div>
+  <p class="sample" id="count"></p>`;
+},
+documentos(){
+  const rows=[];associados.forEach(a=>a.docs.forEach((ok,i)=>{if(!ok)rows.push({a,i})}));
+  return top("Etapa 1 · Organização","Documentos","Tudo o que falta em cada ficha, para cobrar e anexar sem papel.")+
+  `<div class="grid kpis"><div class="kpi"><small>Documentos anexados</small><strong>${associados.reduce((s,a)=>s+docsOk(a),0)}</strong><em>de ${associados.length*DOCS.length} exigidos</em></div>
+   <div class="kpi"><small>Pendentes</small><strong>${rows.length}</strong><em>a cobrar</em></div>
+   <div class="kpi"><small>Fichas completas</small><strong>${associados.filter(a=>docsOk(a)===DOCS.length).length}</strong><em>de ${associados.length}</em></div></div>
+  <div class="tablewrap" style="margin-top:14px"><table><thead><tr><th>Associado</th><th>Documento pendente</th><th>Situação</th><th></th></tr></thead><tbody>
+  ${rows.map(r=>`<tr data-open="${r.a.mat}"><td>${esc(r.a.nome)}</td><td>${DOCS[r.i]}</td><td><span class="pill warn">Pendente</span></td><td class="num"><span class="rank">abrir ficha →</span></td></tr>`).join("")}
+  </tbody></table></div>`;
+},
+financeiro(){
+  const meses=[["Jun",7480],["Jul",7650],["Ago",7905],["Set",8160],["Out",8330],["Nov",6120]];const mx=9000;
+  const mens=associados.filter(a=>a.mens>0).map((a,i)=>({a,st:i%5===2?"Em atraso":i%4===1?"Aberta":"Paga"}));
+  return top("Etapa 2 · Gestão","Financeiro","Mensalidades, recebimentos e inadimplência em tempo real.")+preview("Etapa 2","Tela ilustrativa do módulo financeiro, prevista para a segunda etapa.")+
+  `<div class="grid kpis"><div class="kpi"><small>Recebido em novembro</small><strong>${brl(6120)}</strong><em>até hoje</em></div>
+  <div class="kpi"><small>A receber</small><strong>${brl(2210)}</strong><em>vence dia 20</em></div>
+  <div class="kpi"><small>Inadimplência</small><strong>4,8%</strong><em>12 associados</em></div>
+  <div class="kpi"><small>Saldo em caixa</small><strong>${brl(48390)}</strong><em>conta da associação</em></div></div>
+  <div class="grid two" style="margin-top:14px"><div class="panel"><h3>Arrecadação mensal</h3><div class="bars">${meses.map(([m,v])=>`<div class="bar"><b>${(v/1000).toFixed(1).replace(".",",")} mil</b><i style="height:${v/mx*100}%"></i><span>${m}</span></div>`).join("")}</div><p class="sample">Novembro ainda em andamento.</p></div>
+  <div class="panel"><h3>Mensalidades de novembro</h3><div class="list">${mens.map(m=>`<div class="tile"><span>${esc(m.a.nome.split(" ").slice(0,2).join(" "))}<br><span class="rank">${brl(m.a.mens)}</span></span><span class="pill ${m.st==="Paga"?"ok":m.st==="Aberta"?"neutral":"bad"}">${m.st}</span></div>`).join("")}</div></div></div>`;
+},
+relatorios(){
+  const r=[["Associados por força e OM","Quantidade e distribuição por unidade"],["Inadimplência por período","Quem está em atraso e há quanto tempo"],["Movimento de caixa","Entradas e saídas do mês"],["Aniversariantes do mês","Para ações de relacionamento"],["Filiações e desligamentos","Crescimento do quadro social"],["Participação em eventos","Inscritos e presença"]];
+  return top("Etapa 2 · Gestão","Relatórios","Relatórios prontos para a diretoria e para a prestação de contas.")+preview("Etapa 2","Os relatórios usam os dados cadastrados na Etapa 1.")+
+  `<div class="grid kpis">${r.map(([t,d])=>`<div class="panel"><h3 style="margin-bottom:4px">${t}</h3><p style="margin:0 0 12px;color:var(--muted)">${d}</p><button class="btn ghost" data-toast="Relatório gerado (simulação)">Gerar relatório</button></div>`).join("")}</div>`;
+},
+eventos(){
+  const ev=[["22","nov","Assembleia geral ordinária","Sede da associação · 19h","48 confirmados"],["06","dez","Confraternização de fim de ano","Clube dos Oficiais · 20h","132 inscritos"],["14","dez","Corrida da família militar 5 km","Avenida Raul Lopes · 6h","87 inscritos"]];
+  return top("Etapa 2 · Gestão","Eventos","Agenda, inscrições e controle de presença.",`<button class="btn" data-toast="Evento criado (simulação)">+ Novo evento</button>`)+preview("Etapa 2","Tela ilustrativa do módulo de eventos.")+
+  `<div class="list">${ev.map(e=>`<div class="item"><div class="date"><b>${e[0]}</b><small>${e[1]}</small></div><div><h4>${e[2]}</h4><p>${e[3]}</p></div><span class="pill neutral" style="margin-left:auto">${e[4]}</span></div>`).join("")}</div>`;
+},
+comunicados(){
+  const c=[["Convocação para a assembleia geral","Enviado a 214 associados · 08/11","Todos"],["Novo convênio com farmácia","Enviado a 214 associados · 30/10","Todos"],["Atualização cadastral obrigatória","Enviado a 37 associados · 21/10","Com pendência"]];
+  return top("Etapa 2 · Gestão","Comunicados","Avisos para todos os associados ou para um grupo, por aplicativo, e-mail ou WhatsApp.")+preview("Etapa 2","O envio real será integrado na segunda etapa.")+
+  `<div class="grid two"><div class="panel"><h3>Novo comunicado</h3><form class="form" id="fc"><label class="full" for="ct">Título<input id="ct" required value="Lembrete: mensalidade de dezembro"></label><label class="full" for="cg">Para<select id="cg"><option>Todos os associados</option><option>Somente ativos</option><option>Com pendência de documentos</option><option>Em atraso</option></select></label><label class="full" for="cm">Mensagem<textarea id="cm" rows="4">Prezado associado, a mensalidade de dezembro vence no dia 20.</textarea></label><div class="full"><button class="btn" type="submit">Enviar comunicado</button></div></form></div>
+  <div class="panel"><h3>Enviados</h3><div class="list" id="sent">${c.map(x=>`<div class="tile"><span>${x[0]}<br><span class="rank">${x[1]}</span></span><span class="pill neutral">${x[2]}</span></div>`).join("")}</div></div></div>`;
+},
+portal(){
+  const a=associados[0];
+  return top("Etapa 3 · Digitalização","Portal do associado","Cada associado com acesso próprio pelo celular: carteirinha, mensalidades e pedidos.")+preview("Etapa 3","Visão do associado, como aparecerá no celular.")+
+  `<div class="phone"><div style="display:flex;justify-content:space-between;align-items:center"><span class="rank">Olá,</span><span class="rank">sair</span></div><b style="font-family:var(--f-display);font-size:22px;margin-top:-8px">${esc(a.nome.split(" ")[0])}</b>
+  <div class="card-id"><small>Carteira de associado</small><b>${esc(a.nome)}</b><div style="font-size:12px;opacity:.85">${a.posto} · ${a.forca}</div><div class="mono" style="margin-top:12px;color:#d3a253">Matrícula ${a.mat} · válida até 12/2027</div></div>
+  <div class="tile"><span>Mensalidade de novembro<br><span class="rank">${brl(a.mens)} · vence 20/11</span></span><span class="pill ok">Paga</span></div>
+  <div class="tile"><span>Meus documentos<br><span class="rank">${docsOk(a)} de ${DOCS.length} enviados</span></span><span class="pill ok">Completo</span></div>
+  <div class="tile"><span>Minhas solicitações<br><span class="rank">1 em análise</span></span><span class="pill warn">Em análise</span></div>
+  <button class="btn" data-toast="Solicitação enviada (simulação)">Fazer uma solicitação</button></div>`;
+},
+solicitacoes(){
+  const s=[["Declaração de associado","Juliana Ferreira Lima","10/11","Em análise","warn"],["Inclusão de dependente","Patrícia Gomes Alencar","09/11","Em análise","warn"],["Segunda via da carteirinha","Antônio Carlos Moura","05/11","Concluída","ok"],["Atualização de endereço","Carlos Eduardo Ramos","02/11","Concluída","ok"],["Cancelamento de convênio","Fernanda Rocha Batista","28/10","Recusada","bad"]];
+  return top("Etapa 3 · Digitalização","Solicitações online","Pedidos feitos pelo portal chegam aqui para a secretaria responder.")+preview("Etapa 3","Fila de atendimento da secretaria.")+
+  `<div class="tablewrap"><table><thead><tr><th>Pedido</th><th>Associado</th><th>Data</th><th>Situação</th></tr></thead><tbody>${s.map(x=>`<tr><td>${x[0]}</td><td>${x[1]}</td><td class="mono">${x[2]}</td><td><span class="pill ${x[4]}">${x[3]}</span></td></tr>`).join("")}</tbody></table></div>`;
+}};
+
+function renderRows(){
+  const q=($("#q").value||"").toLowerCase(),fs=$("#fs").value,ff=$("#ff").value;
+  const list=associados.filter(a=>(!fs||a.sit===fs)&&(!ff||a.forca===ff)&&(!q||(a.nome+a.mat+a.om).toLowerCase().includes(q)));
+  $("#rows").innerHTML=list.map(a=>`<tr data-open="${a.mat}"><td><div class="who"><div class="av">${ini(a.nome)}</div><div>${esc(a.nome)}<div class="rank">${esc(a.posto)}</div></div></div></td><td class="mono">${a.mat}</td><td>${esc(a.forca)}<div class="rank">${esc(a.om)}</div></td><td><span class="pill ${docsOk(a)===DOCS.length?"ok":"warn"}">${docsOk(a)}/${DOCS.length}</span></td><td><span class="pill ${sitClass[a.sit]}">${a.sit}</span></td></tr>`).join("")||`<tr><td colspan="5" style="cursor:default;color:var(--muted)">Nenhum associado encontrado com esses filtros.</td></tr>`;
+  $("#count").textContent=`${list.length} de ${associados.length} associados · dados de exemplo, fictícios.`;
+}
+
+function openFicha(mat){
+  const a=associados.find(x=>x.mat===mat);if(!a)return;
+  $("#layer").innerHTML=`<div class="drawer" id="dr"><div class="sheet" role="dialog" aria-label="Ficha do associado">
+   <header><div><div class="eyebrow">Ficha do associado · <span class="mono">${a.mat}</span></div><h2>${esc(a.nome)}</h2><span class="pill ${sitClass[a.sit]}">${a.sit}</span></div><button class="btn ghost" id="fechar">Fechar</button></header>
+   <div class="panel"><h3>Dados militares</h3><dl class="dl"><dt>Posto/graduação</dt><dd>${esc(a.posto)}</dd><dt>Força</dt><dd>${esc(a.forca)}</dd><dt>OM / lotação</dt><dd>${esc(a.om)}</dd><dt>Associado desde</dt><dd>${fmtData(a.ing)}</dd><dt>Mensalidade</dt><dd>${a.mens?brl(a.mens):"Isento"}</dd></dl></div>
+   <div class="panel"><h3>Dados pessoais e contato</h3><dl class="dl"><dt>CPF</dt><dd class="mono">${a.cpf}</dd><dt>Telefone</dt><dd>${esc(a.tel)}</dd><dt>Cidade</dt><dd>${esc(a.cidade)}</dd><dt>Dependentes</dt><dd>${a.dep}</dd></dl></div>
+   <div class="panel"><h3>Documentos (${docsOk(a)}/${DOCS.length})</h3><div class="docs">${DOCS.map((d,i)=>`<div class="doc"><span>${d}</span>${a.docs[i]?`<span class="pill ok">Anexado</span>`:`<label class="btn ghost" style="cursor:pointer">Anexar arquivo<input type="file" hidden data-doc="${i}"></label>`}</div>`).join("")}</div></div>
+   ${a.sit==="Pendente"?`<div style="display:flex;gap:8px;flex-wrap:wrap"><button class="btn" id="aprovar">Aprovar filiação</button><button class="btn ghost" id="recusar">Pedir correção</button></div>`:""}
+  </div></div>`;
+  $("#dr").addEventListener("click",e=>{if(e.target.id==="dr"||e.target.id==="fechar")close()});
+  $("#dr").querySelectorAll("input[data-doc]").forEach(inp=>inp.addEventListener("change",()=>{if(inp.files.length){a.docs[+inp.dataset.doc]=1;toast(`${DOCS[+inp.dataset.doc]} anexado`);openFicha(mat);route()}}));
+  $("#aprovar")?.addEventListener("click",()=>{a.sit="Ativo";toast("Filiação aprovada");openFicha(mat);route()});
+  $("#recusar")?.addEventListener("click",()=>toast("Pedido de correção enviado ao associado (simulação)"));
+}
+function close(){$("#layer").innerHTML=""}
+
+function novoForm(){
+  $("#layer").innerHTML=`<div class="drawer" id="dr"><div class="sheet" role="dialog" aria-label="Novo associado"><header><div><div class="eyebrow">Etapa 1 · cadastro</div><h2>Novo associado</h2></div><button class="btn ghost" id="fechar">Fechar</button></header>
+  <form class="form" id="fn">
+   <label class="full" for="n-nome">Nome completo<input id="n-nome" required placeholder="Ex.: Maria da Silva Santos"></label>
+   <label for="n-posto">Posto/graduação<select id="n-posto"><option>Soldado</option><option>Cabo</option><option>3º Sargento</option><option>2º Sargento</option><option>1º Sargento</option><option>Subtenente</option><option>Tenente</option><option>Capitão</option><option>Major</option></select></label>
+   <label for="n-forca">Força<select id="n-forca"><option>Polícia Militar</option><option>Corpo de Bombeiros</option><option>Exército</option><option>Marinha</option><option>Aeronáutica</option></select></label>
+   <label class="full" for="n-om">OM / lotação<input id="n-om" required placeholder="Ex.: 1º BPM"></label>
+   <label for="n-tel">Telefone<input id="n-tel" placeholder="(86) 9 0000-0000"></label>
+   <label for="n-cidade">Cidade<input id="n-cidade" placeholder="Teresina/PI"></label>
+   <label for="n-dep">Dependentes<input id="n-dep" type="number" min="0" value="0"></label>
+   <label for="n-mens">Mensalidade<select id="n-mens"><option value="85">R$ 85,00 · praça</option><option value="120">R$ 120,00 · oficial</option></select></label>
+   <div class="full"><button class="btn" type="submit">Cadastrar associado</button></div>
+  </form></div></div>`;
+  $("#dr").addEventListener("click",e=>{if(e.target.id==="dr"||e.target.id==="fechar")close()});
+  $("#fn").addEventListener("submit",e=>{e.preventDefault();
+    const mat=String(associados.length+1).padStart(4,"0")+"-24";
+    associados.push({mat,nome:$("#n-nome").value.trim(),posto:$("#n-posto").value,forca:$("#n-forca").value,om:$("#n-om").value.trim(),sit:"Pendente",ing:new Date().toISOString().slice(0,10),cpf:"a preencher",tel:$("#n-tel").value||"—",cidade:$("#n-cidade").value||"—",dep:+$("#n-dep").value||0,mens:+$("#n-mens").value,docs:[0,0,0,0,0]});
+    close();toast("Associado cadastrado. Filiação pendente de documentos.");location.hash="associados";route();});
+}
+
+function route(){
+  const k=(location.hash.slice(1)||"visao");const v=views[k]?k:"visao";
+  $("#view").innerHTML=views[v]();
+  document.querySelectorAll(".nav").forEach(n=>n.classList.toggle("on",n.getAttribute("href")==="#"+v));
+  if(v==="associados"){["q","fs","ff"].forEach(id=>$("#"+id).addEventListener("input",renderRows));renderRows();$("#novo").addEventListener("click",novoForm)}
+  if(v==="comunicados"){$("#fc").addEventListener("submit",e=>{e.preventDefault();$("#sent").insertAdjacentHTML("afterbegin",`<div class="tile"><span>${esc($("#ct").value)}<br><span class="rank">Enviado agora · simulação</span></span><span class="pill ok">Novo</span></div>`);toast("Comunicado enviado (simulação)")})}
+}
+document.addEventListener("click",e=>{
+  const o=e.target.closest("[data-open]");if(o){openFicha(o.dataset.open);return}
+  const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
+});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")close()});
+window.addEventListener("hashchange",()=>{close();route();window.scrollTo(0,0)});
+route();
+</script>
