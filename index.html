@@ -3720,47 +3720,5 @@ document.addEventListener("keydown",e=>{
 });
 document.addEventListener("mouseover",e=>{const t=e.target.closest("[data-tip]"),tip=$("#tip");if(!t){tip.hidden=true;return}tip.textContent=t.dataset.tip;tip.hidden=false;const r=t.getBoundingClientRect();tip.style.left=Math.min(window.innerWidth-tip.offsetWidth-8,Math.max(8,r.left+r.width/2-tip.offsetWidth/2))+"px";tip.style.top=Math.max(8,r.top-tip.offsetHeight-6)+"px"});
 window.addEventListener("hashchange",()=>{fecharGaveta();route.anim=true;route();window.scrollTo(0,0)});
-/* atalhos do app do associado: a faixa de quadrados passeia devagar para o lado, para mostrar que há mais seções.
-   Para quando a pessoa toca, arrasta ou passa o mouse, e volta sozinha depois. Desligado para quem pede menos animação. */
-(function(){
-  if(matchMedia("(prefers-reduced-motion: reduce)").matches)return;
-  const VEL=16,ESPERA_PONTA=2200,ESPERA_TOQUE=5000;   /* px por segundo, pausa nas pontas, pausa depois de um toque (ms) */
-  const est=new WeakMap();let ult=0,mem=null;
-  function prep(el,t){
-    const e={pos:0,dir:1,ate:t+1800,mouse:false,toque:false};
-    if(mem&&t-mem.t<1500){e.pos=mem.pos;e.dir=mem.dir;e.ate=mem.ate;el.style.scrollSnapType="none";el.scrollLeft=e.pos}   /* a tela foi redesenhada: continua de onde estava */
-    est.set(el,e);
-    const solta=()=>{e.toque=false;e.ate=performance.now()+ESPERA_TOQUE};
-    el.addEventListener("pointerdown",()=>{e.toque=true;el.style.scrollSnapType=""},{passive:true});
-    el.addEventListener("touchstart",()=>{e.toque=true;el.style.scrollSnapType=""},{passive:true});
-    ["pointerup","pointercancel","touchend","touchcancel"].forEach(n=>el.addEventListener(n,solta,{passive:true}));
-    el.addEventListener("wheel",()=>{el.style.scrollSnapType="";e.ate=performance.now()+ESPERA_TOQUE},{passive:true});
-    el.addEventListener("pointerenter",ev=>{if(ev.pointerType==="mouse")e.mouse=true},{passive:true});
-    el.addEventListener("pointerleave",ev=>{if(ev.pointerType==="mouse"){e.mouse=false;e.ate=Math.max(e.ate,performance.now()+1200)}},{passive:true});
-    el.addEventListener("focusin",()=>{e.mouse=true},{passive:true});
-    el.addEventListener("focusout",()=>{e.mouse=false;e.ate=performance.now()+ESPERA_TOQUE},{passive:true});
-    el.addEventListener("scroll",()=>{if(Math.abs(el.scrollLeft-e.pos)>2)e.pos=el.scrollLeft},{passive:true});   /* a pessoa rolou: segue dali */
-    return e;
-  }
-  function passo(t){
-    const dt=Math.min(.05,(t-(ult||t))/1000);ult=t;
-    const el=document.querySelector(".ax-car");
-    if(el&&el.offsetParent&&!document.hidden){
-      const e=est.get(el)||prep(el,t),max=el.scrollWidth-el.clientWidth;
-      if(max>4&&!e.mouse&&!e.toque&&t>=e.ate){
-        el.style.scrollSnapType="none";
-        const borda=e.dir>0?max-e.pos:e.pos;
-        const f=Math.min(1,(t-e.ate)/1200)*Math.min(1,.12+borda/60);   /* acelera aos poucos e desacelera perto da ponta */
-        e.pos+=e.dir*VEL*f*dt;
-        if(e.pos>=max){e.pos=max;e.dir=-1;e.ate=t+ESPERA_PONTA}
-        else if(e.pos<=0){e.pos=0;e.dir=1;e.ate=t+ESPERA_PONTA}
-        el.scrollLeft=e.pos;
-      }
-      mem={pos:e.pos,dir:e.dir,ate:e.ate,t};
-    }
-    requestAnimationFrame(passo);
-  }
-  requestAnimationFrame(passo);
-})();
 setConn();marcarTema();route.anim=true;route();iniciar();
 </script>
