@@ -1,3 +1,5 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
 <title>Gestão da Associação</title>
 <meta name="claude:viewport-fit-sides" content="cover">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -1048,7 +1050,7 @@ let fichaUI={inativar:false,excluir:false,enviando:null}, recemCriado=null;
 const filas={};
 
 function setConn(){
-  const el=$("#conn");const m={carregando:["","Conectando ao banco…"],cache:["","Mostrando cópia salva, atualizando…"],ok:["on",podeEscrever?"Dados salvos online":"Somente leitura"],lento:["off","Banco não respondeu ainda"],erro:["off","Conexão encerrada"],semdb:["off","Sem banco nesta visualização"]}[estado];
+  const el=$("#conn");const m={carregando:["","Conectando ao banco…"],cache:["","Mostrando cópia salva, atualizando…"],ok:["on",modoDemo?"Demonstração: nada é salvo":podeEscrever?"Dados salvos online":"Somente leitura"],lento:["off","Banco não respondeu ainda"],erro:["off","Conexão encerrada"],semdb:["off","Sem banco nesta visualização"]}[estado];
   el.className="conn "+m[0];el.querySelector("span").textContent=m[1];
 }
 function aviso(){
@@ -1076,8 +1078,23 @@ async function escrever(id,fn,okMsg,col="associados"){
 }
 const hist=(a,t)=>[{em:new Date().toISOString(),t},...(a.hist||[])].slice(0,40);
 
+/* Fora do Claude (ex.: Vercel) não existe window.claude: carrega o banco simulado com os dados de exemplo.
+   Nada é salvo; ao recarregar a página os dados voltam ao exemplo. */
+let modoDemo=false;
+async function carregarDemo(){
+  try{
+    const [seed,js]=await Promise.all([fetch("dados-exemplo/dados-exemplo.json").then(r=>{if(!r.ok)throw 0;return r.json()}),fetch("banco-simulado.js").then(r=>{if(!r.ok)throw 0;return r.text()})]);
+    const anexos=o=>{if(o&&typeof o==="object"){if(o.assetId&&typeof o.url==="string"&&o.url.startsWith("/_blob/"))o.url="dados-exemplo/arquivos/"+o.assetId+".pdf";Object.values(o).forEach(anexos)}};
+    anexos(seed);
+    window.__SEED=seed;
+    const s=document.createElement("script");s.textContent=js;document.head.appendChild(s);
+    modoDemo=!!window.claude;
+    return modoDemo;
+  }catch{return false}
+}
 async function iniciar(){
   const timer=setTimeout(()=>{if(estado==="carregando"||estado==="cache"){estado="lento";setConn();refresh()}},10000);
+  if(!window.claude&&!(await carregarDemo())){clearTimeout(timer);estado="semdb";setConn();refresh();return}
   if(!window.claude||typeof claude.use!=="function"){clearTimeout(timer);estado="semdb";setConn();refresh();return}
   db=await claude.use("db");
   if(!db){clearTimeout(timer);estado="semdb";setConn();refresh();return}

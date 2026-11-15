@@ -25,7 +25,7 @@ logo="data:image/png;base64,"+base64.b64encode(open("brasao-assomise.png","rb").
 marca={"nome":"ASSOMISE","longo":"Associação dos Oficiais Militares de Sergipe (ASSOMISE)","sub":"Oficiais Militares de Sergipe","sigla":"AS","logo":logo}
 idx=open("index.html",encoding="utf-8").read()
 troca=[("<title>Gestão da Associação</title>","<title>Gestão ASSOMISE</title>"),
-       ('ok:["on",podeEscrever?"Dados salvos online":"Somente leitura"]','ok:["on","Modo apresentação: nada é salvo"]')]
+       ('ok:["on",modoDemo?"Demonstração: nada é salvo":podeEscrever?"Dados salvos online":"Somente leitura"]','ok:["on","Modo apresentação: nada é salvo"]')]
 for a,b in troca:
     assert idx.count(a)==1,a; idx=idx.replace(a,b)
 cab='<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">'
