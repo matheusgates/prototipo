@@ -21,15 +21,12 @@ def troca_anexos(o):
 troca_anexos(seed)
 
 mock=open("banco-simulado.js",encoding="utf-8").read()
-logo="data:image/png;base64,"+base64.b64encode(open("brasao-assomise.png","rb").read()).decode()
-marca={"nome":"ASSOMISE","longo":"Associação dos Oficiais Militares de Sergipe (ASSOMISE)","sub":"Oficiais Militares de Sergipe","sigla":"AS","logo":logo}
-idx=open("index.html",encoding="utf-8").read()
-troca=[("<title>Gestão da Associação</title>","<title>Gestão ASSOMISE</title>"),
-       ('ok:["on",modoDemo?"Demonstração: nada é salvo":podeEscrever?"Dados salvos online":"Somente leitura"]','ok:["on","Modo apresentação: nada é salvo"]')]
+idx=open("index.html",encoding="utf-8").read()   # nome e brasão da ASSOMISE já vêm no próprio index.html (const MARCA)
+troca=[('ok:["on",modoDemo?"Demonstração: nada é salvo":podeEscrever?"Dados salvos online":"Somente leitura"]','ok:["on","Modo apresentação: nada é salvo"]')]
 for a,b in troca:
     assert idx.count(a)==1,a; idx=idx.replace(a,b)
 cab='<!doctype html><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1">'
 seed_js=json.dumps(seed,ensure_ascii=False).replace("</","<\\/")
-out=cab+"<script>window.__SEED="+seed_js+"</script><script>"+mock+"</script><script>window.__MARCA="+json.dumps(marca,ensure_ascii=False)+"</script>"+idx
+out=cab+"<script>window.__SEED="+seed_js+"</script><script>"+mock+"</script>"+idx
 open("apresentacao-assomise.html","w",encoding="utf-8").write(out)
 print("ok",len(out)//1024,"KB ·",sum(len(v) for v in seed.values()),"registros ·",len(anexos),"anexo(s)")
