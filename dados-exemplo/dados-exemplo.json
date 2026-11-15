@@ -1,0 +1,2376 @@
+{
+ "associados": {
+  "a0001": {
+   "cep": "",
+   "cidade": "Teresina/PI",
+   "cpf": "000.412.987-30",
+   "criadoEm": "2019-03-12T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "1984-06-02",
+     "nome": "Luciana Ramos",
+     "par": "Cônjuge"
+    },
+    {
+     "nasc": "2012-09-18",
+     "nome": "Pedro Ramos",
+     "par": "Filho(a)"
+    }
+   ],
+   "docs": {
+    "contra": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    },
+    "cpf": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2019-03-12",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Exército",
+   "formaPag": "Desconto em folha",
+   "hist": [
+    {
+     "em": "2019-03-12T15:00:00.000Z",
+     "t": "Filiação aprovada"
+    },
+    {
+     "em": "2019-03-12T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2019-03-12",
+   "mat": "0001-19",
+   "mens": 85,
+   "motivo": null,
+   "nasc": "1979-04-21",
+   "nome": "Carlos Eduardo Ramos",
+   "obs": "",
+   "om": "25º Batalhão de Caçadores",
+   "posto": "Subtenente",
+   "rg": "",
+   "servicos": {
+    "cartao": {
+     "canceladoEm": null,
+     "desde": "2019-04-01",
+     "ref": "5021 0001",
+     "status": "Ativo",
+     "valor": null
+    },
+    "seguro": {
+     "canceladoEm": null,
+     "desde": "2020-01-15",
+     "ref": "Enfermaria · regional",
+     "status": "Ativo",
+     "valor": 32.9
+    }
+   },
+   "sit": "Ativo",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 9812-4410"
+  },
+  "a0002": {
+   "cep": "",
+   "cidade": "Teresina/PI",
+   "cpf": "000.331.540-15",
+   "criadoEm": "2020-07-02T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "2017-02-11",
+     "nome": "Ana Clara Lima",
+     "par": "Filho(a)"
+    }
+   ],
+   "docs": {
+    "contra": {
+     "em": "2020-07-02",
+     "tipo": "papel"
+    },
+    "cpf": {
+     "em": "2020-07-02",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "arquivo": "ficha_adesao_amfu_ficticia.pdf",
+     "assetId": "51754892ca26c0688ee2eb866a4b7985",
+     "em": "2026-11-11",
+     "tipo": "arquivo",
+     "url": "/_blob/51754892ca26c0688ee2eb866a4b7985"
+    },
+    "foto": {
+     "em": "2020-07-02",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2020-07-02",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2020-07-02",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Polícia Militar",
+   "formaPag": "PIX",
+   "hist": [
+    {
+     "em": "2026-11-12T01:39:17.411Z",
+     "t": "Ficha de filiação assinada anexado"
+    },
+    {
+     "em": "2026-11-12T01:36:06.478Z",
+     "t": "Ficha de filiação assinada removido"
+    },
+    {
+     "em": "2026-11-12T01:35:56.046Z",
+     "t": "Ficha de filiação assinada anexado"
+    },
+    {
+     "em": "2026-11-12T01:35:39.961Z",
+     "t": "Ficha de filiação assinada removido"
+    },
+    {
+     "em": "2026-11-12T01:35:38.799Z",
+     "t": "Ficha de filiação assinada recebido em papel"
+    },
+    {
+     "em": "2020-07-02T15:00:00.000Z",
+     "t": "Filiação aprovada"
+    },
+    {
+     "em": "2020-07-02T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2020-07-02",
+   "mat": "0002-20",
+   "mens": 85,
+   "motivo": null,
+   "nasc": "1988-11-03",
+   "nome": "Juliana Ferreira Lima",
+   "obs": "",
+   "om": "1º BPM",
+   "posto": "2º Sargento",
+   "rg": "",
+   "servicos": {
+    "cartao": {
+     "canceladoEm": null,
+     "desde": "2020-08-01",
+     "ref": "5021 0002",
+     "status": "Ativo",
+     "valor": null
+    }
+   },
+   "sit": "Ativo",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 9433-1288"
+  },
+  "a0003": {
+   "cep": "",
+   "cidade": "Parnaíba/PI",
+   "cpf": "000.208.665-42",
+   "criadoEm": "2026-10-28T12:00:00.000Z",
+   "deps": [],
+   "docs": {
+    "cpf": {
+     "em": "2026-10-28",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2026-10-28",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2026-10-28",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Polícia Militar",
+   "formaPag": "Desconto em folha",
+   "hist": [
+    {
+     "em": "2026-10-28T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2026-10-28",
+   "mat": "0003-26",
+   "mens": 85,
+   "motivo": null,
+   "nasc": "1996-01-30",
+   "nome": "Marcos Vinícius Sousa",
+   "obs": "",
+   "om": "5º BPM",
+   "posto": "Cabo",
+   "rg": "",
+   "sit": "Pendente",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 8820-7731"
+  },
+  "a0004": {
+   "cep": "",
+   "cidade": "Teresina/PI",
+   "cpf": "000.774.120-01",
+   "criadoEm": "2014-01-20T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "1962-03-14",
+     "nome": "Maria José Moura",
+     "par": "Cônjuge"
+    },
+    {
+     "nasc": "1990-07-07",
+     "nome": "Rafael Moura",
+     "par": "Filho(a)"
+    },
+    {
+     "nasc": "1994-12-01",
+     "nome": "Bianca Moura",
+     "par": "Filho(a)"
+    }
+   ],
+   "docs": {
+    "contra": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    },
+    "cpf": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2014-01-20",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Exército",
+   "formaPag": "Desconto em folha",
+   "hist": [
+    {
+     "em": "2014-01-20T15:00:00.000Z",
+     "t": "Filiação aprovada"
+    },
+    {
+     "em": "2014-01-20T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2014-01-20",
+   "mat": "0004-14",
+   "mens": 120,
+   "motivo": null,
+   "nasc": "1960-08-09",
+   "nome": "Antônio Carlos Moura",
+   "obs": "",
+   "om": "Reserva remunerada",
+   "posto": "1º Tenente",
+   "rg": "",
+   "servicos": {
+    "cartao": {
+     "canceladoEm": null,
+     "desde": "2014-02-01",
+     "ref": "5021 0004",
+     "status": "Ativo",
+     "valor": null
+    },
+    "seguro": {
+     "canceladoEm": null,
+     "desde": "2016-05-10",
+     "ref": "Apartamento · nacional",
+     "status": "Ativo",
+     "valor": 54.5
+    }
+   },
+   "sit": "Ativo",
+   "sitMil": "Reserva remunerada",
+   "tel": "(86) 9 9901-3302"
+  },
+  "a0005": {
+   "cep": "",
+   "cidade": "Picos/PI",
+   "cpf": "000.905.341-74",
+   "criadoEm": "2022-05-15T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "2020-04-25",
+     "nome": "Davi Alencar",
+     "par": "Filho(a)"
+    }
+   ],
+   "docs": {
+    "cpf": {
+     "em": "2022-05-15",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "em": "2022-05-15",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2022-05-15",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2022-05-15",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2022-05-15",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Corpo de Bombeiros",
+   "formaPag": "Boleto",
+   "hist": [
+    {
+     "em": "2022-05-15T15:00:00.000Z",
+     "t": "Filiação aprovada"
+    },
+    {
+     "em": "2022-05-15T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2022-05-15",
+   "mat": "0005-22",
+   "mens": 85,
+   "motivo": null,
+   "nasc": "1995-05-19",
+   "nome": "Patrícia Gomes Alencar",
+   "obs": "",
+   "om": "2º GBM",
+   "posto": "Soldado",
+   "rg": "",
+   "servicos": {
+    "seguro": {
+     "canceladoEm": "2025-09-30",
+     "desde": "2022-06-01",
+     "ref": "Enfermaria · regional",
+     "status": "Cancelado",
+     "valor": 32.9
+    }
+   },
+   "sit": "Ativo",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 9455-6610"
+  },
+  "a0006": {
+   "cep": "",
+   "cidade": "Floriano/PI",
+   "cpf": "000.118.209-93",
+   "criadoEm": "2011-09-03T12:00:00.000Z",
+   "deps": [],
+   "docs": {
+    "contra": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    },
+    "cpf": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2011-09-03",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Polícia Militar",
+   "formaPag": "Desconto em folha",
+   "hist": [
+    {
+     "em": "2025-02-10T12:00:00.000Z",
+     "t": "Inativado: Falecimento do titular · pensão"
+    },
+    {
+     "em": "2011-09-03T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2011-09-03",
+   "mat": "0006-11",
+   "mens": 0,
+   "motivo": "Falecimento do titular · pensão",
+   "nasc": "1952-02-27",
+   "nome": "Raimundo Nonato Silva",
+   "obs": "",
+   "om": "Pensionista",
+   "posto": "3º Sargento",
+   "rg": "",
+   "sit": "Inativo",
+   "sitMil": "Pensionista",
+   "tel": "(86) 9 8711-0954"
+  },
+  "a0007": {
+   "cep": "",
+   "cidade": "Teresina/PI",
+   "cpf": "000.640.732-38",
+   "criadoEm": "2018-11-30T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "1985-10-10",
+     "nome": "Gustavo Batista",
+     "par": "Cônjuge"
+    },
+    {
+     "nasc": "2015-03-08",
+     "nome": "Sofia Batista",
+     "par": "Filho(a)"
+    }
+   ],
+   "docs": {
+    "contra": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    },
+    "cpf": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    },
+    "ficha": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    },
+    "foto": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    },
+    "idmil": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    },
+    "resid": {
+     "em": "2018-11-30",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Polícia Militar",
+   "formaPag": "Desconto em folha",
+   "hist": [
+    {
+     "em": "2018-11-30T15:00:00.000Z",
+     "t": "Filiação aprovada"
+    },
+    {
+     "em": "2018-11-30T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2018-11-30",
+   "mat": "0007-18",
+   "mens": 120,
+   "motivo": null,
+   "nasc": "1986-07-15",
+   "nome": "Fernanda Rocha Batista",
+   "obs": "",
+   "om": "Comando Geral",
+   "posto": "Capitão",
+   "rg": "",
+   "servicos": {
+    "cartao": {
+     "canceladoEm": null,
+     "desde": "2018-12-10",
+     "ref": "5021 0007",
+     "status": "Ativo",
+     "valor": null
+    },
+    "seguro": {
+     "canceladoEm": null,
+     "desde": "2019-03-01",
+     "ref": "Apartamento · nacional",
+     "status": "Ativo",
+     "valor": 54.5
+    }
+   },
+   "sit": "Ativo",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 9300-2257"
+  },
+  "a0008": {
+   "cep": "",
+   "cidade": "Teresina/PI",
+   "cpf": "000.552.018-57",
+   "criadoEm": "2026-11-04T12:00:00.000Z",
+   "deps": [
+    {
+     "nasc": "1999-08-22",
+     "nome": "Larissa Pereira",
+     "par": "Cônjuge"
+    }
+   ],
+   "docs": {
+    "idmil": {
+     "em": "2026-11-04",
+     "tipo": "papel"
+    }
+   },
+   "email": "",
+   "end": "",
+   "forca": "Exército",
+   "formaPag": "PIX",
+   "hist": [
+    {
+     "em": "2026-11-04T12:00:00.000Z",
+     "t": "Cadastro criado (dados de exemplo)"
+    }
+   ],
+   "idMil": "",
+   "ing": "2026-11-04",
+   "mat": "0008-26",
+   "mens": 85,
+   "motivo": null,
+   "nasc": "1998-12-12",
+   "nome": "José Wilson Pereira",
+   "obs": "",
+   "om": "25º Batalhão de Caçadores",
+   "posto": "Cabo",
+   "rg": "",
+   "sit": "Pendente",
+   "sitMil": "Ativa",
+   "tel": "(86) 9 9188-4402"
+  }
+ },
+ "comunicados": {
+  "c-assembleia": {
+   "arquivadoEm": null,
+   "criadoEm": "2026-11-05T12:00:00.000Z",
+   "fim": "2026-11-22",
+   "inicio": "2026-11-05",
+   "msg": "Convocamos todos os associados para a assembleia geral no dia 22/11, às 19h, na sede. Pauta: prestação de contas e eleição do conselho fiscal.",
+   "publico": "todos",
+   "titulo": "Assembleia geral ordinária"
+  },
+  "c-docs": {
+   "arquivadoEm": null,
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "fim": "2026-11-30",
+   "inicio": "2026-11-01",
+   "msg": "Sua ficha tem documentos pendentes. Entregue na secretaria ou envie pelo portal até o fim do mês.",
+   "publico": "pendencia",
+   "titulo": "Atualize seus documentos"
+  },
+  "c-junina": {
+   "arquivadoEm": null,
+   "criadoEm": "2026-06-10T12:00:00.000Z",
+   "fim": "2026-06-27",
+   "inicio": "2026-06-10",
+   "msg": "Venha para o nosso arraiá no dia 27/06 no clube.",
+   "publico": "todos",
+   "titulo": "Festa junina da associação"
+  },
+  "c-natal": {
+   "arquivadoEm": null,
+   "criadoEm": "2026-11-10T12:00:00.000Z",
+   "fim": "2026-12-13",
+   "inicio": "2026-12-01",
+   "msg": "Dia 13/12, a partir das 20h, no salão de festas. Associados e dependentes são bem-vindos.",
+   "publico": "ativos",
+   "titulo": "Confraternização de fim de ano"
+  }
+ },
+ "convenios": {
+  "cv-amigo": {
+   "ativo": true,
+   "cat": "pet",
+   "cidade": "Picos/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "10% em banho e tosa e 5% em rações e acessórios.",
+   "desconto": "10% em banho e tosa",
+   "endereco": "Rua Monsenhor Hipólito, 140 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Pet Shop Amigo Fiel",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-colegio": {
+   "ativo": true,
+   "cat": "educacao",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "30% na mensalidade do ensino infantil e fundamental, 20% no ensino médio. Para filhos e enteados de associados.",
+   "desconto": "Até 30% na mensalidade",
+   "endereco": "Rua Olavo Bilac, 900 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Colégio Saber Integral",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "Desconto concedido na matrícula, com declaração de associado emitida pela secretaria.",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-drogbem": {
+   "ativo": true,
+   "cat": "farmacia",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "20% em genéricos, 10% em medicamentos de marca e 5% em perfumaria. Não vale para itens já em promoção.",
+   "desconto": "Até 20% em medicamentos",
+   "endereco": "Rua Barroso, 210 – Centro (e mais 3 lojas)",
+   "insta": "drogariabemestar.exemplo",
+   "logo": null,
+   "nome": "Drogaria Bem-Estar",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "Informe o CPF no caixa e apresente a carteirinha digital.",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-farmavida": {
+   "ativo": true,
+   "cat": "farmacia",
+   "cidade": "Picos/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "15% em genéricos e 8% nos demais medicamentos. Entrega grátis na cidade para pedidos acima de R$ 50.",
+   "desconto": "15% em genéricos + entrega grátis",
+   "endereco": "Praça Félix Pacheco, 55 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Farmácia Farmavida",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-forca": {
+   "ativo": true,
+   "cat": "academia",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "Isenção da matrícula e 15% na mensalidade dos planos mensal, trimestral e anual. Avaliação física grátis.",
+   "desconto": "Matrícula grátis + 15% na mensalidade",
+   "endereco": "Rua Coelho Rodrigues, 1500 – Centro",
+   "insta": "forcatotal.exemplo",
+   "logo": null,
+   "nome": "Academia Força Total",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-horizonte": {
+   "ativo": true,
+   "cat": "educacao",
+   "cidade": "Parnaíba/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "20% em cursos de graduação presencial e EAD e 25% em pós-graduação. Vale para associados e dependentes.",
+   "desconto": "20% na graduação e pós",
+   "endereco": "Av. São Sebastião, 2200 – Reis Veloso",
+   "insta": "",
+   "logo": null,
+   "nome": "Centro Universitário Horizonte",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-implante": {
+   "ativo": true,
+   "cat": "odonto",
+   "cidade": "Parnaíba/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "15% em implantes, próteses fixas e lentes de contato dental. Parcelamento em até 12x sem juros para associados.",
+   "desconto": "15% em implantes e próteses",
+   "endereco": "Av. Chagas Rodrigues, 300 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Instituto de Implantes Sorrir",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-labcerto": {
+   "ativo": true,
+   "cat": "saude",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "25% em exames laboratoriais e 15% em exames de imagem (raio-X e ultrassom). Coleta domiciliar com taxa reduzida.",
+   "desconto": "25% em exames",
+   "endereco": "Av. Miguel Rosa, 3200 – Centro/Sul",
+   "insta": "",
+   "logo": null,
+   "nome": "Laboratório Diagnóstico Certo",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "Leve o pedido médico, a carteirinha digital e um documento com foto.",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-manipula": {
+   "ativo": true,
+   "cat": "farmacia",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "10% em fórmulas manipuladas, vitaminas e fitoterápicos.",
+   "desconto": "10% em fórmulas manipuladas",
+   "endereco": "Rua Simplício Mendes, 1020 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Farmácia de Manipulação Fórmula Certa",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-odontovida": {
+   "ativo": true,
+   "cat": "odonto",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "Limpeza e avaliação grátis uma vez por ano. 30% em clareamento e restaurações, 20% em próteses e 15% em ortodontia. Vale para dependentes cadastrados.",
+   "desconto": "Até 30% em tratamentos",
+   "endereco": "Av. Frei Serafim, 1450 – Centro",
+   "insta": "odontovida.exemplo",
+   "logo": null,
+   "nome": "OdontoVida Clínica Odontológica",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-pneu": {
+   "ativo": true,
+   "cat": "automotivo",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "10% em revisão, troca de óleo, alinhamento e balanceamento. 5% em pneus.",
+   "desconto": "10% em revisão e pneus",
+   "endereco": "BR-343, km 3 – Zona Sul",
+   "insta": "",
+   "logo": null,
+   "nome": "Auto Center Pneu Forte",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-sabor": {
+   "ativo": true,
+   "cat": "alimentacao",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "10% no almoço de segunda a sexta (self-service e pratos executivos).",
+   "desconto": "10% no almoço",
+   "endereco": "Rua David Caldas, 330 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Restaurante Sabor da Casa",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-sorriso": {
+   "ativo": true,
+   "cat": "odonto",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "Plano odontológico com consultas, limpeza, raio-X e urgência 24h. Sem carência para consultas. Inclusão de dependentes por R$ 19,90 cada.",
+   "desconto": "Plano a partir de R$ 29,90/mês",
+   "endereco": "Rua Areolino de Abreu, 820 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Sorriso Pleno Odontologia",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "Peça a adesão na secretaria da associação ou direto na clínica, informando a matrícula.",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-vidaplena": {
+   "ativo": true,
+   "cat": "saude",
+   "cidade": "Floriano/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "Consultas com clínico geral, cardiologista, ginecologista e pediatra a partir de R$ 90. Exames de rotina com 20% de desconto.",
+   "desconto": "Consultas a partir de R$ 90",
+   "endereco": "Rua Fernando Marques, 480 – Centro",
+   "insta": "",
+   "logo": null,
+   "nome": "Clínica Médica Vida Plena",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  },
+  "cv-visao": {
+   "ativo": true,
+   "cat": "otica",
+   "cidade": "Teresina/PI",
+   "contato": "",
+   "criadoEm": "2026-11-13T12:00:00.000Z",
+   "criadoPor": null,
+   "desc": "20% em armação + lentes, 10% em óculos de sol e exame de vista grátis na compra de óculos completos.",
+   "desconto": "20% em óculos completos",
+   "endereco": "Shopping da Cidade, loja 112",
+   "insta": "",
+   "logo": null,
+   "nome": "Ótica Visão Clara",
+   "obsInt": "Exemplo fictício para demonstração.",
+   "regras": "",
+   "site": "",
+   "tel": "",
+   "validade": "",
+   "whats": ""
+  }
+ },
+ "docs_assoc": {
+  "ex-alvara": {
+   "arquivo": null,
+   "cat": "licencas",
+   "criadoEm": "2026-11-13T09:04:00.000Z",
+   "criadoPor": null,
+   "data": "2025-11-20",
+   "ident": "Alvará nº 2025/0981",
+   "local": "Quadro da recepção (original)",
+   "obs": "Pedir renovação na prefeitura antes do vencimento.",
+   "titulo": "Alvará de funcionamento",
+   "valor": 0,
+   "venc": "2026-11-30"
+  },
+  "ex-ata-2026": {
+   "arquivo": null,
+   "cat": "estatuto",
+   "criadoEm": "2026-11-13T09:01:00.000Z",
+   "criadoPor": null,
+   "data": "2026-03-14",
+   "ident": "Ata nº 27",
+   "local": "Livro de atas nº 3",
+   "obs": "Eleição da diretoria e prestação de contas de 2025.",
+   "titulo": "Ata da assembleia geral ordinária 2026",
+   "valor": 0,
+   "venc": ""
+  },
+  "ex-avcb": {
+   "arquivo": null,
+   "cat": "licencas",
+   "criadoEm": "2026-11-13T09:05:00.000Z",
+   "criadoPor": null,
+   "data": "2023-10-05",
+   "ident": "AVCB nº 33.871",
+   "local": "Pasta de licenças",
+   "obs": "Vencido: agendar nova vistoria do salão.",
+   "titulo": "Auto de vistoria do Corpo de Bombeiros (AVCB)",
+   "valor": 0,
+   "venc": "2026-10-05"
+  },
+  "ex-cnd": {
+   "arquivo": null,
+   "cat": "certidoes",
+   "criadoEm": "2026-11-13T09:07:00.000Z",
+   "criadoPor": null,
+   "data": "2026-06-10",
+   "ident": "Receita Federal / PGFN",
+   "local": "Pasta de certidões",
+   "obs": "Validade de 180 dias.",
+   "titulo": "Certidão negativa de débitos federais",
+   "valor": 0,
+   "venc": "2026-12-07"
+  },
+  "ex-cnpj": {
+   "arquivo": null,
+   "cat": "certidoes",
+   "criadoEm": "2026-11-13T09:06:00.000Z",
+   "criadoPor": null,
+   "data": "2026-02-01",
+   "ident": "CNPJ 00.000.000/0001-00 (exemplo)",
+   "local": "Pasta de certidões",
+   "obs": "",
+   "titulo": "Cartão CNPJ",
+   "valor": 0,
+   "venc": ""
+  },
+  "ex-contrato-limpeza": {
+   "arquivo": null,
+   "cat": "contratos",
+   "criadoEm": "2026-11-13T09:08:00.000Z",
+   "criadoPor": null,
+   "data": "2026-02-01",
+   "ident": "Contrato 04/2026",
+   "local": "Pasta de contratos",
+   "obs": "Valor mensal. Renovação automática por 12 meses se ninguém avisar com 30 dias.",
+   "titulo": "Contrato de limpeza e conservação",
+   "valor": 1800,
+   "venc": "2027-01-31"
+  },
+  "ex-energia-out": {
+   "arquivo": null,
+   "cat": "contas",
+   "criadoEm": "2026-11-13T09:09:00.000Z",
+   "criadoPor": null,
+   "data": "2026-10-28",
+   "ident": "UC 7788990",
+   "local": "Pasta de contas 2026",
+   "obs": "Paga. Lançada no financeiro.",
+   "titulo": "Conta de energia · outubro/2026",
+   "valor": 612.4,
+   "venc": ""
+  },
+  "ex-escritura": {
+   "arquivo": null,
+   "cat": "imoveis",
+   "criadoEm": "2026-11-13T09:02:00.000Z",
+   "criadoPor": null,
+   "data": "2008-07-02",
+   "ident": "Matrícula 12.345 · 2º Ofício de Imóveis",
+   "local": "Cofre da secretaria",
+   "obs": "Terreno de 1.200 m² onde ficam o salão e a quadra.",
+   "titulo": "Escritura do terreno da sede",
+   "valor": 0,
+   "venc": ""
+  },
+  "ex-estatuto": {
+   "arquivo": null,
+   "cat": "estatuto",
+   "criadoEm": "2026-11-13T09:00:00.000Z",
+   "criadoPor": null,
+   "data": "2019-03-20",
+   "ident": "Registro nº 4.512 · Cartório de Títulos",
+   "local": "Armário da secretaria, pasta 1",
+   "obs": "Última alteração aprovada na assembleia de março de 2019.",
+   "titulo": "Estatuto social (versão registrada)",
+   "valor": 0,
+   "venc": ""
+  },
+  "ex-iptu": {
+   "arquivo": null,
+   "cat": "imoveis",
+   "criadoEm": "2026-11-13T09:03:00.000Z",
+   "criadoPor": null,
+   "data": "2026-01-15",
+   "ident": "Inscrição 01.02.0345.0001",
+   "local": "Pasta de contas 2026",
+   "obs": "Última parcela vence em dezembro.",
+   "titulo": "IPTU 2026 da sede",
+   "valor": 2380.5,
+   "venc": "2026-12-10"
+  },
+  "ex-seguro": {
+   "arquivo": null,
+   "cat": "licencas",
+   "criadoEm": "2026-11-13T09:10:00.000Z",
+   "criadoPor": null,
+   "data": "2026-04-01",
+   "ident": "Apólice 55.120.778",
+   "local": "Pasta de licenças",
+   "obs": "Cobre incêndio, roubo e responsabilidade civil no salão.",
+   "titulo": "Apólice de seguro do imóvel",
+   "valor": 3150,
+   "venc": "2027-03-31"
+  }
+ },
+ "eventos": {
+  "ev-assembleia": {
+   "cancelado": false,
+   "criadoEm": "2026-11-05T12:00:00.000Z",
+   "data": "2026-11-22",
+   "desc": "Prestação de contas e eleição do conselho fiscal.",
+   "hora": "19:00",
+   "insc": {},
+   "inscricoes": false,
+   "local": "Sede da associação",
+   "titulo": "Assembleia geral ordinária",
+   "vagas": null,
+   "valor": null
+  },
+  "ev-corrida": {
+   "cancelado": false,
+   "criadoEm": "2026-11-08T12:00:00.000Z",
+   "data": "2026-12-06",
+   "desc": "Percurso de 5 km com camiseta para os inscritos. Leve água.",
+   "hora": "06:30",
+   "insc": {
+    "a0007": {
+     "acomp": 0,
+     "em": "2026-11-09",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "origem": "portal",
+     "presente": false
+    }
+   },
+   "inscricoes": true,
+   "local": "Saída da sede da associação",
+   "titulo": "Corrida da família militar 5 km",
+   "vagas": 60,
+   "valor": null
+  },
+  "ev-junina": {
+   "cancelado": false,
+   "criadoEm": "2026-06-10T12:00:00.000Z",
+   "data": "2026-06-27",
+   "desc": "Arraiá com comidas típicas e quadrilha.",
+   "hora": "18:00",
+   "insc": {
+    "a0001": {
+     "acomp": 2,
+     "em": "2026-06-15",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "origem": "portal",
+     "presente": true
+    },
+    "a0002": {
+     "acomp": 0,
+     "em": "2026-06-20",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "origem": "portal",
+     "presente": false
+    },
+    "a0005": {
+     "acomp": 1,
+     "em": "2026-06-18",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "origem": "portal",
+     "presente": true
+    }
+   },
+   "inscricoes": true,
+   "local": "Quadra poliesportiva",
+   "titulo": "Festa junina da associação",
+   "vagas": null,
+   "valor": 15
+  },
+  "ev-natal": {
+   "cancelado": false,
+   "criadoEm": "2026-11-10T12:00:00.000Z",
+   "data": "2026-12-13",
+   "desc": "Jantar e música ao vivo. Associados e dependentes são bem-vindos.",
+   "hora": "20:00",
+   "insc": {
+    "a0002": {
+     "acomp": 2,
+     "em": "2026-11-10",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "origem": "portal",
+     "presente": false
+    },
+    "a0004": {
+     "acomp": 1,
+     "em": "2026-11-11",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "origem": "portal",
+     "presente": false
+    }
+   },
+   "inscricoes": true,
+   "local": "Salão de festas",
+   "titulo": "Confraternização de fim de ano",
+   "vagas": 120,
+   "valor": 30
+  }
+ },
+ "fin_config": {
+  "geral": {
+   "chavePix": "7f3c2a9e-4b1d-4e8a-9c6f-2d5b8e1a0c47",
+   "cidadePix": "Aracaju",
+   "diaVenc": 10,
+   "recebedor": "Associacao Militar",
+   "saldoInicial": 400000
+  }
+ },
+ "fin_fixas": {
+  "agua": {
+   "ativa": true,
+   "cat": "Água",
+   "desc": "Conta de água da sede",
+   "dia": 20,
+   "valor": 140
+  },
+  "contador": {
+   "ativa": true,
+   "cat": "Contabilidade",
+   "desc": "Escritório de contabilidade",
+   "dia": 10,
+   "valor": 250
+  },
+  "energia": {
+   "ativa": true,
+   "cat": "Energia elétrica",
+   "desc": "Conta de energia da sede",
+   "dia": 10,
+   "valor": 310
+  },
+  "internet": {
+   "ativa": true,
+   "cat": "Internet e telefone",
+   "desc": "Internet e telefone da secretaria",
+   "dia": 15,
+   "valor": 110
+  },
+  "limpeza": {
+   "ativa": true,
+   "cat": "Limpeza e materiais",
+   "desc": "Material de limpeza",
+   "dia": 15,
+   "valor": 160
+  },
+  "manutencao": {
+   "ativa": true,
+   "cat": "Manutenção do clube",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "dia": 5,
+   "valor": 480
+  }
+ },
+ "fin_lanc": {
+  "av-convenio-09": {
+   "cat": "Convênios",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-30T12:00:00.000Z",
+   "desc": "Repasse do convênio com farmácia",
+   "forma": "Transferência",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-09-30",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 180,
+   "venc": "2026-09-30"
+  },
+  "av-junina-06": {
+   "cat": "Eventos",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-27T12:00:00.000Z",
+   "desc": "Festa junina · venda de convites",
+   "forma": "Dinheiro",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-06-27",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 1350,
+   "venc": "2026-06-27"
+  },
+  "av-junina-gasto-06": {
+   "cat": "Eventos",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-25T12:00:00.000Z",
+   "desc": "Festa junina · comidas e decoração",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-06-25",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 820,
+   "venc": "2026-06-25"
+  },
+  "av-portao-10": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-16T12:00:00.000Z",
+   "desc": "Conserto do portão do clube",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-10-16",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 420,
+   "venc": "2026-10-16"
+  },
+  "av-salao-06": {
+   "cat": "Aluguel do salão",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-14T12:00:00.000Z",
+   "desc": "Aluguel do salão · aniversário",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-06-12",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 700,
+   "venc": "2026-06-14"
+  },
+  "av-salao-07": {
+   "cat": "Aluguel do salão",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-19T12:00:00.000Z",
+   "desc": "Aluguel do salão · casamento",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-07-15",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 900,
+   "venc": "2026-07-19"
+  },
+  "av-salao-09": {
+   "cat": "Aluguel do salão",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-20T12:00:00.000Z",
+   "desc": "Aluguel do salão · formatura",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-09-18",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 1200,
+   "venc": "2026-09-20"
+  },
+  "av-salao-10": {
+   "cat": "Aluguel do salão",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-24T12:00:00.000Z",
+   "desc": "Aluguel do salão · confraternização",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": "2026-10-22",
+   "status": "pago",
+   "tipo": "entrada",
+   "valor": 800,
+   "venc": "2026-10-24"
+  },
+  "av-salao-11": {
+   "cat": "Aluguel do salão",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-22T12:00:00.000Z",
+   "desc": "Aluguel do salão · aniversário",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "entrada",
+   "valor": 600,
+   "venc": "2026-11-22"
+  },
+  "av-taxa-11": {
+   "cat": "Impostos e taxas",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-28T12:00:00.000Z",
+   "desc": "Taxa anual do alvará do clube",
+   "forma": "Boleto",
+   "obs": "",
+   "origem": "avulso",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "saida",
+   "valor": 290,
+   "venc": "2026-11-28"
+  },
+  "fx-agua-2026-06": {
+   "cat": "Água",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-20",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-06-20"
+  },
+  "fx-agua-2026-07": {
+   "cat": "Água",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-20",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-07-20"
+  },
+  "fx-agua-2026-08": {
+   "cat": "Água",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-20",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-08-20"
+  },
+  "fx-agua-2026-09": {
+   "cat": "Água",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-20",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-09-20"
+  },
+  "fx-agua-2026-10": {
+   "cat": "Água",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-20",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-10-20"
+  },
+  "fx-agua-2026-11": {
+   "cat": "Água",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Conta de água da sede",
+   "fixaId": "agua",
+   "forma": "",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "saida",
+   "valor": 140,
+   "venc": "2026-11-20"
+  },
+  "fx-contador-2026-06": {
+   "cat": "Contabilidade",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-06-10"
+  },
+  "fx-contador-2026-07": {
+   "cat": "Contabilidade",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-07-10"
+  },
+  "fx-contador-2026-08": {
+   "cat": "Contabilidade",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-08-10"
+  },
+  "fx-contador-2026-09": {
+   "cat": "Contabilidade",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-09-10"
+  },
+  "fx-contador-2026-10": {
+   "cat": "Contabilidade",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-10-10"
+  },
+  "fx-contador-2026-11": {
+   "cat": "Contabilidade",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Escritório de contabilidade",
+   "fixaId": "contador",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-11-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 250,
+   "venc": "2026-11-10"
+  },
+  "fx-energia-2026-06": {
+   "cat": "Energia elétrica",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-06-10"
+  },
+  "fx-energia-2026-07": {
+   "cat": "Energia elétrica",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-07-10"
+  },
+  "fx-energia-2026-08": {
+   "cat": "Energia elétrica",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-08-10"
+  },
+  "fx-energia-2026-09": {
+   "cat": "Energia elétrica",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-09-10"
+  },
+  "fx-energia-2026-10": {
+   "cat": "Energia elétrica",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-10",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-10-10"
+  },
+  "fx-energia-2026-11": {
+   "cat": "Energia elétrica",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Conta de energia da sede",
+   "fixaId": "energia",
+   "forma": "",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "saida",
+   "valor": 310,
+   "venc": "2026-11-10"
+  },
+  "fx-internet-2026-06": {
+   "cat": "Internet e telefone",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-06-15"
+  },
+  "fx-internet-2026-07": {
+   "cat": "Internet e telefone",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-07-15"
+  },
+  "fx-internet-2026-08": {
+   "cat": "Internet e telefone",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-08-15"
+  },
+  "fx-internet-2026-09": {
+   "cat": "Internet e telefone",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-09-15"
+  },
+  "fx-internet-2026-10": {
+   "cat": "Internet e telefone",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-10-15"
+  },
+  "fx-internet-2026-11": {
+   "cat": "Internet e telefone",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Internet e telefone da secretaria",
+   "fixaId": "internet",
+   "forma": "",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "saida",
+   "valor": 110,
+   "venc": "2026-11-15"
+  },
+  "fx-limpeza-2026-06": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-06-15"
+  },
+  "fx-limpeza-2026-07": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-07-15"
+  },
+  "fx-limpeza-2026-08": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-08-15"
+  },
+  "fx-limpeza-2026-09": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-09-15"
+  },
+  "fx-limpeza-2026-10": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-15",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-10-15"
+  },
+  "fx-limpeza-2026-11": {
+   "cat": "Limpeza e materiais",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Material de limpeza",
+   "fixaId": "limpeza",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": null,
+   "status": "aberto",
+   "tipo": "saida",
+   "valor": 160,
+   "venc": "2026-11-15"
+  },
+  "fx-manutencao-2026-06": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-06",
+   "criadoEm": "2026-06-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-06-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-06-05"
+  },
+  "fx-manutencao-2026-07": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-07",
+   "criadoEm": "2026-07-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-07-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-07-05"
+  },
+  "fx-manutencao-2026-08": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-08",
+   "criadoEm": "2026-08-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-08-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-08-05"
+  },
+  "fx-manutencao-2026-09": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-09",
+   "criadoEm": "2026-09-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-09-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-09-05"
+  },
+  "fx-manutencao-2026-10": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-10",
+   "criadoEm": "2026-10-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-10-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-10-05"
+  },
+  "fx-manutencao-2026-11": {
+   "cat": "Manutenção do clube",
+   "comp": "2026-11",
+   "criadoEm": "2026-11-01T12:00:00.000Z",
+   "desc": "Manutenção do clube (piscina e jardinagem)",
+   "fixaId": "manutencao",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "fixa",
+   "pagoEm": "2026-11-05",
+   "status": "pago",
+   "tipo": "saida",
+   "valor": 480,
+   "venc": "2026-11-05"
+  }
+ },
+ "fin_mens": {
+  "2026-06": {
+   "comp": "2026-06",
+   "geradoEm": "2026-06-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-06-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagoEm": "2026-06-05",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-06-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": "2026-06-09",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-06-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-06-10"
+  },
+  "2026-07": {
+   "comp": "2026-07",
+   "geradoEm": "2026-07-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-07-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagoEm": "2026-07-05",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-07-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": "2026-07-09",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-07-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-07-10"
+  },
+  "2026-08": {
+   "comp": "2026-08",
+   "geradoEm": "2026-08-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-08-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagoEm": "2026-08-05",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-08-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": "2026-08-09",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-08-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-08-10"
+  },
+  "2026-09": {
+   "comp": "2026-09",
+   "geradoEm": "2026-09-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-09-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagoEm": "2026-09-05",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-09-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": "2026-09-09",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-09-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-09-10"
+  },
+  "2026-10": {
+   "comp": "2026-10",
+   "geradoEm": "2026-10-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-10-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagoEm": null,
+     "status": "aberto",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-10-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": "2026-10-09",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-10-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-10-10"
+  },
+  "2026-11": {
+   "comp": "2026-11",
+   "geradoEm": "2026-11-01T12:00:00.000Z",
+   "itens": {
+    "a0001": {
+     "forma": "Desconto em folha",
+     "mat": "0001-19",
+     "nome": "Carlos Eduardo Ramos",
+     "pagoEm": "2026-11-08",
+     "status": "pago",
+     "valor": 85
+    },
+    "a0002": {
+     "forma": "PIX",
+     "informadoEm": null,
+     "mat": "0002-20",
+     "nome": "Juliana Ferreira Lima",
+     "pagForma": null,
+     "pagoEm": "2026-11-12",
+     "recusa": null,
+     "status": "pago",
+     "valor": 85
+    },
+    "a0004": {
+     "forma": "Desconto em folha",
+     "mat": "0004-14",
+     "nome": "Antônio Carlos Moura",
+     "pagoEm": "2026-11-08",
+     "status": "pago",
+     "valor": 120
+    },
+    "a0005": {
+     "forma": "Boleto",
+     "mat": "0005-22",
+     "nome": "Patrícia Gomes Alencar",
+     "pagoEm": null,
+     "status": "aberto",
+     "valor": 85
+    },
+    "a0007": {
+     "forma": "Desconto em folha",
+     "mat": "0007-18",
+     "nome": "Fernanda Rocha Batista",
+     "pagoEm": "2026-11-08",
+     "status": "pago",
+     "valor": 120
+    }
+   },
+   "venc": "2026-11-10"
+  }
+ },
+ "lgpd_log": {
+  "7ewc79puio0tbdrvks7t": {
+   "acao": "Abriu a ficha",
+   "alvoId": "a0008",
+   "det": "",
+   "em": "2026-11-13T03:18:02.222Z",
+   "mat": "0008-26",
+   "papel": "admin",
+   "uid": "u_onwZUwF9XRqrlKLGrAVbZA"
+  },
+  "8ycoayn52hnmr2ik7pzr": {
+   "acao": "Abriu a ficha",
+   "alvoId": "a0003",
+   "det": "",
+   "em": "2026-11-13T03:12:31.691Z",
+   "mat": "0003-26",
+   "papel": "admin",
+   "uid": "u_onwZUwF9XRqrlKLGrAVbZA"
+  },
+  "qn9xpcx1pja0918pl6uc": {
+   "acao": "Abriu a ficha",
+   "alvoId": "a0004",
+   "det": "",
+   "em": "2026-11-13T03:42:54.680Z",
+   "mat": "0004-14",
+   "papel": "admin",
+   "uid": "u_onwZUwF9XRqrlKLGrAVbZA"
+  }
+ },
+ "reservas": {
+  "quadra-2026-11-12-18": {
+   "associadoId": "a0001",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-12",
+   "hora": 18,
+   "mat": "0001-19",
+   "nome": "Carlos Eduardo Ramos",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "quadra-2026-11-12-19": {
+   "associadoId": "a0007",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-12",
+   "hora": 19,
+   "mat": "0007-18",
+   "nome": "Fernanda Rocha Batista",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "quadra-2026-11-13-07": {
+   "associadoId": "a0004",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-13",
+   "hora": 7,
+   "mat": "0004-14",
+   "nome": "Antônio Carlos Moura",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "quadra-2026-11-14-09": {
+   "associadoId": "a0002",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-14",
+   "hora": 9,
+   "mat": "0002-20",
+   "nome": "Juliana Ferreira Lima",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "quadra-2026-11-14-10": {
+   "associadoId": "a0002",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-14",
+   "hora": 10,
+   "mat": "0002-20",
+   "nome": "Juliana Ferreira Lima",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "quadra-2026-11-15-17": {
+   "associadoId": "a0005",
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-11-15",
+   "hora": 17,
+   "mat": "0005-22",
+   "nome": "Patrícia Gomes Alencar",
+   "recurso": "quadra",
+   "status": "confirmada"
+  },
+  "salao-2026-11-22": {
+   "associadoId": "a0004",
+   "convidados": 70,
+   "criadoEm": "2026-11-02T13:00:00.000Z",
+   "data": "2026-11-22",
+   "evento": "Aniversário",
+   "mat": "0004-14",
+   "nome": "Antônio Carlos Moura",
+   "obs": "",
+   "recurso": "salao",
+   "solicitacaoId": "s-salao-a0004",
+   "status": "confirmada"
+  },
+  "salao-2026-12-12": {
+   "associadoId": "a0002",
+   "convidados": 90,
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-12-12",
+   "evento": "Confraternização",
+   "mat": "0002-20",
+   "nome": "Juliana Ferreira Lima",
+   "obs": "Confraternização do 1º BPM",
+   "recurso": "salao",
+   "solicitacaoId": "s-salao-a0002",
+   "status": "pendente"
+  }
+ },
+ "solicitacoes": {
+  "49nvovo4783da28r0oaj": {
+   "associadoId": "a0004",
+   "convidados": 1,
+   "criadoEm": "2026-11-12T01:42:24.761Z",
+   "data": "2026-11-24",
+   "evento": "Casamento",
+   "mat": "0004-14",
+   "motivo": null,
+   "nome": "Antônio Carlos Moura",
+   "obs": "",
+   "reservaId": "salao-2026-11-24",
+   "respostaEm": "2026-11-11",
+   "status": "cancelada",
+   "tipo": "salao"
+  },
+  "s-cartao-a0005": {
+   "associadoId": "a0005",
+   "criadoEm": "2026-11-09T18:20:00.000Z",
+   "mat": "0005-22",
+   "nome": "Patrícia Gomes Alencar",
+   "obs": "",
+   "servico": "cartao",
+   "status": "pendente",
+   "tipo": "servico"
+  },
+  "s-salao-a0002": {
+   "associadoId": "a0002",
+   "convidados": 90,
+   "criadoEm": "2026-11-10T14:00:00.000Z",
+   "data": "2026-12-12",
+   "evento": "Confraternização",
+   "mat": "0002-20",
+   "nome": "Juliana Ferreira Lima",
+   "obs": "Confraternização do 1º BPM",
+   "reservaId": "salao-2026-12-12",
+   "status": "pendente",
+   "tipo": "salao"
+  },
+  "s-salao-a0004": {
+   "associadoId": "a0004",
+   "convidados": 70,
+   "criadoEm": "2026-11-02T13:00:00.000Z",
+   "data": "2026-11-22",
+   "evento": "Aniversário",
+   "mat": "0004-14",
+   "nome": "Antônio Carlos Moura",
+   "obs": "",
+   "reservaId": "salao-2026-11-22",
+   "respostaEm": "2026-11-03",
+   "status": "aprovada",
+   "tipo": "salao"
+  }
+ }
+}
