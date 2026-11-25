@@ -1179,7 +1179,7 @@ async function iniciar(){
   sub("reservas",s=>{portal.res=s.docs.map(d=>Object.assign({id:d.id},d.data()))});
   db.doc("fin_config/geral").onSnapshot(d=>{fin.cfg=d.exists?d.data():{};refresh()},()=>{});
   iniciarLgpd();iniciarApp();iniciarOnda1();iniciarOnda2();
-  iniciarOnda34();iniciarOnda5();iniciarOnda35();iniciarOnda38();
+  iniciarOnda34();iniciarOnda5();iniciarOnda35();iniciarOnda38();iniciarOnda39();
 }
 
 /* ---------- interface ---------- */
@@ -3776,7 +3776,7 @@ const o4Plano=id=>o4.planos.find(p=>p.id===id);
 const o4ValorIdade=(p,idd)=>{const f=(p&&p.faixas||[]).find(x=>idd>=+x.de&&idd<=+x.ate);return f?+f.valor||0:0};
 const o4Vidas=(a,p,depsIdx)=>[{nome:a.nome,par:"Titular",nasc:a.nasc||"",titular:true},...(a.deps||[]).filter((d,i)=>depsIdx.includes(i)).map(d=>({nome:d.nome,par:d.par,nasc:d.nasc||"",titular:false}))].map(v=>({...v,valor:o4ValorIdade(p,idadeAnos(v.nasc))}));
 const o4Adesao=a=>o4.ades.find(x=>x.associadoId===a.id&&x.status==="ativo");
-const o4Recalc=x=>{const p=o4Plano(x.planoId);return soma((x.vidas||[]).map(v=>({valor:o4ValorIdade(p,idadeAnos(v.nasc))})))};
+let o4Recalc=x=>{const p=o4Plano(x.planoId);return soma((x.vidas||[]).map(v=>({valor:o4ValorIdade(p,idadeAnos(v.nasc))})))};
 const o4Ab=()=>`<nav class="tabs" role="tablist" style="margin-bottom:16px">${[["planos","Planos de saúde"],["adesoes",`Adesões (${o4.ades.filter(x=>x.status==="ativo").length})`],["cartao","Cartão da associação"],["vales","Vales gás e combustível"]].map(([k,n])=>`<button class="tab" role="tab" aria-selected="${o4UI.aba===k}" data-o4aba="${k}">${n}</button>`).join("")}</nav>`;
 const o4MesNav=k=>`<div class="mesnav"><button class="btn ghost sm" data-o4mes="-1" data-k="${k}" aria-label="Mês anterior">‹</button><b>${nomeMes(o4UI[k])}</b><button class="btn ghost sm" data-o4mes="1" data-k="${k}" aria-label="Próximo mês">›</button></div>`;
 views.beneficios=function(){const ed=editavel();let c="";
@@ -3823,7 +3823,7 @@ async function o4SalvarMov(){const aid=$("#o4-ma")?.value,a=lista.find(x=>x.id==
   const m0=d.slice(8,10)>String(o4FechaDia()).padStart(2,"0")?somaMes(d.slice(0,7),1):d.slice(0,7),base=Math.floor(v/np*100)/100,g=o34Id("cm");let ok=0;
   for(let k=0;k<np;k++)if(await escrever(`${g}-${k+1}`,r=>r.set({associadoId:a.id,data:d,estab:est,valor:k===np-1?Math.round((v-base*(np-1))*100)/100:base,parcela:np>1?`${k+1}/${np}`:"",mes:somaMes(m0,k),conferido:false,criadoEm:new Date().toISOString()}),null,"cartao_mov"))ok++;
   if(ok){registrar("Lançou compra no cartão da associação",a,`${est} · ${brl(v)}${np>1?` em ${np}x`:""}`);toast(np>1?`Compra lançada em ${np} faturas`:"Compra lançada");o4UI.movNovo=o4UI.fMov=false;rerender()}}
-const o4FechaDia=()=>Math.min(28,Math.max(1,+(fin.cfg.cartaoFecha||25)));
+let o4FechaDia=()=>Math.min(28,Math.max(1,+(fin.cfg.cartaoFecha||25)));
 function o4CartaoHTML(ed){const m=o4UI.mes,mv=o4MovMes(m),por={};mv.forEach(x=>(por[x.associadoId]=por[x.associadoId]||[]).push(x));
   const ce=lista.filter(a=>servAtivo(a,"cartao")).length,conf=mv.filter(x=>x.conferido).length;
   return `<div class="o3-tb" style="justify-content:space-between">${o4MesNav("mes")}${ed&&ce?`<button class="btn" data-o4movnovo>Lançar compra</button>`:""}</div>
@@ -3935,7 +3935,7 @@ async function o4Informe(ids,ano){if(!downloads)return toast("Baixar arquivos n�
       tab("Mensalidades associativas (não dedutíveis)",["Mês","Pago em","Valor"],d.mens.map(i=>[nomeMes(i.comp),fmtData(i.pagoEm),brl(i.valor)]),soma(d.mens));
       if(d.parc.length)tab("Parcelas de acordo (não dedutíveis)",["Descrição","Pago em","Valor"],d.parc.map(l=>[l.desc,fmtData(l.pagoEm),brl(l.valor)]),soma(d.parc));
       pdf.setFont("helvetica","normal");pdf.setFontSize(8.5);pdf.setTextColor(90);
-      const nota=pdf.splitTextToSize("Valores conforme os registros da associação. Os valores do plano de saúde são os cobrados no período em que o plano esteve ativo, mais coparticipações. Confira com o informe da operadora antes de declarar; as regras de dedução são as da Receita Federal.",W-28);pdf.text(nota,14,y);y+=nota.length*4+20;
+      const nota=pdf.splitTextToSize(o39IrTexto(d),W-28);pdf.text(nota,14,y);y+=nota.length*4+20;
       pdf.setTextColor(20);pdf.line(W/2-40,y,W/2+40,y);pdf.setFontSize(9.5);pdf.text("Tesouraria",W/2,y+5,{align:"center"});pdf.setFontSize(8);pdf.setTextColor(130);pdf.text(`Emitido em ${new Date().toLocaleDateString("pt-BR")}`,W/2,y+10,{align:"center"});
       registrar("Gerou informe de IRPF",a,String(ano))}
     if(!pg)return toast(`Nenhum pagamento registrado em ${ano}.`);
@@ -4575,7 +4575,7 @@ async function o2Extrato(id){const a=lista.find(x=>x.id===id);if(!a)return;const
 
 
 /* ---- planos de saúde viram cobrança do mês (fin_lanc origem "plano"); entram na remessa da folha/banco como benefício ---- */
-const o2PlanosPend=c=>(typeof o4!=="undefined"&&o4.ades||[]).filter(x=>x.status==="ativo"&&lista.some(a=>a.id===x.associadoId&&a.sit==="Ativo")&&!fin.lanc.some(l=>l.id===`pl-${x.id}-${c}`));
+let o2PlanosPend=c=>(typeof o4!=="undefined"&&o4.ades||[]).filter(x=>x.status==="ativo"&&lista.some(a=>a.id===x.associadoId&&a.sit==="Ativo")&&!fin.lanc.some(l=>l.id===`pl-${x.id}-${c}`));
 async function o2LancarPlanos(c,silencioso){const l=o2PlanosPend(c);let n=0,tot=0;
   for(const x of l){const a=lista.find(y=>y.id===x.associadoId),p=o4Plano(x.planoId),mensal=Math.round(o4Recalc(x)*100)/100,cop=(x.copart||[]).filter(k=>k.mes===c),vc=Math.round(soma(cop)*100)/100,valor=Math.round((mensal+vc)*100)/100;if(!a||!(valor>0))continue;
     if(await escrever(`pl-${x.id}-${c}`,r=>r.set({tipo:"entrada",desc:`Plano de saúde${p&&p.nome?" "+p.nome:""} · ${a.nome}`,cat:"Planos de saúde",valor,venc:c+"-"+pad2(diaVenc()),comp:c,status:"aberto",pagoEm:null,forma:a.formaPag||FORMA_FOLHA,obs:[`Mensalidade do plano ${brl(mensal)}`,...cop.map(k=>`${k.desc}: ${brl(k.valor)}`)].join(" · "),origem:"plano",assocId:a.id,adesaoId:x.id,mensal,copart:vc,criadoEm:new Date().toISOString()}),null,"fin_lanc")){n++;tot+=valor}}
@@ -4697,7 +4697,7 @@ const o5CamId=d=>"cam-"+d;
 const o5AssocTxt=a=>a.nome+" · "+a.mat;
 const o5AchaAssoc=v=>lista.find(x=>o5AssocTxt(x)===String(v||"").trim());
 const o5DlAssoc=(id,f)=>`<datalist id="${id}">${lista.filter(x=>!x.anonimizadoEm&&(f?f(x):true)).sort(porNome).map(x=>`<option value="${esc(o5AssocTxt(x))}">`).join("")}</datalist>`;
-const o5SolNome=s=>s.tipo==="atendimento"?`Atendimento (${o5TipoN(s.tipoAt)}) em ${fmtData(s.data)} às ${s.hora}`:s.tipo==="caminhao"?`Caminhão em ${fmtData(s.data)}`:"";
+let o5SolNome=s=>s.tipo==="atendimento"?`Atendimento (${o5TipoN(s.tipoAt)}) em ${fmtData(s.data)} às ${s.hora}`:s.tipo==="caminhao"?`Caminhão em ${fmtData(s.data)}`:"";
 
 PAPEIS.juridico={n:"Jurídico",d:"Agenda de atendimento, com o assunto e as anotações dos atendimentos jurídicos. Sem acesso às fichas."};
 ACESSO.juridico=["visao","atendimento"];
@@ -5894,6 +5894,403 @@ function ligarOnda38(){if(editavel()&&o3.acordos.length)o38Sync()}
 @media (max-width:760px){.o38-d{min-height:48px;padding:4px}.o38-d small{display:none}.o38-d small:first-of-type{display:block;width:6px;height:6px;padding:0;border-radius:99px;font-size:0}}
 `;document.head.append(st)})();
 
+/* ---------- v39 · onda 4 revisada (BMAD, spec-onda4-beneficios): vários planos por associado com vidas, contrato, carteirinha e responsável financeiro; importação e conferência da operadora; mudança de faixa etária; IRPF pelo que foi pago; cartão com extrato importado, contrapartida e fatura na remessa; lançamentos padrões; vales por pedido e com desconto; "Meus benefícios" no app ---------- */
+/* Coleções novas: planos_import, ben_padroes. Configuração: app_config/beneficios {layouts{operadora,cartao}, irpfTexto, vales{gas|combustivel:{desconta,valor}}, cartao{fecha,contrapartida}}. fin_lanc novos: ct-<assoc>-<mês> (cartao), pd-<padrao>-<assoc>-<mês> (padrao), vl-<vale> (vale). Ganchos: iniciarOnda39 (iniciar), o39Click (clique, antes de todos), o39Change (change), ligarOnda39 (fim de route) */
+let o39={cfg:{},imp:[],pad:[]};
+let o39UI={f:null,impPlano:"",impTipo:"fatura",impMes:hoje().slice(0,7),prev:null,cprev:null,lendo:false,fxN:3,pad:null,pmes:hoje().slice(0,7),vped:false};
+const O39_OPER=["Unimed","Plamed","OdontoServ","PrevDonto","Outra"];
+const O39_LAY={operadora:{cpf:"cpf",cart:"carteirinha, carteira, cartao, codigo beneficiario, matricula beneficiario",nome:"nome, beneficiario, usuario",valor:"valor, mensalidade, vlr, total",desc:"descricao, procedimento, evento, historico"},
+  cartao:{cpf:"cpf",cart:"numero do cartao, cartao, n cartao",nome:"nome, portador",valor:"valor, vlr",data:"data, dt",estab:"estabelecimento, loja, local, descricao",parcela:"parcela"}};
+const O39_LAY_N={cpf:"CPF",cart:"Carteirinha ou cartão",nome:"Nome",valor:"Valor",desc:"Descrição",data:"Data",estab:"Estabelecimento",parcela:"Parcela"};
+const O39_IRPF="Valores conforme os registros da associação: plano de saúde e coparticipações efetivamente pagos no ano, por beneficiário. Confira com o informe da operadora antes de declarar; as regras de dedução são as da Receita Federal.";
+const O39_IMP_T={contratos:"Contratos e carteirinhas",copart:"Coparticipação",fatura:"Fatura da operadora"};
+const o39Lay=k=>Object.assign({},O39_LAY[k],((o39.cfg.layouts||{})[k])||{});
+const o39ValeCfg=t=>Object.assign({desconta:true,valor:(TIPOS_BEN.find(x=>x.k===t)||{}).v||0},((o39.cfg.vales||{})[t])||{});
+const o39CartCfg=()=>Object.assign({fecha:+(fin.cfg.cartaoFecha||25),contrapartida:0},o39.cfg.cartao||{});
+function o39IrTexto(d){const t=String(o39.cfg.irpfTexto||O39_IRPF);return t+(d&&(d.plano||[]).some(v=>v.prev)?" Linhas marcadas (previsto) não têm cobrança lançada no sistema: o valor é o da tabela do plano.":"")}
+o4FechaDia=()=>Math.min(28,Math.max(1,+o39CartCfg().fecha||25));
+O2_LANC_COB.cartao="Cartão da associação";O2_LANC_COB.padrao="Lançamento padrão";O2_LANC_COB.vale="Vale";
+O38_DIV_ORIG.push("cartao","padrao","vale");
+TIT_P.beneficios="Meus benefícios";O5_TELAS.beneficios=(a,ed)=>pBeneficios(a,ed);
+const o39R=v=>Math.round((+v||0)*100)/100;
+const o39Num=v=>o36Num(v);
+const o39AssocTxt=a=>a?a.nome+" · "+a.mat:"";
+const o39AchaAssoc=v=>{v=String(v||"").trim();return v?lista.find(y=>o39AssocTxt(y)===v)||null:null};
+const o39DlAssoc=id=>`<datalist id="${id}">${lista.filter(x=>!x.anonimizadoEm&&x.sit!=="Inativo").sort(porNome).map(x=>`<option value="${esc(o39AssocTxt(x))}">`).join("")}</datalist>`;
+
+function iniciarOnda39(){
+  const sub=(c,fn)=>db.collection(c).onSnapshot(s=>{fn(s.docs.map(d=>Object.assign({id:d.id},d.data())));refresh()},()=>{});
+  sub("planos_import",l=>o39.imp=l);sub("ben_padroes",l=>o39.pad=l);
+  db.doc("app_config/beneficios").onSnapshot(d=>{o39.cfg=d.exists?d.data():{};refresh()},()=>{});
+}
+const o39SalvarCfg=(p,msg)=>escrever("beneficios",r=>r.set(Object.assign({},o39.cfg,p,{editadoEm:new Date().toISOString()})),msg,"app_config");
+
+/* ---- vidas por mês: incluída a partir do mês de inclusão, sai no mês da exclusão; valor pela idade no fim do mês ---- */
+const o39MesAtivo=(v,c)=>(!v.inclEm||String(v.inclEm).slice(0,7)<=c)&&(!v.exclEm||String(v.exclEm).slice(0,7)>c);
+const o39FimMes=c=>{const[y,m]=c.split("-").map(Number);return `${c}-${pad2(new Date(y,m,0).getDate())}`};
+const o39IdadeEm=(n,d)=>{if(!n)return 99;const a=new Date(n+"T12:00"),h=new Date(d+"T12:00");let y=h.getFullYear()-a.getFullYear();if(h<new Date(h.getFullYear(),a.getMonth(),a.getDate(),12))y--;return y};
+const o39ValorVida=(p,v,c)=>o4ValorIdade(p,c?o39IdadeEm(v.nasc,o39FimMes(c)):idadeAnos(v.nasc));
+o4Recalc=(x,c)=>{const p=o4Plano(x.planoId),m=c||hoje().slice(0,7);return o39R(soma((x.vidas||[]).filter(v=>o39MesAtivo(v,m)).map(v=>({valor:o39ValorVida(p,v,c)}))))};
+const o39Ades=a=>o4.ades.filter(x=>x.associadoId===a.id&&x.status==="ativo");
+const o39Pagador=x=>lista.find(y=>y.id===(x.respId||x.associadoId));
+const o39VidaCpf=(x,v)=>{const a=lista.find(y=>y.id===x.associadoId);if(v.cpf)return cpfDig(v.cpf);if(v.titular)return cpfDig(a&&a.cpf);const d=a&&(a.deps||[]).find(d=>nrm(d.nome)===nrm(v.nome));return cpfDig(d&&d.cpf)};
+const o39Vidas=(x,c)=>(x.vidas||[]).map((v,i)=>({v,i})).filter(o=>o39MesAtivo(o.v,c||hoje().slice(0,7)));
+/* serviço "Plano de saúde" da ficha acompanha as adesões ativas */
+async function o39SyncServ(a,ad,txt){const l=o4.ades.filter(x=>x.associadoId===a.id&&x.id!==ad.id&&x.status==="ativo");if(ad.status==="ativo")l.push(ad);
+  const s0=a.servicos&&a.servicos.seguro,s=l.length?{status:"Ativo",desde:(s0&&s0.status==="Ativo"&&s0.desde)||ad.desde||hoje(),ref:l.map(x=>(o4Plano(x.planoId)||{}).nome||"Plano").join(" + "),valor:o39R(soma(l,x=>x.total)),canceladoEm:null}:{status:"Cancelado",canceladoEm:hoje()};
+  return escrever(a.id,r=>r.update({servicos:{seguro:s},hist:hist(a,txt)}))}
+
+/* ---- ficha: planos (várias adesões) + resumo do mês; o resto (cartão, vales, IRPF) continua da v32 ---- */
+const o39FichaBase=o4FichaHTML;
+o4FichaHTML=function(a,ed){const h=o39FichaBase(a,ed),i=h.indexOf('<div class="panel"><h3>Cartão da associação</h3>');return o39PlanosFicha(a,ed)+o39Resumo(a)+(i>=0?h.slice(i):"")};
+function o39PlanosFicha(a,ed){const l=o39Ades(a),f=o39UI.f&&o39UI.f.aid===a.id?o39UI.f:null,m=hoje().slice(0,7);
+  const pagos=o4.ades.filter(x=>x.respId===a.id&&x.associadoId!==a.id&&x.status==="ativo");
+  const card=x=>{const p=o4Plano(x.planoId)||{},rc=o4Recalc(x),resp=x.respId&&x.respId!==a.id?lista.find(y=>y.id===x.respId):null,fx=f&&f.ad===x.id?f:null;
+    const cp=(x.copart||[]).slice().sort((u,w)=>String(w.mes).localeCompare(String(u.mes))).slice(0,4);
+    return `<div class="o39-ad"><div class="serv-h"><div><b>${esc(p.nome||"Plano removido")}</b><p class="rank" style="margin:2px 0 0">${[p.operadora,p.tipo,x.contrato?"contrato "+x.contrato:"","desde "+fmtData(x.desde)].filter(Boolean).map(esc).join(" · ")}</p>${resp?`<p class="rank" style="margin:2px 0 0">Pago por <b>${esc(resp.nome)}</b> · ${esc(resp.mat)}</p>`:""}</div><b class="mono">${brl(x.total)}</b></div>
+     <div class="list" style="margin-top:8px">${(x.vidas||[]).map((v,i)=>{const at=o39MesAtivo(v,m);return `<div class="tile${at?"":" o39-off"}"><span>${esc(v.nome)}<br><span class="rank">${[esc(v.par),v.nasc?idadeAnos(v.nasc)+" anos":"",v.cart?"carteirinha "+esc(v.cart):"",v.inclEm?"entrou "+fmtData(v.inclEm):"",v.exclEm?"saiu "+fmtData(v.exclEm):""].filter(Boolean).join(" · ")}</span></span><span class="r2"><b class="mono">${at?brl(v.valor):"—"}</b>${ed&&at&&!v.titular&&!fx?`<button class="btn ghost sm" data-o39excl="${x.id}:${i}">Excluir</button>`:""}</span></div>`}).join("")}</div>
+     ${cp.length?`<p class="rank" style="margin:10px 0 4px">Coparticipações</p><div class="list">${cp.map(c=>`<div class="tile"><span>${esc(c.desc||"Coparticipação")}<br><span class="rank">${nomeMes(c.mes)}${c.vida!=null&&x.vidas[c.vida]?" · "+esc(x.vidas[c.vida].nome.split(" ")[0]):""}${c.origem==="import"?" · importada":""}</span></span><b class="mono">${brl(c.valor)}</b></div>`).join("")}</div>`:""}
+     ${Math.abs(rc-(+x.total||0))>.005?`<div class="callout" style="margin-top:10px"><span>Pela tabela e pelas vidas de hoje o plano fica ${brl(rc)}.</span>${ed?`<button class="btn sm" data-o39recalc="${x.id}">Atualizar valores</button>`:""}</div>`:""}
+     ${ed?o39FormAd(a,x,p,fx):""}</div>`};
+  let novo="";
+  if(ed&&a.sit!=="Inativo"){const disp=o4.planos.filter(p=>p.ativo!==false&&!l.some(x=>x.planoId===p.id));
+    if(f&&f.k==="novo"){const fp=o4Plano(f.plano)||disp[0];
+      novo=`<div class="o3-f o39-form" style="margin-top:12px"><label class="full">Plano<select id="o39-np" data-o39np>${disp.map(p=>`<option value="${p.id}" ${fp&&p.id===fp.id?"selected":""}>${esc(p.nome)} · ${esc(p.operadora||"")}</option>`).join("")}</select></label>
+       <div class="full"><span class="rank">Quem entra</span><div class="list" style="margin-top:6px"><label class="chkline"><input type="checkbox" checked disabled> ${esc(a.nome)} (titular) · <b>${brl(o4ValorIdade(fp,idadeAnos(a.nasc)))}</b></label>${(a.deps||[]).map((d,i)=>`<label class="chkline"><input type="checkbox" data-o39dep="${i}" ${f.deps.includes(i)?"checked":""}> ${esc(d.nome)} (${esc(d.par)}${d.nasc?", "+idadeAnos(d.nasc)+" anos":""}) · <b>${brl(o4ValorIdade(fp,idadeAnos(d.nasc)))}</b></label>`).join("")}</div></div>
+       <label>Início<input id="o39-nd" type="date" value="${hoje()}"></label><label>Nº do contrato<input id="o39-nc" placeholder="Opcional"></label>
+       <label class="full">Responsável financeiro<input id="o39-nr" list="o39-dlr" placeholder="Vazio = o próprio associado" autocomplete="off">${o39DlAssoc("o39-dlr")}</label>
+       <div class="full o4-tot"><span>Mensal do plano</span><b>${brl(soma(o4Vidas(a,fp,f.deps)))}</b></div>
+       <div class="full actions"><button class="btn" type="button" data-o39aderir>Confirmar adesão</button><button class="btn ghost" type="button" data-o39fechar>Cancelar</button></div></div>`}
+    else if(disp.length&&!f)novo=`<div class="actions" style="margin-top:12px"><button class="btn sm${l.length?" ghost":""}" data-o39novo>${l.length?"Incluir em outro plano":"Incluir em um plano"}</button></div>`;
+    else if(!o4.planos.length)novo=`<p class="rank" style="margin:8px 0 0">Cadastre os planos em Atendimento › Planos e benefícios.</p>`}
+  const leg=!l.length&&servAtivo(a,"seguro")?a.servicos.seguro:null;
+  return `<div class="panel"><h3>Planos de saúde${l.length?` (${l.length})`:""}</h3>
+   ${leg?`<div class="callout" style="margin-bottom:10px"><span>Plano registrado só como serviço${leg.ref?` (${esc(leg.ref)})`:""}${leg.valor?`, ${brl(leg.valor)} por mês`:""}. Faça a adesão abaixo para calcular por faixa etária.</span></div>`:""}
+   ${l.length?l.map(card).join(""):leg?"":`<p class="rank" style="margin:0">Sem plano de saúde pela associação.</p>`}
+   ${pagos.length?`<p class="rank" style="margin:12px 0 4px">Também paga</p><div class="list">${pagos.map(x=>`<div class="tile"><span><button class="lnk" data-o4ficha="${x.associadoId}" style="padding:0">${esc(x.nome)}</button><br><span class="rank">${esc((o4Plano(x.planoId)||{}).nome||"Plano")} · ${(x.vidas||[]).length} ${o34Pl((x.vidas||[]).length,"vida","vidas")}</span></span><b class="mono">${brl(x.total)}</b></div>`).join("")}</div>`:""}
+   ${novo}</div>`}
+function o39FormAd(a,x,p,fx){
+  if(!fx)return `<div class="actions" style="margin-top:10px">${(a.deps||[]).some((d,i)=>!(x.vidas||[]).some(v=>!v.titular&&nrm(v.nome)===nrm(d.nome)&&o39MesAtivo(v,hoje().slice(0,7))))?`<button class="btn ghost sm" data-o39f="incl:${x.id}">Incluir vida</button>`:""}<button class="btn ghost sm" data-o39f="edit:${x.id}">Contrato e responsável</button>${+p.copart?`<button class="btn ghost sm" data-o39f="cop:${x.id}">Lançar coparticipação</button>`:""}<button class="btn ghost sm" data-o39f="canc:${x.id}">Cancelar plano</button></div>`;
+  const B=`<button class="btn ghost sm" type="button" data-o39fechar>Voltar</button>`;
+  if(fx.k==="incl"){const m=hoje().slice(0,7),fora=(a.deps||[]).map((d,i)=>({d,i})).filter(({d})=>!(x.vidas||[]).some(v=>!v.titular&&nrm(v.nome)===nrm(d.nome)&&o39MesAtivo(v,m)));
+    return `<div class="o3-f o39-form" style="margin-top:10px"><label class="full">Dependente<select id="o39-id">${fora.map(({d,i})=>`<option value="${i}">${esc(d.nome)} (${esc(d.par)}) · ${brl(o4ValorIdade(p,idadeAnos(d.nasc)))}</option>`).join("")}</select></label><label>Entra em<input id="o39-idt" type="date" value="${hoje()}"></label><label>Carteirinha<input id="o39-ic" placeholder="Opcional"></label><div class="full actions"><button class="btn sm" type="button" data-o39incl="${x.id}">Incluir</button>${B}</div></div>`}
+  if(fx.k==="edit"){const r=x.respId&&x.respId!==a.id?lista.find(y=>y.id===x.respId):null;
+    return `<div class="o3-f o39-form" style="margin-top:10px"><label>Nº do contrato<input id="o39-ec" value="${esc(x.contrato||"")}"></label><label>Responsável financeiro<input id="o39-er" list="o39-dle" value="${esc(o39AssocTxt(r))}" placeholder="Vazio = o próprio associado" autocomplete="off">${o39DlAssoc("o39-dle")}</label>
+     ${(x.vidas||[]).map((v,i)=>`<label>Carteirinha de ${esc(v.nome.split(" ")[0])}<input data-o39cart="${i}" value="${esc(v.cart||"")}"></label>`).join("")}<div class="full actions"><button class="btn sm" type="button" data-o39edit="${x.id}">Salvar</button>${B}</div></div>`}
+  if(fx.k==="cop")return `<div class="o3-f o39-form" style="margin-top:10px"><label>Mês<input id="o39-cm" type="month" value="${hoje().slice(0,7)}"></label><label>Valor (R$)<input id="o39-cv" type="number" min="0" step="0.01" inputmode="decimal"></label><label>De quem<select id="o39-cw">${o39Vidas(x).map(({v,i})=>`<option value="${i}">${esc(v.nome)}</option>`).join("")}</select></label><label>Descrição<input id="o39-cd" placeholder="Ex.: consulta, exame"></label><div class="full actions"><button class="btn sm" type="button" data-o39cop="${x.id}">Lançar</button>${B}</div></div>`;
+  if(fx.k==="canc")return `<div class="inline bad" style="margin-top:10px"><span>Cancelar ${esc(p.nome||"o plano")} de ${esc(a.nome.split(" ")[0])} e dependentes?</span><button class="btn danger sm" data-o39canc="${x.id}">Cancelar plano</button>${B}</div>`;
+  return ""}
+function o39Resumo(a){const m=hoje().slice(0,7),ad=o39Ades(a);
+  const meus=ad.filter(x=>!x.respId||x.respId===a.id),pago=o4.ades.filter(x=>x.respId===a.id&&x.associadoId!==a.id&&x.status==="ativo");
+  const cop=soma([...meus,...pago].flatMap(x=>(x.copart||[]).filter(c=>c.mes===m))),cart=soma(o4MovMes(m,a.id));
+  const outros=fin.lanc.filter(l=>l.assocId===a.id&&l.comp===m&&["padrao","vale","caminhao","telefonia"].includes(l.origem));
+  const linhas=[["Mensalidade",+a.mens||0],...meus.map(x=>["Plano "+((o4Plano(x.planoId)||{}).nome||""),o4Recalc(x,m)]),...pago.map(x=>[`Plano de ${x.nome.split(" ")[0]} (paga)`,o4Recalc(x,m)]),!ad.length&&servAtivo(a,"seguro")&&a.servicos.seguro.valor?["Plano de saúde (serviço)",+a.servicos.seguro.valor]:null,cop?["Coparticipações",cop]:null,cart?["Cartão da associação",cart]:null,...outros.map(l=>[O2_LANC_COB[l.origem]+(l.origem==="padrao"?" · "+String(l.desc).split(" · ")[0]:""),+l.valor||0])].filter(Boolean);
+  const vl=soma(o4.ben.filter(b=>b.associadoId===a.id&&b.mes===m&&b.status!=="cancelado"&&b.status!=="pedido"));
+  return `<div class="panel"><h3>Resumo de ${mesSo(m)}</h3><div class="o4-res">${linhas.map(([k,v])=>`<div><span>${esc(k)}</span><span class="mono">${brl(v)}</span></div>`).join("")}<div><span>Total do mês</span><span class="mono">${brl(soma(linhas,x=>x[1]))}</span></div></div>${vl?`<p class="rank" style="margin:8px 0 0">Recebe ${brl(vl)} em vales neste mês.</p>`:""}</div>`}
+
+async function o39Aderir(a){const f=o39UI.f,p=o4Plano($("#o39-np").value);if(!a||!p||!f)return toast("Escolha o plano.");
+  const rv=($("#o39-nr").value||"").trim(),resp=rv?o39AchaAssoc(rv):null;if(rv&&!resp)return toast("Escolha o responsável financeiro na lista.");
+  const desde=$("#o39-nd").value||hoje(),vidas=o4Vidas(a,p,f.deps).map(v=>Object.assign(v,{inclEm:desde})),total=o39R(soma(vidas));
+  if(vidas.some(v=>!v.valor))return toast("Alguém está fora das faixas etárias do plano (ou sem data de nascimento). Confira o plano.");
+  const ad={id:`pa-${a.id}-${p.id}`,associadoId:a.id,nome:a.nome,mat:a.mat,planoId:p.id,vidas,total,desde,status:"ativo",copart:[],contrato:($("#o39-nc").value||"").trim(),respId:resp&&resp.id!==a.id?resp.id:null,criadoEm:new Date().toISOString()};
+  const{id,...dados}=ad;if(!await escrever(id,r=>r.set(dados),null,"planos_adesoes"))return;
+  await o39SyncServ(a,ad,`Adesão ao plano ${p.nome}: ${vidas.length} ${o34Pl(vidas.length,"vida","vidas")}, ${brl(total)}/mês${ad.respId?` · pago por ${resp.nome}`:""}`);
+  registrar("Fez adesão a plano de saúde",a,`${p.nome} · ${vidas.length} vidas${ad.respId?" · responsável "+resp.mat:""}`);o39UI.f=null;toast(`Adesão feita: ${brl(total)} por mês`);renderFicha(a.id)}
+async function o39AtualizarAd(a,x,patch,txt,msg){const nx=Object.assign({},x,patch);nx.total=o4Recalc(nx);nx.vidas=(nx.vidas||[]).map(v=>o39MesAtivo(v,hoje().slice(0,7))?Object.assign({},v,{valor:o39ValorVida(o4Plano(nx.planoId),v)}):v);
+  if(!await escrever(x.id,r=>r.update({vidas:nx.vidas,total:nx.total,...Object.fromEntries(Object.entries(patch).filter(([k])=>k!=="vidas"))}),msg,"planos_adesoes"))return false;
+  await o39SyncServ(a,nx,txt);o39UI.f=null;renderFicha(a.id);return true}
+
+/* ---- cobrança dos planos: no nome do responsável financeiro, vidas do mês, idade no fim do mês; junto saem os lançamentos padrões automáticos ---- */
+o2PlanosPend=c=>o4.ades.filter(x=>x.status==="ativo"&&String(x.desde||"").slice(0,7)<=c&&lista.some(a=>a.id===x.associadoId&&a.sit==="Ativo")&&!fin.lanc.some(l=>l.id===`pl-${x.id}-${c}`));
+async function o39LancarPlanos(c,silencioso){const l=o2PlanosPend(c);let n=0,tot=0;
+  for(const x of l){const a=lista.find(y=>y.id===x.associadoId),pg=o39Pagador(x)||a,p=o4Plano(x.planoId),mensal=o4Recalc(x,c),cop=(x.copart||[]).filter(k=>k.mes===c),vc=o39R(soma(cop)),valor=o39R(mensal+vc);if(!a||!(valor>0))continue;const outro=pg.id!==a.id;
+    if(await escrever(`pl-${x.id}-${c}`,r=>r.set({tipo:"entrada",desc:`Plano de saúde${p&&p.nome?" "+p.nome:""} · ${a.nome}${outro?` (pago por ${pg.nome})`:""}`,cat:"Planos de saúde",valor,venc:c+"-"+pad2(diaVenc()),comp:c,status:"aberto",pagoEm:null,forma:pg.formaPag||FORMA_FOLHA,obs:[`Mensalidade do plano ${brl(mensal)}`,...cop.map(k=>`${k.desc||"Coparticipação"}: ${brl(k.valor)}`)].join(" · "),origem:"plano",assocId:pg.id,benefId:a.id,adesaoId:x.id,mensal,copart:vc,criadoEm:new Date().toISOString()}),null,"fin_lanc")){n++;tot+=valor}}
+  if(n||!silencioso)toast(n?`Cobrança dos planos lançada: ${n} ${n===1?"adesão":"adesões"} · ${brl(tot)}`:"Nenhum plano para lançar neste mês.");if(n)registrar("Lançou cobrança dos planos de saúde",null,`${c} · ${n} adesões · ${brl(tot)}`)}
+/* substitui a cadeia inteira (v33 + v34): planos, telefonia quando é a geração do mês, e lançamentos padrões automáticos */
+o2LancarPlanos=async function(c,silencioso){await o39LancarPlanos(c,silencioso);if(silencioso)await o5LancarTel(c,true);await o39GerarPadroes(c,{soAuto:true,silencioso:true})};
+
+/* ---- IRPF pelo que foi pago, por beneficiário (adesão com responsável vai para o informe de quem paga) ---- */
+o4DadosIR=function(a,ano){const y=String(ano);
+  const mens=minhasMens(a).filter(i=>i.status==="pago"&&String(i.pagoEm||i.comp).slice(0,4)===y).sort((x,z)=>x.comp.localeCompare(z.comp));
+  const parc=fin.lanc.filter(l=>l.origem==="acordo"&&(l.associadoId===a.id||l.assocId===a.id)&&l.status==="pago"&&String(l.pagoEm).slice(0,4)===y);
+  const pl={},dc=dadosCompletos(),add=(x,v,val,prv)=>{if(!v||!(val>0))return;const key=v.nome+"|"+v.par,cpf=o39VidaCpf(x,v);pl[key]=pl[key]||{nome:v.nome,par:v.par+(cpf?" · CPF "+(dc?maskCPF(cpf):cpfMask(cpf)):""),nasc:v.nasc,valor:0};pl[key].valor=o39R(pl[key].valor+val);if(prv)pl[key].prev=true};
+  o4.ades.filter(x=>(x.respId||x.associadoId)===a.id).forEach(x=>{const p=o4Plano(x.planoId);
+    for(let k=1;k<=12;k++){const c=`${y}-${pad2(k)}`;if(c<String(x.desde).slice(0,7)||c>hoje().slice(0,7)||(x.canceladoEm&&c>String(x.canceladoEm).slice(0,7)))continue;
+      const l=fin.lanc.find(z=>z.id===`pl-${x.id}-${c}`);if(l&&l.status!=="pago")continue;const prv=!l,vs=o39Vidas(x,c),base=soma(vs.map(o=>({valor:o39ValorVida(p,o.v,c)}))),fat=l&&base?(+l.mensal||base)/base:1;
+      vs.forEach(o=>add(x,o.v,o39R(o39ValorVida(p,o.v,c)*fat),prv));
+      if(!l||+l.copart>0)(x.copart||[]).filter(cp=>cp.mes===c).forEach(cp=>add(x,(x.vidas||[])[cp.vida!=null?cp.vida:0]||(vs[0]||{}).v,+cp.valor||0,prv))}});
+  return{mens,parc,plano:Object.values(pl).map(v=>v.prev?Object.assign({},v,{par:v.par+" (previsto)"}):v)}};
+
+/* ---- benefícios: abas novas ---- */
+const o39Ab=()=>{const nf=o39Mudancas(o39UI.fxN).length;return `<nav class="tabs" role="tablist" style="margin-bottom:16px">${[["planos","Planos de saúde"],["adesoes",`Adesões (${o4.ades.filter(x=>x.status==="ativo").length})`],["operadoras","Operadoras"],["faixa",`Faixa etária${nf?` (${nf})`:""}`],["cartao","Cartão"],["vales","Vales"],["padroes","Lançamentos padrões"],["ajustes","Ajustes"]].map(([k,n])=>`<button class="tab" role="tab" aria-selected="${o4UI.aba===k}" data-o4aba="${k}">${n}</button>`).join("")}</nav>`};
+views.beneficios=function(){const ed=editavel(),k=o4UI.aba;let c="";
+  if(k==="planos")c=o4PlanosHTML(ed);else if(k==="adesoes")c=o4AdesoesHTML();else if(k==="operadoras")c=o39OperHTML(ed);else if(k==="faixa")c=o39FaixaHTML(ed);
+  else if(k==="cartao")c=o39CartaoTopo(ed)+o4CartaoHTML(ed);else if(k==="vales")c=o39ValesTopo(ed)+o4ValesHTML(ed);else if(k==="padroes")c=o39PadHTML(ed);else if(k==="ajustes")c=o39AjHTML(ed);
+  return cabecalho("Atendimento","Planos e benefícios","Planos de saúde por operadora, conferência dos arquivos, cartão da associação, vales, lançamentos padrões e informe para o Imposto de Renda.")+aviso()+o39Ab()+c};
+
+/* ---- operadoras: resumo, importação e conferência ---- */
+function o39OperHTML(ed){const at=o4.ades.filter(x=>x.status==="ativo"),por={};
+  o4.planos.forEach(p=>{const o=p.operadora||"Sem operadora";(por[o]=por[o]||[]).push(p)});
+  const res=Object.entries(por).sort().map(([o,ps])=>{const ad=at.filter(x=>ps.some(p=>p.id===x.planoId));return `<div class="tile"><span><b>${esc(o)}</b><br><span class="rank">${ps.map(p=>esc(p.nome)).join(", ")} · ${ad.length} ${o34Pl(ad.length,"adesão","adesões")} · ${soma(ad,x=>o39Vidas(x).length)} vidas</span></span><b class="mono">${brl(soma(ad,x=>x.total))}</b></div>`}).join("");
+  const P=o39UI.prev,pl=o4.planos.slice().sort(porNome),sel=o39UI.impPlano||(pl[0]||{}).id||"";
+  const imp=ed?`<div class="panel"><h3>Importar arquivo da operadora</h3><p class="rank" style="margin:0 0 10px">CSV ou Excel com cabeçalho. O sistema casa cada linha por CPF, carteirinha ou nome e mostra o que não bate antes de gravar. As colunas reconhecidas ficam em Ajustes (provisório até chegar o arquivo real).</p>
+    <div class="o3-f"><label>Plano<select id="o39-ip">${pl.map(p=>`<option value="${p.id}" ${p.id===sel?"selected":""}>${esc(p.nome)} · ${esc(p.operadora||"")}</option>`).join("")}</select></label><label>Arquivo de<select id="o39-it">${Object.entries(O39_IMP_T).map(([k,n])=>`<option value="${k}" ${k===o39UI.impTipo?"selected":""}>${n}</option>`).join("")}</select></label><label>Mês de referência<input id="o39-im" type="month" value="${o39UI.impMes}"></label>
+    <div class="actions" style="align-self:end"><label class="btn" style="cursor:pointer">${o39UI.lendo?"Lendo…":"Escolher arquivo"}<input type="file" hidden accept=".csv,.txt,.xlsx,.xls" data-o39imp></label></div></div></div>`:"";
+  const prev=P&&P.k==="oper"?(()=>{const p=o4Plano(P.planoId)||{};
+    const L=(t,l,f)=>l.length?`<p class="rank" style="margin:12px 0 4px"><b>${t} (${l.length})</b></p><div class="list">${l.slice(0,30).map(f).join("")}</div>${l.length>30?`<p class="rank">e mais ${l.length-30}.</p>`:""}`:"";
+    return `<div class="panel o39-prev"><div class="serv-h"><div><h3 style="margin:0">Prévia · ${esc(p.nome||"")} · ${O39_IMP_T[P.tipo]} de ${mesSo(P.mes)}</h3><p class="rank" style="margin:2px 0 0">${P.linhas} linhas no arquivo · ${P.casados.length} casadas · ${P.orfaos.length} ${o34Pl(P.orfaos.length,"órfã","órfãs")} · ${P.difs.length} ${o34Pl(P.difs.length,"diferença","diferenças")}</p></div></div>
+      ${L("Diferenças de valor (operadora × associação)",P.difs,d=>`<div class="tile"><span>${esc(d.nome)}<br><span class="rank">operadora ${brl(d.op)} · associação ${brl(d.assoc)}</span></span><b class="mono ${d.op>d.assoc?"neg":""}">${d.op>d.assoc?"+":""}${brl(d.op-d.assoc)}</b></div>`)}
+      ${L("Órfãos: estão no arquivo e não na associação",P.orfaos,o=>`<div class="tile"><span>${esc(o.nome||"Sem nome")}<br><span class="rank">${[o.cpf&&"CPF "+o.cpf,o.cart&&"carteirinha "+esc(o.cart)].filter(Boolean).join(" · ")||"sem CPF nem carteirinha"}</span></span><b class="mono">${o.valor?brl(o.valor):""}</b></div>`)}
+      ${L("Só na associação: vidas ativas que não vieram no arquivo",P.soAssoc,o=>`<div class="tile"><span>${esc(o.nome)}<br><span class="rank">titular ${esc(o.tit)}</span></span></div>`)}
+      ${P.tipo==="copart"?L("Coparticipações que serão lançadas",P.casados.filter(c=>c.valor>0),c=>`<div class="tile"><span>${esc(c.nome)}<br><span class="rank">${esc(c.desc||"Coparticipação")}</span></span><b class="mono">${brl(c.valor)}</b></div>`):""}
+      ${P.tipo==="contratos"?`<p class="rank" style="margin:10px 0 0">${P.casados.filter(c=>c.cart&&c.cart!==c.cartAnt).length} carteirinhas novas ou alteradas serão gravadas.</p>`:""}
+      <div class="actions" style="margin-top:12px"><button class="btn" data-o39impok>${P.tipo==="copart"?"Lançar coparticipações e registrar":P.tipo==="contratos"?"Gravar carteirinhas e registrar":"Registrar conferência"}</button><button class="btn ghost" data-o39impx>Descartar</button></div></div>`})():"";
+  const hist=o39.imp.filter(i=>i.tipo!=="cartao").sort((x,y)=>String(y.em).localeCompare(String(x.em))).slice(0,8);
+  return `<div class="panel"><h3>Por operadora</h3>${res?`<div class="list">${res}</div>`:`<p class="rank" style="margin:0">Nenhum plano cadastrado.</p>`}</div>${imp}${prev}
+   <div class="panel"><h3>Arquivos já conferidos</h3>${hist.length?`<div class="list">${hist.map(i=>`<div class="tile"><span>${esc((o4Plano(i.planoId)||{}).nome||"Plano")} · ${O39_IMP_T[i.tipo]||i.tipo} de ${mesSo(i.mes)}<br><span class="rank">${fmtData(i.em)} · ${i.casados} casadas · ${(i.orfaos||[]).length} órfãs · ${(i.difs||[]).length} diferenças${i.porNome?" · "+esc(i.porNome):""}</span></span><span class="pill ${(i.orfaos||[]).length||(i.difs||[]).length?"warn":"ok"}">${(i.orfaos||[]).length||(i.difs||[]).length?"Com pendência":"Bateu"}</span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum arquivo importado ainda.</p>`}</div>`}
+async function o39LerLinhas(f){if(!f)throw{msg:"Escolha um arquivo."};if(f.size>5*1024*1024)throw{msg:"Arquivo maior que 5 MB."};let rows;
+  if(/\.(xlsx|xls|ods)$/i.test(f.name)){const X=await carregarXLSX(),wb=X.read(await f.arrayBuffer(),{type:"array"});rows=X.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]],{header:1,raw:true,defval:""})}else rows=lerCSV(await f.text());
+  rows=(rows||[]).filter(r=>r&&r.some(v=>String(v).trim()));if(rows.length<2)throw{msg:"O arquivo está vazio ou só tem o cabeçalho."};return rows}
+function o39Colunas(h,lay){const H=h.map(x=>semAcento(String(x)).toLowerCase().trim()),ci={},usadas=new Set();
+  for(const[k,v] of Object.entries(lay)){const t=String(v||"").split(",").map(s=>semAcento(s).toLowerCase().trim()).filter(Boolean);let i=H.findIndex((x,j)=>!usadas.has(j)&&t.includes(x));if(i<0)i=H.findIndex((x,j)=>!usadas.has(j)&&t.some(w=>x.includes(w)));ci[k]=i;if(i>=0)usadas.add(i)}return ci}
+function o39Linhas(rows,lay){const ci=o39Colunas(rows[0],lay),g=(r,k)=>ci[k]>=0?r[ci[k]]:"";return{ci,l:rows.slice(1).map(r=>({cpf:cpfDig(g(r,"cpf")),cart:String(g(r,"cart")||"").trim(),nome:String(g(r,"nome")||"").trim(),valor:o39R(o39Num(g(r,"valor"))),desc:String(g(r,"desc")||g(r,"estab")||"").trim(),data:o36Data(g(r,"data"))||"",estab:String(g(r,"estab")||"").trim(),parcela:String(g(r,"parcela")||"").trim()}))}}
+async function o39LerOper(f){const planoId=$("#o39-ip").value,tipo=$("#o39-it").value,mes=$("#o39-im").value||hoje().slice(0,7),p=o4Plano(planoId);if(!p)return toast("Escolha o plano.");
+  o39UI.impPlano=planoId;o39UI.impTipo=tipo;o39UI.impMes=mes;o39UI.lendo=true;rerender();
+  try{const{ci,l}=o39Linhas(await o39LerLinhas(f),o39Lay("operadora"));if(ci.cpf<0&&ci.cart<0&&ci.nome<0)throw{msg:"O arquivo precisa de uma coluna CPF, carteirinha ou nome (veja Ajustes)."};if(tipo!=="contratos"&&ci.valor<0)throw{msg:"O arquivo precisa de uma coluna de valor."};
+    const ads=o4.ades.filter(x=>x.planoId===planoId&&x.status==="ativo"),idx={cpf:{},cart:{},nome:{}};
+    ads.forEach(x=>(x.vidas||[]).forEach((v,i)=>{if(!o39MesAtivo(v,mes))return;const o={x,i,v},c=o39VidaCpf(x,v);if(c)idx.cpf[c]=o;if(v.cart)idx.cart[String(v.cart).replace(/\s/g,"")]=o;idx.nome[nrm(v.nome)]=o}));
+    const casados=[],orfaos=[],difs=[],vistos=new Set();
+    for(const r of l){const o=(r.cpf&&idx.cpf[r.cpf])||(r.cart&&idx.cart[r.cart.replace(/\s/g,"")])||(r.nome&&idx.nome[nrm(r.nome)]);
+      if(!o){orfaos.push({nome:r.nome,cpf:r.cpf?cpfMask(r.cpf):"",cart:r.cart,valor:r.valor});continue}
+      vistos.add(o.x.id+":"+o.i);casados.push({adId:o.x.id,vida:o.i,nome:o.v.nome,valor:r.valor,desc:r.desc,cart:r.cart,cartAnt:o.v.cart||""});
+      if(tipo==="fatura"){const as=o39ValorVida(p,o.v,mes);if(Math.abs(as-r.valor)>.005)difs.push({adId:o.x.id,vida:o.i,nome:o.v.nome,op:r.valor,assoc:as})}}
+    const soAssoc=tipo==="copart"?[]:ads.flatMap(x=>o39Vidas(x,mes).filter(({i})=>!vistos.has(x.id+":"+i)).map(({v})=>({nome:v.nome,tit:x.nome})));
+    o39UI.prev={k:"oper",planoId,tipo,mes,linhas:l.length,casados,orfaos,difs,soAssoc}}
+  catch(e){toast(e&&e.msg||"Não foi possível ler o arquivo.")}o39UI.lendo=false;rerender()}
+async function o39ConfirmarOper(){const P=o39UI.prev;if(!P||P.k!=="oper")return;const p=o4Plano(P.planoId)||{},por={};P.casados.forEach(c=>(por[c.adId]=por[c.adId]||[]).push(c));let n=0;
+  for(const[id,cs] of Object.entries(por)){const x=o4.ades.find(y=>y.id===id);if(!x)continue;
+    if(P.tipo==="contratos"){const vidas=(x.vidas||[]).map((v,i)=>{const c=cs.find(z=>z.vida===i&&z.cart);return c?Object.assign({},v,{cart:c.cart}):v});if(await escrever(id,r=>r.update({vidas}),null,"planos_adesoes"))n++}
+    if(P.tipo==="copart"){const novos=cs.filter(c=>c.valor>0).map(c=>({mes:P.mes,valor:c.valor,desc:c.desc||"Coparticipação",vida:c.vida,origem:"import",em:new Date().toISOString()}));if(!novos.length)continue;
+      if(await escrever(id,r=>r.update({copart:[...(x.copart||[]),...novos]}),null,"planos_adesoes")){n++;const lid=`pl-${id}-${P.mes}`,l=fin.lanc.find(y=>y.id===lid),v=o39R(soma(novos));
+        if(l&&l.status==="aberto")await escrever(lid,r=>r.update({valor:o39R(+l.valor+v),copart:o39R((+l.copart||0)+v),obs:[l.obs,...novos.map(k=>`${k.desc}: ${brl(k.valor)}`)].filter(Boolean).join(" · ")}),null,"fin_lanc")}}}
+  const au=o35Autor();await escrever(o34Id("pi"),r=>r.set({planoId:P.planoId,tipo:P.tipo,mes:P.mes,em:new Date().toISOString(),...au,linhas:P.linhas,casados:P.casados.length,orfaos:P.orfaos,difs:P.difs.map(d=>({nome:d.nome,op:d.op,assoc:d.assoc,adId:d.adId})),soAssoc:P.soAssoc.map(o=>o.nome)}),null,"planos_import");
+  registrar("Importou arquivo da operadora",null,`${p.nome} · ${O39_IMP_T[P.tipo]} · ${P.mes} · ${P.casados.length} casadas, ${P.orfaos.length} órfãs, ${P.difs.length} diferenças`);
+  toast(P.tipo==="copart"?`Coparticipações lançadas em ${n} ${o34Pl(n,"adesão","adesões")}`:P.tipo==="contratos"?`Carteirinhas gravadas em ${n} ${o34Pl(n,"adesão","adesões")}`:"Conferência registrada");o39UI.prev=null;rerender()}
+
+/* ---- mudança de faixa etária: já mudou (aplicar) e vai mudar nos próximos meses ---- */
+function o39Mudancas(n){const hj=hoje().slice(0,7),out=[];
+  o4.ades.filter(x=>x.status==="ativo").forEach(x=>{const p=o4Plano(x.planoId);if(!p)return;(x.vidas||[]).forEach((v,i)=>{if(!o39MesAtivo(v,hj)||!v.nasc)return;const atual=+v.valor||0,agora=o39ValorVida(p,v);
+    if(Math.abs(agora-atual)>.005){out.push({x,i,v,mes:hj,de:atual,para:agora,ja:true});return}
+    for(let k=1;k<=n;k++){const c=somaMes(hj,k),nv=o39ValorVida(p,v,c);if(Math.abs(nv-atual)>.005){out.push({x,i,v,mes:c,de:atual,para:nv,ja:false});break}}})});
+  return out.sort((a,b)=>a.mes.localeCompare(b.mes)||String(a.v.nome).localeCompare(String(b.v.nome),"pt-BR"))}
+function o39FaixaHTML(ed){const l=o39Mudancas(o39UI.fxN),ja=l.filter(m=>m.ja);
+  return `<div class="o3-tb" style="justify-content:space-between"><label class="rank">Próximos <select id="o39-fxn">${[3,6,12].map(n=>`<option value="${n}" ${n===o39UI.fxN?"selected":""}>${n} meses</option>`).join("")}</select></label><span class="actions">${ed&&ja.length?`<button class="btn" data-o39fxok>Aplicar ${ja.length} ${o34Pl(ja.length,"mudança","mudanças")} que já valem</button>`:""}${l.length?`<button class="btn ghost" data-o39fxexp>Exportar</button>`:""}</span></div>
+   ${l.length?`<div class="o3-lst">${l.map((m,i)=>`<div class="o3-it" style="--i:${i}">${avatar({nome:m.v.nome})}<span class="t"><b>${esc(m.v.nome)}</b><small>${esc(m.v.par)} de ${esc(m.x.nome)} · ${esc((o4Plano(m.x.planoId)||{}).nome||"")} · faz ${o39IdadeEm(m.v.nasc,o39FimMes(m.mes))} anos</small></span><span class="v">${brl(m.de)} → ${brl(m.para)}</span><span class="pill ${m.ja?"warn":"neutral"}">${m.ja?"Já vale":"A partir de "+curtoMes(m.mes)}</span></div>`).join("")}</div>`:`<div class="panel empty"><b>Ninguém muda de faixa nos próximos ${o39UI.fxN} meses.</b><span>A lista considera a idade de cada vida no fim de cada mês e as faixas do plano.</span></div>`}
+   <p class="sample">A cobrança do mês já usa a faixa certa pela idade. "Aplicar" atualiza o valor guardado na adesão e registra no histórico da ficha.</p>`}
+async function o39AplicarFaixas(){const ja=o39Mudancas(o39UI.fxN).filter(m=>m.ja),por={};ja.forEach(m=>(por[m.x.id]=por[m.x.id]||[]).push(m));let n=0;
+  for(const ms of Object.values(por)){const x=ms[0].x,a=lista.find(y=>y.id===x.associadoId),p=o4Plano(x.planoId);const vidas=(x.vidas||[]).map(v=>o39MesAtivo(v,hoje().slice(0,7))?Object.assign({},v,{valor:o39ValorVida(p,v)}):v),total=o4Recalc(x);
+    if(!await escrever(x.id,r=>r.update({vidas,total}),null,"planos_adesoes"))continue;n+=ms.length;
+    if(a)await o39SyncServ(a,Object.assign({},x,{vidas,total}),`${p.nome}: mudança de faixa etária de ${ms.map(m=>`${m.v.nome.split(" ")[0]} (${brl(m.de)} → ${brl(m.para)})`).join(", ")}; plano ${brl(total)}`)}
+  registrar("Aplicou mudança de faixa etária",null,`${n} vidas`);toast(`${n} ${o34Pl(n,"mudança aplicada","mudanças aplicadas")}`);rerender()}
+
+/* ---- cartão: extrato da administradora e fechamento da fatura ---- */
+function o39CartaoTopo(ed){const m=o4UI.mes,C=o39CartCfg(),P=o39UI.cprev,mv=o4MovMes(m),lc=fin.lanc.filter(l=>l.origem==="cartao"&&l.comp===m);
+  const prev=P&&P.mes===m?`<div class="panel o39-prev"><h3>Prévia do extrato · fatura de ${mesSo(m)}</h3><p class="rank" style="margin:0 0 8px">${P.linhas} linhas · ${P.casados.length} compras casadas${P.dup?` · ${P.dup} já lançadas (puladas)`:""} · ${P.orfaos.length} ${o34Pl(P.orfaos.length,"cartão órfão","cartões órfãos")}</p>
+    ${P.casados.length?`<div class="list">${P.casados.slice(0,30).map(c=>`<div class="tile"><span>${esc(o4Nome(c.aid))} · ${esc(c.estab||"Compra")}<br><span class="rank">${c.data?fmtData(c.data):""}${c.parcela?" · "+esc(c.parcela):""}</span></span><b class="mono">${brl(c.valor)}</b></div>`).join("")}</div>`:""}
+    ${P.orfaos.length?`<p class="rank" style="margin:12px 0 4px"><b>Cartões órfãos (no extrato e sem associado com cartão ativo)</b></p><div class="list">${P.orfaos.map(o=>`<div class="tile"><span>${esc(o.nome||"Sem nome")}<br><span class="rank">${[o.cpf&&"CPF "+o.cpf,o.cart&&"cartão "+esc(o.cart),o.obs].filter(Boolean).join(" · ")}</span></span><b class="mono">${brl(o.valor)}</b></div>`).join("")}</div>`:""}
+    <div class="actions" style="margin-top:12px">${P.casados.length?`<button class="btn" data-o39cimpok>Lançar ${P.casados.length} ${o34Pl(P.casados.length,"compra","compras")}</button>`:""}<button class="btn ghost" data-o39cimpx>Descartar</button></div></div>`:"";
+  return (ed?`<div class="panel"><div class="serv-h"><div><h3 style="margin:0">Extrato e fechamento</h3><p class="rank" style="margin:2px 0 0">Fecha dia ${o4FechaDia()} · contrapartida da associação ${+C.contrapartida||0}% · ${lc.length?`${lc.length} ${o34Pl(lc.length,"fatura lançada","faturas lançadas")} na cobrança (${brl(soma(lc))})`:"fatura ainda não lançada na cobrança"}</p></div></div>
+    <div class="actions" style="margin-top:10px"><label class="btn ghost" style="cursor:pointer">${o39UI.lendo?"Lendo…":"Importar extrato da administradora"}<input type="file" hidden accept=".csv,.txt,.xlsx,.xls" data-o39cimp></label>${mv.length?`<button class="btn" data-o39cfechar>${lc.length?"Atualizar":"Fechar"} fatura de ${mesSo(m)}</button>`:""}</div></div>`:"")+prev}
+async function o39LerCartao(f){const m=o4UI.mes;o39UI.lendo=true;rerender();
+  try{const{ci,l}=o39Linhas(await o39LerLinhas(f),o39Lay("cartao"));if(ci.cpf<0&&ci.cart<0)throw{msg:"O extrato precisa de uma coluna CPF ou nº do cartão (veja Ajustes)."};if(ci.valor<0)throw{msg:"O extrato precisa de uma coluna de valor."};
+    const casados=[],orfaos=[];let dup=0;
+    for(const r of l){if(!(r.valor>0))continue;const dig=r.cart.replace(/\D/g,"");
+      const a=(r.cpf&&lista.find(y=>cpfDig(y.cpf)===r.cpf))||(dig&&lista.find(y=>y.servicos&&y.servicos.cartao&&String(y.servicos.cartao.ref||"").replace(/\D/g,"")===dig));
+      if(!a||!servAtivo(a,"cartao")){orfaos.push({nome:r.nome,cpf:r.cpf?cpfMask(r.cpf):"",cart:r.cart,valor:r.valor,obs:a?"associado sem cartão ativo":""});continue}
+      const d=r.data||hoje();if(o4MovMes(m,a.id).some(x=>x.data===d&&Math.abs(+x.valor-r.valor)<.005&&nrm(x.estab)===nrm(r.estab||"Compra"))){dup++;continue}
+      casados.push({aid:a.id,data:d,estab:r.estab||r.desc||"Compra",valor:r.valor,parcela:r.parcela})}
+    o39UI.cprev={mes:m,linhas:l.length,casados,orfaos,dup}}
+  catch(e){toast(e&&e.msg||"Não foi possível ler o extrato.")}o39UI.lendo=false;rerender()}
+async function o39ConfirmarCartao(){const P=o39UI.cprev;if(!P)return;const iid=o34Id("pi");let n=0;
+  for(const[k,c] of P.casados.entries())if(await escrever(`${iid}-${k+1}`,r=>r.set({associadoId:c.aid,data:c.data,estab:c.estab,valor:c.valor,parcela:c.parcela,mes:P.mes,conferido:false,origem:"import",importId:iid,criadoEm:new Date().toISOString()}),null,"cartao_mov"))n++;
+  await escrever(iid,r=>r.set({tipo:"cartao",mes:P.mes,em:new Date().toISOString(),...o35Autor(),linhas:P.linhas,casados:n,orfaos:P.orfaos,difs:[]}),null,"planos_import");
+  registrar("Importou extrato do cartão",null,`${P.mes} · ${n} compras · ${P.orfaos.length} órfãos`);toast(`${n} ${o34Pl(n,"compra lançada","compras lançadas")} na fatura de ${mesSo(P.mes)}`);o39UI.cprev=null;rerender()}
+async function o39FecharCartao(m){const por={};o4MovMes(m).forEach(x=>(por[x.associadoId]=por[x.associadoId]||[]).push(x));const pct=+o39CartCfg().contrapartida||0;let n=0,t=0,pul=0;
+  for(const[aid,l] of Object.entries(por)){const a=lista.find(y=>y.id===aid);if(!a)continue;const id=`ct-${aid}-${m}`,ex=fin.lanc.find(y=>y.id===id);if(ex&&ex.status!=="aberto"){pul++;continue}const v=o39R(soma(l));
+    if(await escrever(id,r=>r.set({tipo:"entrada",desc:`Cartão da associação · fatura de ${mesSo(m)} · ${a.nome}`,cat:"Cartão da associação",valor:v,venc:m+"-"+pad2(diaVenc()),comp:m,status:"aberto",pagoEm:null,forma:a.formaPag||FORMA_FOLHA,obs:`${l.length} ${o34Pl(l.length,"compra","compras")}`,origem:"cartao",assocId:a.id,tipoContrato:"CONV",contrapartida:o39R(v*pct/100),criadoEm:(ex&&ex.criadoEm)||new Date().toISOString()}),null,"fin_lanc")){n++;t+=v}}
+  registrar("Fechou fatura do cartão",null,`${m} · ${n} faturas · ${brl(t)}`);toast(`${n} ${o34Pl(n,"fatura lançada","faturas lançadas")} na cobrança · ${brl(t)}${pul?` · ${pul} já pagas ou em acordo ficaram como estavam`:""}`)}
+
+/* ---- vales: pedido individual, desconto do associado e lote ---- */
+function o39ValesTopo(ed){const pend=portal.sol.filter(s=>s.tipo==="vale"&&s.status==="pendente");
+  return (pend.length?`<div class="callout" style="margin-bottom:12px"><span>${pend.length} ${o34Pl(pend.length,"pedido de vale feito pelo app aguarda","pedidos de vale feitos pelo app aguardam")} aprovação.</span><a class="btn sm" href="#solicitacoes">Ver pedidos</a></div>`:"")+
+   (ed?(o39UI.vped?`<div class="panel"><h3>Pedido de vale</h3><div class="o3-f"><label class="full">Associado<input id="o39-va" list="o39-dlv" autocomplete="off">${o39DlAssoc("o39-dlv")}</label><label>Vale<select id="o39-vt">${TIPOS_BEN.map(t=>`<option value="${t.k}">${t.n}</option>`).join("")}</select></label><label>Data<input id="o39-vd" type="date" value="${hoje()}"></label><label>Valor (R$)<input id="o39-vv" type="number" min="0" step="0.01" value="${o39ValeCfg(TIPOS_BEN[0].k).valor}"></label><div class="full actions"><button class="btn" data-o39vok>Lançar vale</button><button class="btn ghost" data-o39vx>Cancelar</button></div></div></div>`:
+   `<div class="actions" style="margin-bottom:12px"><button class="btn ghost" data-o39vped>Pedido individual</button><span class="rank">${TIPOS_BEN.map(t=>`${t.n}: ${o39ValeCfg(t.k).desconta?"descontado do associado":"sem desconto"}`).join(" · ")}</span></div>`):"")}
+async function o39LancarVale(a,t,valor,data,extra){const cfg=o39ValeCfg(t),n=(TIPOS_BEN.find(x=>x.k===t)||{}).n||t,id=extra&&extra.pedidoId?"bp-"+extra.pedidoId:o34Id("bp-"),mes=String(data).slice(0,7);
+  if(!await escrever(id,r=>r.set(Object.assign({tipo:t,associadoId:a.id,nome:a.nome,mat:a.mat,mes,data,valor,status:"lancado",origem:"equipe",criadoEm:new Date().toISOString()},extra||{})),null,"beneficios"))return false;
+  if(cfg.desconta)await o39DescVale({id,tipo:t,valor,mes,associadoId:a.id},a,n);registrar("Lançou vale",a,`${n} · ${brl(valor)}`);return true}
+const o39DescVale=(b,a,n)=>escrever(`vl-${b.id}`,r=>r.set({tipo:"entrada",desc:`${n||b.tipo} · ${a.nome}`,cat:"Vales",valor:+b.valor,venc:b.mes+"-"+pad2(diaVenc()),comp:b.mes,status:"aberto",pagoEm:null,forma:a.formaPag||FORMA_FOLHA,obs:"Desconto do vale",origem:"vale",valeId:b.id,assocId:a.id,tipoContrato:"OUTROS",criadoEm:new Date().toISOString()}),null,"fin_lanc");
+o4LancarVales=async function(){const m=o4UI.mes,t=$("#o4-vt").value,v=o39R(parseFloat($("#o4-vv").value)),p=$("#o4-vp").value;if(!(v>0))return toast("Informe o valor.");
+  const ant=new Set(o4.ben.filter(b=>b.tipo===t&&b.mes===somaMes(m,-1)&&b.status!=="cancelado").map(b=>b.associadoId)),ja=new Set(o4.ben.filter(b=>b.tipo===t&&b.mes===m&&b.status!=="cancelado").map(b=>b.associadoId));
+  const alvo=lista.filter(a=>a.sit==="Ativo"&&!a.anonimizadoEm&&(p==="ativos"||(p==="efetivos"?catDe(a)!=="contribuinte":ant.has(a.id)))&&!ja.has(a.id));
+  if(!alvo.length)return toast(ja.size?"Todos desse público já têm o benefício no mês.":"Ninguém nesse público.");
+  const cfg=o39ValeCfg(t),n=(TIPOS_BEN.find(x=>x.k===t)||{}).n;o4UI.lote=true;rerender();let ok=0;
+  for(const a of alvo){const id=`bn-${t}-${m}-${a.id}`;if(await escrever(id,r=>r.set({tipo:t,associadoId:a.id,nome:a.nome,mat:a.mat,mes:m,data:hoje(),valor:v,status:"lancado",origem:"lote",criadoEm:new Date().toISOString()}),null,"beneficios")){ok++;if(cfg.desconta)await o39DescVale({id,tipo:t,valor:v,mes:m},a,n)}}
+  o4UI.lote=false;registrar("Lançou vales em lote",null,`${n} · ${m} · ${ok} pessoas${cfg.desconta?" · com desconto":""}`);toast(`${ok} ${o34Pl(ok,"vale lançado","vales lançados")} em ${mesSo(m)}${cfg.desconta?", com desconto na cobrança":""}`);rerender()};
+/* pedido de vale pelo app entra em Solicitações */
+o5SolNome=(base=>s=>s.tipo==="vale"?`${(TIPOS_BEN.find(t=>t.k===s.tipoVale)||{}).n||"Vale"} · ${brl(s.valor)}`:base(s))(o5SolNome);
+const o39SolTexto=solTexto;
+solTexto=function(s,semNome){if(s.tipo!=="vale")return o39SolTexto(s,semNome);const cfg=o39ValeCfg(s.tipoVale);return `<b>${esc(o5SolNome(s))}</b><small>${[semNome?"":esc(s.nome),fmtData(s.criadoEm),cfg.desconta?"descontado na cobrança":"sem desconto"].filter(Boolean).join(" · ")}</small>`};
+const o39Aprovar=aprovar;
+aprovar=async function(s){if(!s||s.tipo!=="vale")return o39Aprovar(s);const a=lista.find(y=>y.id===s.associadoId);if(!a){toast("Associado não encontrado.");return}
+  if(!await o39LancarVale(a,s.tipoVale,+s.valor,hoje(),{pedidoId:s.id,origem:"app"}))return;
+  await escrever(a.id,r=>r.update({hist:hist(a,`${o5SolNome(s)} aprovado (pedido pelo app)`)}));
+  await escrever(s.id,r=>r.update({status:"aprovada",respostaEm:hoje(),motivo:null}),"Vale aprovado e lançado","solicitacoes")};
+
+/* ---- lançamentos padrões ---- */
+async function o39GerarPadroes(c,{soAuto,silencioso,pid}={}){const l=o39.pad.filter(p=>p.ativo!==false&&(pid?p.id===pid:(!soAuto||p.auto)));let n=0,t=0;
+  for(const p of l)for(const aid of p.assocs||[]){const a=lista.find(y=>y.id===aid);if(!a||a.sit!=="Ativo")continue;const id=`pd-${p.id}-${aid}-${c}`;if(fin.lanc.some(y=>y.id===id))continue;
+    if(await escrever(id,r=>r.set({tipo:"entrada",desc:`${p.nome} · ${a.nome}`,cat:"Lançamentos padrões",valor:+p.valor||0,venc:c+"-"+pad2(diaVenc()),comp:c,status:"aberto",pagoEm:null,forma:a.formaPag||FORMA_FOLHA,obs:p.cod?"Código "+p.cod:"",origem:"padrao",padraoId:p.id,assocId:a.id,tipoContrato:p.tipoContrato||"OUTROS",criadoEm:new Date().toISOString()}),null,"fin_lanc")){n++;t+=+p.valor||0}}
+  if(n||!silencioso)toast(n?`${n} ${o34Pl(n,"lançamento padrão gerado","lançamentos padrões gerados")} em ${mesSo(c)} · ${brl(t)}`:"Nenhum lançamento padrão novo neste mês.");if(n)registrar("Gerou lançamentos padrões",null,`${c} · ${n} · ${brl(t)}`);return n}
+function o39PadHTML(ed){const m=o39UI.pmes,F=o39UI.pad,l=o39.pad.slice().sort((x,y)=>String(x.cod||"").localeCompare(String(y.cod||""))||String(x.nome).localeCompare(String(y.nome),"pt-BR"));
+  if(F){const p=F.id==="novo"?{}:o39.pad.find(x=>x.id===F.id)||{};
+    return `<div class="panel"><h3>${F.id==="novo"?"Novo lançamento padrão":"Editar lançamento padrão"}</h3><div class="o3-f">
+     <label>Código<input id="o39-pc" value="${esc(p.cod||"")}" placeholder="Ex.: 101"></label><label>Nome<input id="o39-pn" value="${esc(p.nome||"")}" placeholder="Ex.: Seguro de vida"></label><label>Valor mensal (R$)<input id="o39-pv" type="number" min="0" step="0.01" value="${esc(p.valor??"")}"></label>
+     <label>Tipo de contrato<select id="o39-pt">${o36Tipos().map(t=>`<option value="${esc(t.cod)}" ${t.cod===(p.tipoContrato||"OUTROS")?"selected":""}>${esc(t.cod)} · ${esc(t.n)}</option>`).join("")}</select></label>
+     <label class="chkline"><input type="checkbox" id="o39-pa" ${p.auto?"checked":""}> Automático (sai todo mês junto com os planos)</label><label class="chkline"><input type="checkbox" id="o39-pat" ${p.ativo!==false?"checked":""}> Ativo</label>
+     <div class="full"><span class="rank">Associados (${F.assocs.length})</span><div class="o39-chips">${F.assocs.map(id=>`<span class="chip">${esc(o4Nome(id))}<button type="button" class="lnk" data-o39prm="${id}" aria-label="Tirar">✕</button></span>`).join("")||`<span class="rank">Ninguém ainda.</span>`}</div>
+      <div class="o1-row" style="margin-top:8px"><input id="o39-pas" list="o39-dlp" placeholder="Nome ou matrícula" autocomplete="off">${o39DlAssoc("o39-dlp")}<button class="btn ghost sm" type="button" data-o39padd>Incluir</button></div></div>
+     <div class="full actions"><button class="btn" type="button" data-o39psalvar>Salvar</button><button class="btn ghost" type="button" data-o39px>Cancelar</button></div></div></div>`}
+  const lm=fin.lanc.filter(x=>x.origem==="padrao"&&x.comp===m);
+  return `<div class="o3-tb" style="justify-content:space-between"><div class="mesnav"><button class="btn ghost sm" data-o39pm="-1" aria-label="Mês anterior">‹</button><b>${nomeMes(m)}</b><button class="btn ghost sm" data-o39pm="1" aria-label="Próximo mês">›</button></div>${ed?`<span class="actions"><button class="btn ghost" data-o39pnovo>Novo lançamento padrão</button>${l.some(p=>p.auto&&p.ativo!==false)?`<button class="btn" data-o39pger>Gerar automáticos de ${mesSo(m)}</button>`:""}</span>`:""}</div>
+   <p class="resumo-l"><b>${l.length}</b> ${o34Pl(l.length,"lançamento padrão","lançamentos padrões")} · <b>${lm.length}</b> ${o34Pl(lm.length,"cobrança","cobranças")} em ${mesSo(m)} · <b>${brl(soma(lm))}</b></p>
+   ${l.length?`<div class="o3-lst">${l.map((p,i)=>{const g=lm.filter(x=>x.padraoId===p.id).length;return `<div class="o3-it" style="--i:${i}"><span class="t"><b>${p.cod?`<span class="mono">${esc(p.cod)}</span> · `:""}${esc(p.nome)}</b><small>${(p.assocs||[]).length} ${o34Pl((p.assocs||[]).length,"associado","associados")} · contrato ${esc(p.tipoContrato||"OUTROS")} · ${g} ${o34Pl(g,"cobrança","cobranças")} em ${mesSo(m)}</small></span><span class="v">${brl(p.valor)}</span><span class="pill ${p.ativo===false?"neutral":p.auto?"ok":"warn"}">${p.ativo===false?"Inativo":p.auto?"Automático":"Manual"}</span>${ed?`<span class="actions"><button class="btn ghost sm" data-o39ped="${p.id}">Editar</button>${p.ativo!==false?`<button class="btn ghost sm" data-o39pger1="${p.id}">Lançar em ${curtoMes(m)}</button>`:""}</span>`:""}</div>`}).join("")}</div>`:`<div class="panel empty"><b>Nenhum lançamento padrão.</b><span>Cadastre cobranças fixas que se repetem (código, valor e quem paga). As automáticas saem todo mês com a cobrança dos planos e entram na remessa.</span></div>`}`}
+async function o39SalvarPad(){const F=o39UI.pad,nome=($("#o39-pn").value||"").trim(),v=o39R(parseFloat($("#o39-pv").value));if(nome.length<2)return toast("Escreva o nome.");if(!(v>0))return toast("Informe o valor.");
+  const id=F.id==="novo"?o34Id("pd"):F.id,ant=o39.pad.find(x=>x.id===id)||{};
+  if(await escrever(id,r=>r.set(Object.assign({},ant,{cod:($("#o39-pc").value||"").trim(),nome,valor:v,tipoContrato:$("#o39-pt").value,auto:$("#o39-pa").checked,ativo:$("#o39-pat").checked,assocs:F.assocs,editadoEm:new Date().toISOString()},ant.criadoEm?{}:{criadoEm:new Date().toISOString()})),"Lançamento padrão salvo","ben_padroes")){registrar("Salvou lançamento padrão",null,`${nome} · ${F.assocs.length} associados`);o39UI.pad=null;rerender()}}
+
+/* ---- ajustes: IRPF, vales, cartão e colunas dos arquivos ---- */
+function o39AjHTML(ed){const C=o39CartCfg(),dis=ed?"":"disabled";
+  const lay=k=>`<div class="full"><span class="rank"><b>${k==="operadora"?"Arquivo da operadora":"Extrato do cartão"}</b> · nomes de coluna aceitos, separados por vírgula</span><div class="o3-f" style="margin-top:6px">${Object.keys(O39_LAY[k]).map(f=>`<label>${O39_LAY_N[f]}<input data-o39lay="${k}|${f}" value="${esc(o39Lay(k)[f])}" ${dis}></label>`).join("")}</div></div>`;
+  return `<div class="panel"><div class="serv-h"><div><h3 style="margin:0">Ajustes dos benefícios</h3><p class="rank" style="margin:2px 0 0">Os layouts abaixo são provisórios: troque pelos nomes de coluna dos arquivos reais quando chegarem.</p></div><span class="pill ${(o39.cfg.layouts)?"ok":"warn"}">${o39.cfg.layouts?"Personalizado":"Provisório"}</span></div>
+   <div class="o3-f" style="margin-top:12px">
+    <label class="full">Texto do informe de IRPF<textarea id="o39-irt" rows="3" ${dis}>${esc(o39.cfg.irpfTexto||O39_IRPF)}</textarea></label>
+    ${TIPOS_BEN.map(t=>{const v=o39ValeCfg(t.k);return `<label>${t.n}: valor (R$)<input type="number" min="0" step="0.01" data-o39vv="${t.k}" value="${esc(v.valor)}" ${dis}></label><label class="chkline"><input type="checkbox" data-o39vd="${t.k}" ${v.desconta?"checked":""} ${dis}> Descontar ${t.n.toLowerCase()} do associado</label>`}).join("")}
+    <label>Cartão: dia de fechamento<input id="o39-cf" type="number" min="1" max="28" value="${esc(C.fecha)}" ${dis}></label><label>Cartão: contrapartida da associação (%)<input id="o39-cc" type="number" min="0" max="100" step="0.1" value="${esc(C.contrapartida)}" ${dis}></label>
+    ${lay("operadora")}${lay("cartao")}
+    ${ed?`<div class="full actions"><button class="btn" data-o39ajok>Salvar ajustes</button>${o39.cfg.layouts?`<button class="btn ghost" data-o39laypadrao>Colunas no padrão provisório</button>`:""}</div>`:""}</div></div>`}
+function o39SalvarAj(){const layouts={operadora:{},cartao:{}},vales={};document.querySelectorAll("[data-o39lay]").forEach(el=>{const[k,f]=el.dataset.o39lay.split("|");layouts[k][f]=el.value.trim()});
+  TIPOS_BEN.forEach(t=>vales[t.k]={valor:o39R(parseFloat($(`[data-o39vv="${t.k}"]`).value)),desconta:$(`[data-o39vd="${t.k}"]`).checked});
+  const mud=JSON.stringify(layouts)!==JSON.stringify({operadora:O39_LAY.operadora,cartao:O39_LAY.cartao});
+  o39SalvarCfg({irpfTexto:($("#o39-irt").value||"").trim()||null,vales,cartao:{fecha:Math.min(28,Math.max(1,+$("#o39-cf").value||25)),contrapartida:Math.max(0,Math.min(100,+$("#o39-cc").value||0))},layouts:mud?layouts:null},"Ajustes salvos");registrar("Alterou ajustes dos benefícios")}
+
+/* ---- app: Meus benefícios ---- */
+function pBeneficios(a){const m=hoje().slice(0,7),ads=o4.ades.filter(x=>x.status==="ativo"&&(x.associadoId===a.id||x.respId===a.id)),bl=o4.ben.filter(b=>b.associadoId===a.id&&b.status!=="cancelado").sort((x,y)=>String(y.data||y.mes).localeCompare(String(x.data||x.mes))).slice(0,6);
+  const pend=portal.sol.filter(s=>s.associadoId===a.id&&s.tipo==="vale"&&s.status==="pendente");
+  const pl=ads.length?ads.map(x=>{const p=o4Plano(x.planoId)||{},meu=x.associadoId===a.id;return `<div class="p-card"><div class="serv-h"><b>${esc(p.nome||"Plano")}</b><b class="mono">${brl(x.total)}</b></div><p class="rank" style="margin:2px 0 8px">${[p.operadora,x.contrato&&"contrato "+x.contrato,!meu&&"você paga o plano de "+x.nome.split(" ")[0],meu&&x.respId&&x.respId!==a.id&&"pago por "+o4Nome(x.respId)].filter(Boolean).map(esc).join(" · ")}</p>${o39Vidas(x).map(({v})=>`<div class="tile"><span>${esc(v.nome)}<br><span class="rank">${esc(v.par)}${v.cart?" · carteirinha "+esc(v.cart):""}</span></span><b class="mono">${brl(v.valor)}</b></div>`).join("")}</div>`}).join(""):`<p class="rank" style="margin:0">Você não tem plano de saúde pela associação. Para contratar, use Serviços.</p>`;
+  let ct=`<p class="rank" style="margin:0">Você não tem o cartão da associação.</p>`;
+  if(servAtivo(a,"cartao")){const mv=o4MovMes(m,a.id),t=soma(mv),lim=o4Limite(a);ct=`<div class="p-card"><div class="serv-h"><b>Fatura de ${mesSo(m)}</b><b class="mono">${brl(t)}</b></div>${lim?`<p class="rank" style="margin:2px 0 6px">Limite ${brl(lim)} · disponível ${brl(Math.max(0,lim-t))}</p><div class="o4-bar"><i class="${t>lim?"over":""}" style="width:${Math.min(100,t/lim*100)}%"></i></div>`:""}${mv.length?mv.map(x=>`<div class="tile"><span>${esc(x.estab)}<br><span class="rank">${fmtData(x.data)}${x.parcela?" · "+esc(x.parcela):""}</span></span><b class="mono">${brl(x.valor)}</b></div>`).join(""):`<p class="rank" style="margin:0">Nenhuma compra nesta fatura.</p>`}</div>`}
+  const pedir=a.sit==="Ativo"?TIPOS_BEN.map(t=>{const c=o39ValeCfg(t.k),ja=pend.some(s=>s.tipoVale===t.k)||o4.ben.some(b=>b.associadoId===a.id&&b.tipo===t.k&&b.mes===m&&b.status!=="cancelado");
+    return `<button class="btn${ja?" ghost":""}" data-p39vale="${t.k}" ${ja?"disabled":""}>${ja?`${t.n}: ${pend.some(s=>s.tipoVale===t.k)?"pedido enviado":"já recebido neste mês"}`:`Pedir ${t.n.toLowerCase()} · ${brl(c.valor)}`}</button>`}).join(""):"";
+  return `<div class="ax-sec"><h2>Planos de saúde</h2></div>${pl}
+   <div class="ax-sec"><h2>Cartão da associação</h2></div>${ct}
+   <div class="ax-sec"><h2>Vales</h2></div>${pedir?`<div class="actions" style="margin-bottom:10px">${pedir}</div><p class="rank" style="margin:0 0 10px">${TIPOS_BEN.map(t=>o39ValeCfg(t.k).desconta?`O ${t.n.toLowerCase()} é descontado na sua cobrança.`:"").filter(Boolean).join(" ")} A secretaria confirma o pedido.</p>`:""}
+   ${bl.length?bl.map(b=>`<div class="tile"><span>${(TIPOS_BEN.find(t=>t.k===b.tipo)||{}).n||b.tipo}<br><span class="rank">${b.data?fmtData(b.data):nomeMes(b.mes)}</span></span><span class="r2"><b class="mono">${brl(b.valor)}</b><span class="pill ${b.status==="entregue"?"ok":"warn"}">${b.status==="entregue"?"Entregue":"Lançado"}</span></span></div>`).join(""):`<p class="rank" style="margin:0">Nenhum vale recebido.</p>`}`}
+async function o39PedirVale(a,t,btn){const c=o39ValeCfg(t);if(!(c.valor>0))return toast("Esse vale não está disponível.");btn.disabled=true;const sid=db.collection("solicitacoes").doc().id;
+  await escrever(sid,r=>r.set({tipo:"vale",tipoVale:t,valor:c.valor,data:hoje(),associadoId:a.id,nome:a.nome,mat:a.mat,status:"pendente",criadoEm:new Date().toISOString()}),"Pedido enviado. A secretaria vai confirmar.","solicitacoes");registrar("Pediu vale pelo app",a,t);rerender()}
+const o39PInicio=pInicio;
+pInicio=function(a){return o39PInicio(a).replace('<button class="ax-tile" data-pgo="servicos">',`<button class="ax-tile" data-pgo="beneficios"><span class="ax-ic">${IC.saude}</span><span>Benefícios</span></button><button class="ax-tile" data-pgo="servicos">`)};
+const o39PMais=pMais;
+pMais=function(a){const h=o39PMais(a),k='<button class="ax-row-it " data-pgo="servicos">';return h.includes(k)?h.replace(k,`<button class="ax-row-it " data-pgo="beneficios">${IC.saude}<span>Meus benefícios</span><span class="chev" aria-hidden="true">›</span></button>`+k):h};
+
+/* ---- relatórios ---- */
+REL.push({id:"o39vidas",t:"Vidas por operadora",d:"Adesões, vidas e valor mensal de cada plano, agrupados por operadora.",mes:false,g(){const at=o4.ades.filter(x=>x.status==="ativo");
+  const rows=o4.planos.slice().sort((x,y)=>String(x.operadora||"").localeCompare(String(y.operadora||""))||String(x.nome).localeCompare(String(y.nome))).map(p=>{const ad=at.filter(x=>x.planoId===p.id);return[p.operadora||"—",p.nome,p.tipo||"",ad.length,soma(ad,x=>o39Vidas(x).length),brl(soma(ad,x=>x.total))]});
+  return{res:[["Adesões ativas",at.length],["Vidas",soma(at,x=>o39Vidas(x).length)],["Mensal",brl(soma(at,x=>x.total))]],cols:["Operadora","Plano","Tipo","Adesões","Vidas","Mensal"],rows}}});
+REL.push({id:"o39conf",t:"Conferência das operadoras",d:"Arquivos importados no mês: órfãos, diferenças de valor e vidas que só a associação tem.",mes:true,g(m){const l=o39.imp.filter(i=>i.mes===m&&i.tipo!=="cartao"),rows=[];
+  l.forEach(i=>{const pn=(o4Plano(i.planoId)||{}).nome||"",tn=O39_IMP_T[i.tipo]||i.tipo;(i.difs||[]).forEach(d=>rows.push([pn,tn,"Diferença",d.nome,brl(d.op),brl(d.assoc)]));(i.orfaos||[]).forEach(o=>rows.push([pn,tn,"Órfão na operadora",o.nome||o.cpf||o.cart||"—",o.valor?brl(o.valor):"",""]));(i.soAssoc||[]).forEach(n=>rows.push([pn,tn,"Só na associação",n,"",""]))});
+  return{res:[["Arquivos",l.length],["Diferenças",soma(l,i=>(i.difs||[]).length)],["Órfãos",soma(l,i=>(i.orfaos||[]).length)]],cols:["Plano","Arquivo","Situação","Beneficiário","Operadora","Associação"],rows}}});
+REL.push({id:"o39faixa",t:"Mudança de faixa etária",d:"Vidas que já mudaram ou vão mudar de faixa nos próximos 12 meses, com o valor novo.",mes:false,g(){const l=o39Mudancas(12);
+  return{res:[["Já valem",l.filter(x=>x.ja).length],["Próximos 12 meses",l.filter(x=>!x.ja).length]],cols:["Beneficiário","Parentesco","Titular","Plano","A partir de","De","Para"],rows:l.map(x=>[x.v.nome,x.v.par,x.x.nome,(o4Plano(x.x.planoId)||{}).nome||"",nomeMes(x.mes),brl(x.de),brl(x.para)])}}});
+REL.push({id:"o39cartao",t:"Cartão da associação",d:"Fatura de cada associado no mês, limite, contrapartida e situação da cobrança.",mes:true,g(m){const por={};o4MovMes(m).forEach(x=>(por[x.associadoId]=por[x.associadoId]||[]).push(x));const pct=+o39CartCfg().contrapartida||0;
+  const rows=Object.entries(por).map(([aid,l])=>{const a=lista.find(y=>y.id===aid)||{},t=soma(l),lc=fin.lanc.find(y=>y.id===`ct-${aid}-${m}`);return[a.nome||"—",a.mat||"",l.length,brl(t),o4Limite(a)?brl(o4Limite(a)):"—",brl(o39R(t*pct/100)),lc?(lc.status==="pago"?"Paga":lc.status==="acordo"?"Em acordo":"Na cobrança"):"Não fechada"]});
+  const t=soma(o4MovMes(m));return{res:[["Associados",rows.length],["Fatura",brl(t)],["Contrapartida",brl(o39R(t*pct/100))]],cols:["Associado","Matrícula","Compras","Fatura","Limite","Contrapartida","Cobrança"],rows}}});
+
+/* ---- cliques e mudanças ---- */
+function o39Click(e){const b=s=>e.target.closest(s);let x;const ed=editavel();
+  if($("#layer").contains(e.target)){const a=o4Aberto();if(!a)return false;const R=()=>{renderFicha(a.id);return true};
+    if(x=b("[data-o4ficha]")){fichaUI={inativar:false,excluir:false,enviando:null,aba:"beneficios"};o39UI.f=null;renderFicha(x.dataset.o4ficha,true);return true}
+    if(b("[data-o39novo]")){const p=o4.planos.find(y=>y.ativo!==false&&!o39Ades(a).some(z=>z.planoId===y.id));o39UI.f={aid:a.id,k:"novo",plano:p&&p.id,deps:[]};return R()}
+    if(x=b("[data-o39dep]")){const i=+x.dataset.o39dep,d=o39UI.f.deps;o39UI.f.deps=x.checked?[...d,i]:d.filter(k=>k!==i);return R()}
+    if(x=b("[data-o39f]")){const[k,ad]=x.dataset.o39f.split(":");o39UI.f={aid:a.id,k,ad};return R()}
+    if(b("[data-o39fechar]")){o39UI.f=null;return R()}
+    if(b("[data-o39aderir]")){if(ed)o39Aderir(a);return true}
+    if(!ed&&b("[data-o39excl],[data-o39incl],[data-o39edit],[data-o39cop],[data-o39canc],[data-o39recalc]"))return true;
+    if(x=b("[data-o39excl]")){const[id,i]=x.dataset.o39excl.split(":"),ad=o4.ades.find(y=>y.id===id),v=ad&&ad.vidas[+i];if(!v)return true;
+      o39AtualizarAd(a,ad,{vidas:ad.vidas.map((w,k)=>k===+i?Object.assign({},w,{exclEm:hoje()}):w)},`${(o4Plano(ad.planoId)||{}).nome}: ${v.nome} saiu do plano`,`${v.nome.split(" ")[0]} saiu do plano`).then(ok=>ok&&registrar("Excluiu vida do plano",a,v.nome));return true}
+    if(x=b("[data-o39incl]")){const ad=o4.ades.find(y=>y.id===x.dataset.o39incl),d=(a.deps||[])[+$("#o39-id").value];if(!ad||!d)return true;const p=o4Plano(ad.planoId);if(!o4ValorIdade(p,idadeAnos(d.nasc)))return toast("Esse dependente está fora das faixas etárias do plano (ou sem data de nascimento)."),true;
+      const v={nome:d.nome,par:d.par,nasc:d.nasc||"",titular:false,valor:o4ValorIdade(p,idadeAnos(d.nasc)),inclEm:$("#o39-idt").value||hoje(),cart:($("#o39-ic").value||"").trim()};
+      o39AtualizarAd(a,ad,{vidas:[...ad.vidas.filter(w=>w.titular||nrm(w.nome)!==nrm(d.nome)||o39MesAtivo(w,hoje().slice(0,7))),v]},`${p.nome}: ${d.nome} entrou no plano em ${fmtData(v.inclEm)}`,`${d.nome.split(" ")[0]} incluído no plano`).then(ok=>ok&&registrar("Incluiu vida no plano",a,d.nome));return true}
+    if(x=b("[data-o39edit]")){const ad=o4.ades.find(y=>y.id===x.dataset.o39edit);if(!ad)return true;const rv=($("#o39-er").value||"").trim(),r=rv?o39AchaAssoc(rv):null;if(rv&&!r)return toast("Escolha o responsável na lista."),true;
+      const vidas=ad.vidas.map((v,i)=>{const el=$(`[data-o39cart="${i}"]`);return el?Object.assign({},v,{cart:el.value.trim()}):v}),respId=r&&r.id!==a.id?r.id:null;
+      escrever(ad.id,y=>y.update({contrato:($("#o39-ec").value||"").trim(),respId,vidas}),"Plano atualizado","planos_adesoes").then(ok=>{if(!ok)return;if((ad.respId||null)!==respId){escrever(a.id,y=>y.update({hist:hist(a,`${(o4Plano(ad.planoId)||{}).nome}: responsável financeiro ${respId?r.nome:"o próprio associado"}`)}));registrar("Alterou responsável financeiro do plano",a,respId?r.mat:"próprio")}o39UI.f=null;renderFicha(a.id)});return true}
+    if(x=b("[data-o39cop]")){const ad=o4.ades.find(y=>y.id===x.dataset.o39cop),v=o39R(parseFloat($("#o39-cv").value)),mes=$("#o39-cm").value;if(!ad||!(v>0)||!mes)return toast("Informe mês e valor."),true;
+      escrever(ad.id,y=>y.update({copart:[...(ad.copart||[]),{mes,valor:v,desc:($("#o39-cd").value||"").trim(),vida:+$("#o39-cw").value,em:new Date().toISOString()}]}),"Coparticipação lançada","planos_adesoes").then(ok=>{if(ok){registrar("Lançou coparticipação",a,`${mes} · ${brl(v)}`);o39UI.f=null;renderFicha(a.id)}});return true}
+    if(x=b("[data-o39canc]")){const ad=o4.ades.find(y=>y.id===x.dataset.o39canc);if(!ad)return true;
+      escrever(ad.id,y=>y.update({status:"cancelado",canceladoEm:hoje()}),null,"planos_adesoes").then(ok=>{if(!ok)return;const p=o4Plano(ad.planoId)||{};o39SyncServ(a,Object.assign({},ad,{status:"cancelado"}),`Plano ${p.nome||""} cancelado`).then(()=>toast("Plano cancelado"));registrar("Cancelou plano de saúde",a,p.nome);o39UI.f=null});return true}
+    if(x=b("[data-o39recalc]")){const ad=o4.ades.find(y=>y.id===x.dataset.o39recalc);if(ad)o39AtualizarAd(a,ad,{},`${(o4Plano(ad.planoId)||{}).nome}: valores atualizados por faixa etária e vidas`,"Plano atualizado");return true}
+    return false}
+  if(!$("#view").contains(e.target))return false;
+  if(viewAtual==="portal"||viewAtual==="app"){if(x=b("[data-p39vale]")){const a=pAssoc();if(a)o39PedirVale(a,x.dataset.p39vale,x);return true}return false}
+  if(viewAtual!=="beneficios")return false;
+  if(x=b("[data-o4aba]")){o4UI.aba=x.dataset.o4aba;o4UI.plano=null;o4UI.movNovo=false;o39UI.prev=o39UI.cprev=o39UI.pad=null;route();return true}
+  if(b("[data-o39impok]")){if(ed)o39ConfirmarOper();return true}
+  if(b("[data-o39impx]")){o39UI.prev=null;rerender();return true}
+  if(b("[data-o39fxok]")){if(ed)o39AplicarFaixas();return true}
+  if(b("[data-o39fxexp]")){const r=REL.find(y=>y.id==="o39faixa").g();exportarTabela({nome:`mudanca-faixa-${hoje()}`,titulo:"Mudança de faixa etária",sub:`Próximos ${o39UI.fxN} meses`,cols:r.cols,rows:o39Mudancas(o39UI.fxN).map(m=>[m.v.nome,m.v.par,m.x.nome,(o4Plano(m.x.planoId)||{}).nome||"",nomeMes(m.mes),brl(m.de),brl(m.para)]),formato:"xlsx",log:["Exportou mudança de faixa etária",null,String(o39UI.fxN)]});return true}
+  if(b("[data-o39cimpok]")){if(ed)o39ConfirmarCartao();return true}
+  if(b("[data-o39cimpx]")){o39UI.cprev=null;rerender();return true}
+  if(b("[data-o39cfechar]")){if(ed)o39FecharCartao(o4UI.mes);return true}
+  if(b("[data-o39vped]")){o39UI.vped=true;rerender();return true}
+  if(b("[data-o39vx]")){o39UI.vped=false;rerender();return true}
+  if(b("[data-o39vok]")){const a=o39AchaAssoc($("#o39-va").value),t=$("#o39-vt").value,v=o39R(parseFloat($("#o39-vv").value)),d=$("#o39-vd").value||hoje();if(!a)return toast("Escolha o associado na lista."),true;if(!(v>0))return toast("Informe o valor."),true;
+    o39LancarVale(a,t,v,d).then(ok=>{if(ok){toast("Vale lançado");o39UI.vped=false;rerender()}});return true}
+  if(x=b("[data-o4bcanc]")){const id=x.dataset.o4bcanc,l=fin.lanc.find(y=>y.id===`vl-${id}`);escrever(id,r=>r.update({status:"cancelado"}),"Vale cancelado","beneficios").then(ok=>{if(ok&&l&&l.status==="aberto")escrever(l.id,r=>r.delete(),null,"fin_lanc")});return true}
+  if(x=b("[data-o39pm]")){o39UI.pmes=somaMes(o39UI.pmes,+x.dataset.o39pm);rerender();return true}
+  if(b("[data-o39pnovo]")){o39UI.pad={id:"novo",assocs:[]};rerender();return true}
+  if(x=b("[data-o39ped]")){const p=o39.pad.find(y=>y.id===x.dataset.o39ped);o39UI.pad={id:p.id,assocs:[...(p.assocs||[])]};rerender();return true}
+  if(b("[data-o39px]")){o39UI.pad=null;rerender();return true}
+  if(b("[data-o39padd]")){const a=o39AchaAssoc($("#o39-pas").value);if(!a)return toast("Escolha o associado na lista."),true;if(!o39UI.pad.assocs.includes(a.id))o39UI.pad.assocs.push(a.id);o39PadKeep();rerender();return true}
+  if(x=b("[data-o39prm]")){o39UI.pad.assocs=o39UI.pad.assocs.filter(id=>id!==x.dataset.o39prm);o39PadKeep();rerender();return true}
+  if(b("[data-o39psalvar]")){if(ed)o39SalvarPad();return true}
+  if(b("[data-o39pger]")){if(ed)o39GerarPadroes(o39UI.pmes,{soAuto:true});return true}
+  if(x=b("[data-o39pger1]")){if(ed)o39GerarPadroes(o39UI.pmes,{pid:x.dataset.o39pger1});return true}
+  if(b("[data-o39ajok]")){if(ed)o39SalvarAj();return true}
+  if(b("[data-o39laypadrao]")){if(ed)o39SalvarCfg({layouts:null},"Colunas no padrão provisório");return true}
+  return false}
+/* guarda o que já foi digitado no formulário do lançamento padrão ao redesenhar */
+function o39PadKeep(){const F=o39UI.pad,p=F.id==="novo"?null:o39.pad.find(x=>x.id===F.id);const v={cod:$("#o39-pc")?.value,nome:$("#o39-pn")?.value,valor:$("#o39-pv")?.value,tipoContrato:$("#o39-pt")?.value,auto:$("#o39-pa")?.checked,ativo:$("#o39-pat")?.checked};
+  F.rasc=v;setTimeout(()=>{const r=o39UI.pad&&o39UI.pad.rasc;if(!r)return;if($("#o39-pc"))$("#o39-pc").value=r.cod||"";if($("#o39-pn"))$("#o39-pn").value=r.nome||"";if($("#o39-pv"))$("#o39-pv").value=r.valor||"";if($("#o39-pt")&&r.tipoContrato)$("#o39-pt").value=r.tipoContrato;if($("#o39-pa"))$("#o39-pa").checked=!!r.auto;if($("#o39-pat"))$("#o39-pat").checked=r.ativo!==false},0)}
+function o39Change(e){const t=e.target;
+  if(t.matches("[data-o39np]")&&o39UI.f){o39UI.f.plano=t.value;const a=o4Aberto();if(a)renderFicha(a.id);return true}
+  if(viewAtual!=="beneficios")return false;
+  if(t.matches("input[data-o39imp]")){o39LerOper(t.files&&t.files[0]);t.value="";return true}
+  if(t.matches("input[data-o39cimp]")){o39LerCartao(t.files&&t.files[0]);t.value="";return true}
+  if(t.id==="o39-fxn"){o39UI.fxN=+t.value;rerender();return true}
+  if(t.id==="o39-vt"){if($("#o39-vv"))$("#o39-vv").value=o39ValeCfg(t.value).valor;return true}
+  if(t.id==="o4-vt"){if($("#o4-vv"))$("#o4-vv").value=o39ValeCfg(t.value).valor;return true}
+  return false}
+function ligarOnda39(){}
+(function(){const st=document.createElement("style");st.textContent=`
+.o39-ad{border:1px solid var(--line);border-radius:12px;padding:12px;margin-top:10px;background:var(--surface)}
+.o39-ad:first-of-type{margin-top:0}
+.o39-off{opacity:.55}
+.o39-form{border-top:1px dashed var(--line-2);padding-top:10px}
+.o39-prev{border-color:var(--accent)}
+.o3-f label.btn{color:var(--btn-fg);flex-direction:row;font-size:14px;font-weight:600}.o3-f label.btn.ghost{color:var(--fg)}
+.o39-chips{display:flex;flex-wrap:wrap;gap:6px;margin-top:6px}
+.o39-chips .chip{display:inline-flex;align-items:center;gap:6px;background:var(--accent-soft);color:var(--accent);border-radius:99px;padding:3px 10px;font-size:13px}
+`;document.head.append(st)})();
+
 /* ---------- navegação ---------- */
 const SEC_FECHADAS=["Privacidade","Dependentes","Acesso ao app"];
 function secoesFicha(){document.querySelectorAll(".sheet .panel>h3:first-child").forEach(h=>{const p=h.parentElement,t=h.textContent.trim().replace(/\s*\(.*$/,"");p.classList.add("sec");h.dataset.sec=t;h.tabIndex=0;h.setAttribute("role","button");
@@ -5925,7 +6322,7 @@ function route(){
   if(viewAtual==="app"){ligarApp();ligarPortal()}
   if(viewAtual==="associados")$("#csv2")?.addEventListener("click",()=>exportarCSV(true));
   ligarOnda1();ligarOnda2();ligarOnda35();
-  ligarOnda34();ligarOnda5();ligarOnda38();
+  ligarOnda34();ligarOnda5();ligarOnda38();ligarOnda39();
 }
 function refresh(){
   if(viewAtual==="associados"&&$("#rows")){const t=$(".top");const tmp=document.createElement("div");tmp.innerHTML=views.associados();const nt=tmp.querySelector(".top");if(t&&nt){t.replaceWith(nt);$("#csv")?.addEventListener("click",()=>exportarCSV(false));$("#csv2")?.addEventListener("click",()=>exportarCSV(true))}const na=$(".notice");if(na)na.remove();const av=aviso();if(av)$(".top").insertAdjacentHTML("afterend",av);{const tb=$("#view nav.tabs"),t2=document.createElement("div");t2.innerHTML=abasAss("associados");if(tb&&t2.firstElementChild)tb.replaceWith(t2.firstElementChild)}renderRows()}
@@ -6118,7 +6515,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-gbusca]")){abrirBusca();return}
   if(secClick(e))return;
   if(v29Click(e))return;
-  if(o38Click(e)||o37Click(e)||o36Click(e)||o35Click(e)||o1Click(e)||o1ClickFin(e)||o2Click(e))return;
+  if(o39Click(e)||o38Click(e)||o37Click(e)||o36Click(e)||o35Click(e)||o1Click(e)||o1ClickFin(e)||o2Click(e))return;
   if(o34Click(e))return;
   if(o5Click(e))return;
   {const bx=$("#bx");if(bx&&bx.contains(e.target)){const r=e.target.closest("[data-bx]");if(r)bxAbrir(+r.dataset.bx);else if(e.target===bx)fecharBusca();return}}
@@ -6136,7 +6533,7 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
 });
 document.addEventListener("change",e=>{if(o36Change(e)||o35Change(e)||o1Change(e))return;if(e.target.matches("input[data-o2ret],input[data-o2marg]")){o2Change(e);return}if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
-document.addEventListener("change",e=>{if(o38Change(e)||o34Change(e))return;o5Change(e)});
+document.addEventListener("change",e=>{if(o39Change(e)||o38Change(e)||o34Change(e))return;o5Change(e)});
 document.addEventListener("keydown",e=>{
   if(bxTecla(e))return;
   if(e.key==="Escape"&&document.body.classList.contains("menu-on")){menuMais(false);$("[data-menu]")?.focus();return}

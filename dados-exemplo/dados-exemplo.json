@@ -2609,6 +2609,17 @@
    "mat": "0005-22",
    "status": "pendente",
    "criadoEm": "2026-11-24T18:30:00.000Z"
+  },
+  "sol-vale-exemplo": {
+   "tipo": "vale",
+   "tipoVale": "gas",
+   "valor": 110,
+   "data": "2026-11-24",
+   "associadoId": "a0002",
+   "nome": "Juliana Ferreira Lima",
+   "mat": "0002-20",
+   "status": "pendente",
+   "criadoEm": "2026-11-24T12:00:00.000Z"
   }
  },
  "app_config": {
@@ -2956,21 +2967,24 @@
      "par": "Titular",
      "nasc": "1979-04-21",
      "titular": true,
-     "valor": 412.6
+     "valor": 412.6,
+     "cart": "90001001"
     },
     {
      "nome": "Luciana Ramos",
      "par": "Cônjuge",
      "nasc": "1984-06-02",
      "titular": false,
-     "valor": 348.9
+     "valor": 348.9,
+     "cart": "90002001"
     },
     {
      "nome": "Pedro Ramos",
      "par": "Filho(a)",
      "nasc": "2012-09-18",
      "titular": false,
-     "valor": 189.9
+     "valor": 189.9,
+     "cart": "90003001"
     }
    ],
    "total": 951.4,
@@ -2990,7 +3004,8 @@
      "em": "2026-11-12T12:00:00.000Z"
     }
    ],
-   "criadoEm": "2020-01-15T12:00:00.000Z"
+   "criadoEm": "2020-01-15T12:00:00.000Z",
+   "contrato": "EX-0001"
   },
   "pa-a0007": {
    "associadoId": "a0007",
@@ -3018,6 +3033,62 @@
    "status": "ativo",
    "copart": [],
    "criadoEm": "2024-03-01T12:00:00.000Z"
+  },
+  "pa-a0001-pl-odonto": {
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "planoId": "pl-odonto",
+   "vidas": [
+    {
+     "nome": "Carlos Eduardo Ramos",
+     "par": "Titular",
+     "nasc": "1979-04-21",
+     "titular": true,
+     "valor": 29.9,
+     "cart": "OD-1001",
+     "inclEm": "2026-02-01"
+    },
+    {
+     "nome": "Luciana Ramos",
+     "par": "Cônjuge",
+     "nasc": "1984-06-02",
+     "titular": false,
+     "valor": 29.9,
+     "cart": "OD-1002",
+     "inclEm": "2026-02-01"
+    }
+   ],
+   "total": 59.8,
+   "desde": "2026-02-01",
+   "status": "ativo",
+   "copart": [],
+   "contrato": "OD-EX-01",
+   "respId": null,
+   "criadoEm": "2026-02-01T12:00:00.000Z"
+  },
+  "pa-a0005-pl-odonto": {
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "planoId": "pl-odonto",
+   "vidas": [
+    {
+     "nome": "Patrícia Gomes Alencar",
+     "par": "Titular",
+     "nasc": "1995-05-19",
+     "titular": true,
+     "valor": 29.9,
+     "inclEm": "2026-05-01"
+    }
+   ],
+   "total": 29.9,
+   "desde": "2026-05-01",
+   "status": "ativo",
+   "copart": [],
+   "contrato": "OD-EX-02",
+   "respId": "a0004",
+   "criadoEm": "2026-05-01T12:00:00.000Z"
   }
  },
  "cartao_mov": {
@@ -3475,6 +3546,33 @@
    "por": "equipe",
    "porNome": "Aparecida Santos",
    "porPapel": "Secretaria"
+  }
+ },
+ "ben_padroes": {
+  "pd-exemplo-1": {
+   "cod": "101",
+   "nome": "Seguro de vida (exemplo)",
+   "valor": 18.5,
+   "auto": true,
+   "ativo": true,
+   "tipoContrato": "OUTROS",
+   "assocs": [
+    "a0001",
+    "a0004"
+   ],
+   "criadoEm": "2026-01-10T12:00:00.000Z"
+  },
+  "pd-exemplo-2": {
+   "cod": "205",
+   "nome": "Taxa do clube (exemplo)",
+   "valor": 25,
+   "auto": false,
+   "ativo": true,
+   "tipoContrato": "OUTROS",
+   "assocs": [
+    "a0002"
+   ],
+   "criadoEm": "2026-01-10T12:00:00.000Z"
   }
  }
 }

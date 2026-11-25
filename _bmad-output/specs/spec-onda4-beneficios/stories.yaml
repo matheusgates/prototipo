@@ -1,0 +1,43 @@
+- id: "1"
+  title: Adesões completas (vários planos, vidas, contrato e responsável financeiro)
+  description: >-
+    CAP-1: adesão pa-<assoc>-<plano> (a antiga pa-<assoc> segue); contrato e carteirinha por vida;
+    incluir e excluir vida com data; responsável financeiro; o2LancarPlanos cobra no nome do responsável;
+    ficha mostra todas as adesões.
+  invoke_dev_with: >-
+    o4Adesao devolve uma só: criar o39Adesoes(a) e reatribuir o2PlanosPend/o2LancarPlanos (são const/function?
+    conferir antes; se const, trocar por let na v32).
+- id: "2"
+  title: Importação e conferência da operadora
+  description: >-
+    CAP-2: aba Operadoras; CSV por plano (contratos, coparticipação, fatura) com layout provisório editável;
+    casa por CPF ou carteirinha; prévia com casados, órfãos e diferenças; coparticipação confirmada vai para a vida;
+    registro em planos_import.
+- id: "3"
+  title: Mudança de faixa prevista e IRPF pelo pago
+  description: >-
+    CAP-3 e CAP-4: lista de mudanças nos próximos 3 meses com aplicar em lote; o4DadosIR passa a somar
+    fin_lanc pl-* pagos por beneficiário (previsto marcado quando não há lançamento); texto do informe editável.
+- id: "4"
+  title: Cartão completo
+  description: >-
+    CAP-5: fechamento e contrapartida em app_config/beneficios.cartao; importar extrato CSV por CPF ou cartão
+    com órfãos; fechar fatura vira fin_lanc ct-<assoc>-<mês> origem cartao na remessa e na dívida.
+- id: "5"
+  title: Lançamentos padrões
+  description: >-
+    CAP-6: coleção ben_padroes com catálogo e associados; gerar automáticos do mês sem duplicar
+    (pd-<padrao>-<assoc>-<mês>, origem padrao); botão na Cobrança e na aba.
+- id: "6"
+  title: Vales por pedido e com desconto
+  description: >-
+    CAP-7: pedido individual pela equipe e pelo app (solicitacoes tipo vale); aprovar lança o vale;
+    tipo descontado gera fin_lanc vl-<vale> origem vale; lote mensal continua.
+- id: "7"
+  title: App "Meus benefícios" e relatórios
+  description: >-
+    CAP-8: tela beneficios no app (O5_TELAS) com adesões, vidas, fatura do cartão, vales e pedir vale;
+    REL o39vidas, o39conf, o39faixa, o39cartao.
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com os campos novos, regerar apresentacao-assomise, teste de ponta a ponta
+    do sinal de sucesso do SPEC, commit e push.

@@ -59,10 +59,10 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Ficha financeira / extrato anual do associado | ✅ aba Financeiro, extrato PDF, pagas e não pagas, mensalidade avulsa |
 | **Inadimplência com acordo, agenda de negociação, carta, e-mail/SMS em lote** | ✅ pré-inadimplência do retorno, dívida completa, acordo com tipo e forma (parcelas na remessa), termo, agenda em calendário, lista de atendimento, WhatsApp/e-mail/SMS/carta em lote, histórico de cobrança, modelos editáveis (Onda 3 revisada) |
 | **Carteiras de gestão (gestor responsável por sócio)** | ✅ distribuir, remanejar, lista agrupada por responsável |
-| **Planos de saúde (contratos, responsáveis, coparticipação, faixa etária)** | 🟡 "Plano de saúde" é só um serviço simples |
-| Informe de IRPF | ❌ |
-| Assomise Card (adesão, extrato, conferência) | 🟡 "Cartão da associação" simples |
-| Benefícios (vale gás/combustível, lançamentos padrões) | ❌ |
+| **Planos de saúde (contratos, responsáveis, coparticipação, faixa etária)** | ✅ vários planos por associado, vidas com entrada/saída e carteirinha, responsável financeiro, importação e conferência da operadora (órfãos e diferenças), mudança de faixa prevista (Onda 4 revisada) |
+| Informe de IRPF | ✅ pelo que foi pago, por beneficiário, texto editável |
+| Assomise Card (adesão, extrato, conferência) | ✅ limite, extrato importado por CPF/cartão, cartões órfãos, contrapartida, fatura na remessa |
+| Benefícios (vale gás/combustível, lançamentos padrões) | ✅ lançamentos padrões automáticos na remessa; vales em lote ou por pedido (app), com desconto opcional |
 | Telefonia | ✅ linhas cedidas, cobrança mensal e relatório (Onda 5) |
 | Agenda de atendimento / jurídico | ✅ agenda com tipos, jurídico com assunto restrito, pedido pelo app (Onda 5) |
 | Caminhão | ✅ agenda, pedido pelo app e cobrança do uso (Onda 5) |
