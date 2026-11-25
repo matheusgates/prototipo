@@ -50,13 +50,13 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Status Sócio Remido / Desligado / Não sócio | ✅ vínculo efetivo/remido/não sócio + desligamento com data e motivo |
 | Mensalidade por patente | ✅ tabela por posto e vínculo, última mensalidade paga |
 | Mensalidades do mês, baixa, inadimplência simples | ✅ |
-| **Desconto em folha SEPLAG/SEAD (remessa, retorno, baixa, órgãos)** | ❌ |
-| **Margem consignável** | ❌ |
-| **Débito em conta BANESE (dados bancários, remessa, retorno)** | ❌ |
-| Sergipe Previdência | ❌ |
-| Boletos / importar planilha de boletos | ❌ (tem PIX) |
-| **Faturas com parcelamento** | ❌ |
-| Ficha financeira / extrato anual do associado | 🟡 histórico no app |
+| **Desconto em folha SEPLAG/SEAD (remessa, retorno, baixa, órgãos)** | ✅ remessa com tipo de contrato, rubrica, parcelas e taxa; listagem de envios e conferência de contratos (Onda 2 revisada) |
+| **Margem consignável** | ✅ com vigência, histórico, arquivo de ativos/inativos e exportação |
+| **Débito em conta BANESE (dados bancários, remessa, retorno)** | ✅ banco, dígito, máximo de desconto, termo em PDF, retorno filtrável |
+| Sergipe Previdência | ✅ canal próprio para órgãos de inativos |
+| Boletos / importar planilha de boletos | ✅ importa planilha de pagos com prévia e baixa |
+| **Faturas com parcelamento** | ✅ com tipo de contrato, taxa, obs. do boleto e relatório de parcelas |
+| Ficha financeira / extrato anual do associado | ✅ aba Financeiro, extrato PDF, pagas e não pagas, mensalidade avulsa |
 | **Inadimplência com acordo, agenda de negociação, carta, e-mail/SMS em lote** | 🟡 só "Cobrar no WhatsApp" individual |
 | **Carteiras de gestão (gestor responsável por sócio)** | ✅ distribuir, remanejar, lista agrupada por responsável |
 | **Planos de saúde (contratos, responsáveis, coparticipação, faixa etária)** | 🟡 "Plano de saúde" é só um serviço simples |

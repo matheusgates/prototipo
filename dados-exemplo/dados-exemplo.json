@@ -113,7 +113,25 @@
    "profissao": "Militar",
    "uf": "PI",
    "telTrab": "(86) 3216-0001",
-   "email3": "carlos.trabalho@exemplo.com"
+   "email3": "carlos.trabalho@exemplo.com",
+   "margemVig": "2026-09-01",
+   "margemOrig": "ativos",
+   "margemHist": [
+    {
+     "v": 480,
+     "vig": "2026-09-01",
+     "origem": "arquivo dos ativos",
+     "arq": "margens-ativos-set.csv",
+     "em": "2026-09-02T12:00:00.000Z"
+    },
+    {
+     "v": 450,
+     "vig": "2026-03-01",
+     "origem": "arquivo dos ativos",
+     "arq": "margens-ativos-mar.csv",
+     "em": "2026-03-03T12:00:00.000Z"
+    }
+   ]
   },
   "a0002": {
    "cep": "",
@@ -223,7 +241,9 @@
    "banco": {
     "ag": "0021",
     "conta": "0003456789",
-    "autorizadoEm": "2026-03-10"
+    "autorizadoEm": "2026-03-10",
+    "bco": "047",
+    "max": 150
    },
    "mensModo": "tabela",
    "profissao": "Servidor público",
@@ -2619,11 +2639,13 @@
     },
     {
      "cod": "00003",
-     "nome": "Inativo"
+     "nome": "Inativo",
+     "canal": "prev"
     },
     {
      "cod": "00004",
-     "nome": "Previdência"
+     "nome": "Previdência",
+     "canal": "prev"
     },
     {
      "cod": "00010",
@@ -2655,19 +2677,23 @@
     },
     {
      "cod": "21340",
-     "nome": "Polícia Militar do Estado de Sergipe - reformados"
+     "nome": "Polícia Militar do Estado de Sergipe - reformados",
+     "canal": "prev"
     },
     {
      "cod": "21350",
-     "nome": "Polícia Militar do Estado de Sergipe - reformados/FUNASERP"
+     "nome": "Polícia Militar do Estado de Sergipe - reformados/FUNASERP",
+     "canal": "prev"
     },
     {
      "cod": "21440",
-     "nome": "Corpo de Bombeiros Militar - reformados"
+     "nome": "Corpo de Bombeiros Militar - reformados",
+     "canal": "prev"
     },
     {
      "cod": "21450",
-     "nome": "Corpo de Bombeiros Militar - reformados/FUNASERP"
+     "nome": "Corpo de Bombeiros Militar - reformados/FUNASERP",
+     "canal": "prev"
     },
     {
      "cod": "28000",
@@ -2682,6 +2708,10 @@
     "benef": {
      "cod": "1200124012",
      "n": "Benefícios"
+    },
+    "benefBanco": {
+     "cod": "1200131012",
+     "n": "Benefícios (banco)"
     }
    },
    "regSeq": 1000
@@ -3202,7 +3232,10 @@
    ],
    "obs": "",
    "cancelada": false,
-   "criadoEm": "2026-09-28T10:00:00.000Z"
+   "criadoEm": "2026-09-28T10:00:00.000Z",
+   "tipoContrato": "EQUIP",
+   "taxaPct": 0,
+   "obsBoleto": ""
   },
   "fat-caminhao-a0004": {
    "assocId": "a0004",

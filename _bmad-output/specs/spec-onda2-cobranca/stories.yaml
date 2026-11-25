@@ -1,0 +1,42 @@
+- id: "1"
+  title: Tipos de contrato, taxa administrativa e linha completa da folha
+  description: >-
+    CAP-1: lista configurável de tipos de contrato (código, nome, taxa %) em app_config/cobranca com
+    padrão por origem; 3ª rubrica benefícios banco; item da remessa grava tipoContrato, taxa e
+    parcelas reais; layouts padrão ganham os campos; remessas antigas seguem funcionando.
+- id: "2"
+  title: Previdência (inativos) como canal próprio
+  description: >-
+    CAP-3: órgão com canal folha ou previdência; aba Previdência com remessa prev-AAAA-MM,
+    layouts prevRem/prevRet, retorno e baixa; não descontados podem ir para o banco.
+  invoke_dev_with: >-
+    Generalizar o2Coletar/o2Analisar/o2Remessa/o2LerRetorno para tipo "prev" tratado como folha
+    (folhaLike = tipo !== "banco"); nome do canal configurável, sem "Sergipe" fixo no código.
+- id: "3"
+  title: Listagem de envios e conferência de contratos
+  description: >-
+    CAP-2: aba Envios com todas as remessas (canal, mês, nº, gerada, enviada, retorno, I/A/E,
+    total) e conferência de contratos ativos por associado; ambas exportam.
+- id: "4"
+  title: Margem com vigência e débito em conta completo
+  description: >-
+    CAP-4 e CAP-5: margemHist com vigência e origem ativos/inativos, exportar margens; banco,
+    dígito e máximo de desconto no formulário; aviso acima do máximo; termo de autorização em PDF;
+    filtro por situação do retorno.
+- id: "5"
+  title: Importar planilha de boletos pagos
+  description: >-
+    CAP-6: aba Boletos com importação CSV/Excel, mapeamento de colunas por nome, prévia
+    (casados, sem par, já pagos) e baixa com forma Boleto; reimportar não baixa em dobro.
+- id: "6"
+  title: Faturas completas e relatório de parcelas
+  description: >-
+    CAP-7: tipo de contrato, taxa e observação do boleto na fatura; REL "Parcelas de faturas".
+- id: "7"
+  title: Mensalidade avulsa, alterar valor e pagas x não pagas
+  description: >-
+    CAP-8: lançar mensalidade avulsa (associado, mês, valor, forma), alterar valor de uma em
+    aberto com valorHist e hist; REL "Pagas e não pagas".
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com os campos novos, regerar apresentacao-assomise, teste de ponta a
+    ponta do sinal de sucesso do SPEC, commit e push.
