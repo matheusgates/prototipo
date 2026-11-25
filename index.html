@@ -1082,7 +1082,7 @@ const DOCS=[{k:"idmil",n:"Identidade militar"},{k:"cpf",n:"CPF"},{k:"resid",n:"C
 const FORCAS=["Polícia Militar","Corpo de Bombeiros","Exército","Marinha","Aeronáutica"];
 const POSTOS=["Soldado","Cabo","3º Sargento","2º Sargento","1º Sargento","Subtenente","Aspirante","2º Tenente","1º Tenente","Capitão","Major","Tenente-Coronel","Coronel"];
 const SITMIL=["Ativa","Reserva remunerada","Reformado","Pensionista"];
-const CATS=[{v:85,n:"Praça · R$ 85,00"},{v:120,n:"Oficial · R$ 120,00"},{v:0,n:"Isento"}];
+const CATS=[{v:94.5,n:"Praça · R$ 94,50"},{v:134,n:"Oficial · R$ 134,00"},{v:0,n:"Isento"}];
 const PARENT=["Cônjuge","Filho(a)","Enteado(a)","Pai/Mãe","Outro"];
 const MOTIVOS=["Pedido do associado","Falecimento","Transferência para outra entidade","Inadimplência","Outro"];
 const SERVICOS=[{k:"cartao",n:"Cartão da associação",curto:"Cartão",desc:"Cartão de identificação e benefícios do associado.",ref:"Número do cartão",info:"Sem custo adicional"},{k:"seguro",n:"Plano de saúde",curto:"Saúde",desc:"Plano de saúde contratado por meio da associação.",ref:"Plano / nº da carteirinha",info:"O valor depende do plano escolhido"}];
@@ -1336,7 +1336,7 @@ function renderFicha(id,anim){
 function opts(arr,sel){return arr.map(o=>typeof o==="object"?`<option value="${o.v}" ${+sel===o.v?"selected":""}>${o.n}</option>`:`<option ${o===sel?"selected":""}>${o}</option>`).join("")}
 function depRow(d={}){return`<div class="deprow"><label>Nome<input data-dn value="${esc(d.nome||"")}"></label><label>Parentesco<select data-dp>${opts(PARENT,d.par)}</select></label><label>Nascimento<input type="date" data-dd value="${esc(d.nasc||"")}"></label><button type="button" class="btn ghost sm" data-rmdep aria-label="Remover dependente">Remover</button></div>`}
 function abrirForm(id){
-  const a=id?lista.find(x=>x.id===id):null;const v=a||{forca:"Polícia Militar",posto:"Soldado",sitMil:"Ativa",mens:85,ing:hoje(),deps:[]};
+  const a=id?lista.find(x=>x.id===id):null;const v=a||{forca:"Polícia Militar",posto:"Soldado",sitMil:"Ativa",mens:94.5,ing:hoje(),deps:[]};
   aberto={tipo:"form",id:id||null};
   const fld=(k,label,attrs="",full)=>`<label class="${full?"full":""}" for="f-${k}">${label}<input id="f-${k}" name="${k}" value="${esc(v[k]||"")}" ${attrs}><span class="err" id="e-${k}"></span></label>`;
   $("#layer").innerHTML=`<div class="drawer" id="dr"><div class="sheet anim" role="dialog" aria-modal="true" aria-label="${a?"Editar associado":"Novo associado"}"><header><div><div class="eyebrow">${a?"Ficha "+esc(a.mat):"Novo cadastro"}</div><h2>${a?"Editar dados":"Novo associado"}</h2></div><button class="btn ghost" data-fechar>Fechar</button></header>
@@ -1492,7 +1492,7 @@ async function upload(inp){
 }
 
 /* ---------- Etapa 2 · financeiro ---------- */
-const CAT_IN=["Mensalidades","Aluguel do salão","Eventos","Convênios","Doações","Outras receitas"];
+const CAT_IN=["Mensalidades","Planos de saúde","Aluguel do salão","Eventos","Convênios","Doações","Outras receitas"];
 const CAT_OUT=["Manutenção do clube","Energia elétrica","Água","Internet e telefone","Funcionários","Encargos trabalhistas","Contabilidade","Limpeza e materiais","Impostos e taxas","Eventos","Outras despesas"];
 const FORMAS_MENS=["Desconto em folha","Débito em conta","PIX","Boleto","Dinheiro"];
 const FORMAS=["PIX","Transferência","Boleto","Dinheiro","Cartão","Desconto em folha","Débito em conta"];
@@ -1639,12 +1639,12 @@ async function gerarMens(c){
   try{const ex=await db.collection("fin_mens").doc(c).get();if(ex.exists){toast("As mensalidades deste mês já foram geradas.");return}}catch{}
   const el=elegiveis(),itens={};
   el.forEach(a=>itens[a.id]={nome:a.nome,mat:a.mat,valor:+a.mens,forma:a.formaPag||"Desconto em folha",status:"aberto",pagoEm:null});
-  await escrever(c,r=>r.set({comp:c,venc:c+"-"+pad2(diaVenc()),geradoEm:new Date().toISOString(),itens}),`${el.length} mensalidades geradas para ${nomeMes(c)}`,"fin_mens");
+  await escrever(c,r=>r.set({comp:c,venc:c+"-"+pad2(diaVenc()),geradoEm:new Date().toISOString(),itens}),`${el.length} mensalidades geradas para ${nomeMes(c)}`,"fin_mens");o2LancarPlanos(c,true);
 }
 async function incluirMens(c){
   const d=fin.mens[c];if(!d)return;const novos={};
   elegiveis().filter(a=>!(d.itens&&d.itens[a.id])).forEach(a=>novos[a.id]={nome:a.nome,mat:a.mat,valor:+a.mens,forma:a.formaPag||"Desconto em folha",status:"aberto",pagoEm:null});
-  const n=Object.keys(novos).length;if(n)await escrever(c,r=>r.update({itens:novos}),n===1?"1 associado incluído":`${n} associados incluídos`,"fin_mens");
+  const n=Object.keys(novos).length;if(n)await escrever(c,r=>r.update({itens:novos}),n===1?"1 associado incluído":`${n} associados incluídos`,"fin_mens");o2LancarPlanos(c,true);
 }
 async function lancarFixas(c){
   const f=fin.fixas.filter(x=>x.ativa!==false&&!fin.lanc.some(l=>l.id===`fx-${x.id}-${c}`));let ok=0;
@@ -3975,10 +3975,18 @@ function o34Click(e){const b=s=>e.target.closest(s);let x;
     if(b("[data-o3pular]")){if(o3UI.fila)o3UI.fila.i++;rerender();return true}
     if(b("[data-o3filafim]")){o3UI.fila=null;rerender();return true}
     if(x=b("[data-o3zap1]")){const a=lista.find(y=>y.id===x.dataset.o3zap1);if(a){const d=o3Div(a);abrirZap(zapNum(a.tel),o3Msg(a,d));registrar("Cobrou mensalidade pelo WhatsApp",a,d.map(i=>i.comp).join(", "))}return true}
-    if(b("[data-o3email]")){const l=o3Filtrados().filter(y=>o3UI.sel[y.a.id]&&y.a.email);if(!l.length)return true;
-      const corpo=`Prezado(a) associado(a),\n\nEm nossos registros constam mensalidades em aberto em seu nome. Pedimos a gentileza de regularizar pelo app da associação${fin.cfg.chavePix?` ou por PIX (chave ${fin.cfg.chavePix})`:""}, ou procurar a secretaria para combinarmos um acordo de parcelamento. Se já pagou, desconsidere esta mensagem.\n\nSecretaria da ${MARCA.nome}`;
-      copiarTexto(l.map(y=>y.a.email).join("; "));l.forEach(y=>registrar("Cobrou mensalidade por e-mail (lote)",y.a,y.d.map(i=>i.comp).join(", ")));
-      try{location.href=`mailto:?bcc=${encodeURIComponent(l.map(y=>y.a.email).join(","))}&subject=${encodeURIComponent("Mensalidades em aberto · "+MARCA.nome)}&body=${encodeURIComponent(corpo)}`}catch{}toast(`E-mails de ${l.length} ${o34Pl(l.length,"associado copiados","associados copiados")}. O programa de e-mail abre com eles em cópia oculta.`);return true}
+    if(b("[data-o3email]")){const l=o3Filtrados().filter(y=>o3UI.sel[y.a.id]&&y.a.email);if(!l.length)return true;const assunto="Mensalidades em aberto · "+MARCA.nome;
+      const pix=fin.cfg.chavePix?` ou por PIX (chave ${fin.cfg.chavePix})`:"";
+      const corpo=`Prezado(a) associado(a),\n\nEm nossos registros constam mensalidades em aberto em seu nome. Pedimos a gentileza de regularizar pelo app da associação${pix}, ou procurar a secretaria para combinarmos um acordo de parcelamento. Se já pagou, desconsidere esta mensagem.\n\nSecretaria da ${MARCA.nome}`;
+      const msgs=l.map(y=>({para:y.a.email,assunto,texto:`Olá, ${String(y.a.nome).split(" ")[0]}.\n\nEm nossos registros constam em aberto:\n${y.d.map(i=>`• Mensalidade de ${curtoMes(i.comp)}: ${brl(i.valor)}`).join("\n")}\nTotal: ${brl(soma(y.d))}\n\nVocê pode pagar pelo app da associação${pix}, ou procurar a secretaria para combinarmos um acordo de parcelamento. Se já pagou, desconsidere esta mensagem.\n\nSecretaria da ${MARCA.nome}`}));
+      x=b("[data-o3email]");x.disabled=true;toast(`Enviando ${l.length} ${o34Pl(l.length,"e-mail","e-mails")}…`);
+      enviarEmails(msgs).then(r=>{x.disabled=false;
+        if(r.enviados){l.slice(0,r.enviados).forEach(y=>registrar("Cobrou mensalidade por e-mail (lote)",y.a,y.d.map(i=>i.comp).join(", ")));toast(r.parcial?`${r.enviados} e-mails enviados; o resto falhou: ${r.erro||"tente de novo"}`:`${r.enviados} ${o34Pl(r.enviados,"e-mail enviado","e-mails enviados")}, um para cada associado`);return}
+        if(r.modo==="senha")return toast("Senha de envio incorreta. Ajuste em Cobrança › Arquivos e e-mail.");
+        if(r.modo==="erro")return toast("O serviço de e-mail recusou: "+(r.erro||"tente de novo"));
+        copiarTexto(l.map(y=>y.a.email).join("; "));l.forEach(y=>registrar("Cobrou mensalidade por e-mail (lote)",y.a,y.d.map(i=>i.comp).join(", ")));
+        try{location.href=`mailto:?bcc=${encodeURIComponent(l.map(y=>y.a.email).join(","))}&subject=${encodeURIComponent(assunto)}&body=${encodeURIComponent(corpo)}`}catch{}
+        toast(`Envio direto não configurado (Cobrança › Arquivos e e-mail). E-mails de ${l.length} ${o34Pl(l.length,"associado copiados","associados copiados")}; o programa de e-mail abre com eles em cópia oculta.`)});return true}
     if(x=b("[data-o3pagar]")){const[id,n]=x.dataset.o3pagar.split(":");o3Pagar(id,+n);return true}
     if(x=b("[data-o3quebrar]")){o3UI.quebrar=x.dataset.o3quebrar;rerender();return true}
     if(x=b("[data-o3quebrarok]")){o3Quebrar(x.dataset.o3quebrarok);return true}
@@ -4032,9 +4040,9 @@ const recadVence=a=>{const b=recadBase(a);return b?somaMes(b.slice(0,7),RECAD_ME
 const recadVencido=a=>a.sit==="Ativo"&&!a.anonimizadoEm&&(!recadBase(a)||recadVence(a)<=hoje());
 
 /* tabela de mensalidades por posto (fin_config/geral.tabela), com _naoSocio para quem não é sócio */
-const MENS_PADRAO=p=>POSTOS.indexOf(p)>=POSTOS.indexOf("Aspirante")?120:85;
+const MENS_PADRAO=p=>POSTOS.indexOf(p)>=POSTOS.indexOf("2º Tenente")?134:94.5;
 const tabMens=()=>(fin.cfg&&fin.cfg.tabela)||{};
-function valorTabela(posto,cat){if(cat==="remido")return 0;const t=tabMens();if(cat==="contribuinte")return t._naoSocio!=null?+t._naoSocio:50;return t[posto]!=null?+t[posto]:MENS_PADRAO(posto)}
+function valorTabela(posto,cat){if(cat==="remido")return 0;const t=tabMens();if(cat==="contribuinte")return t._naoSocio!=null?+t._naoSocio:94.5;return t[posto]!=null?+t[posto]:MENS_PADRAO(posto)}
 const mensModo=a=>{if(catDe(a)==="remido")return"isento";if(a.mensModo)return a.mensModo;const m=+a.mens||0;if(!m)return"isento";return m===valorTabela(a.posto,catDe(a))||m===MENS_PADRAO(a.posto)?"tabela":"manual"};
 const o1DifTabela=()=>lista.filter(a=>a.sit!=="Inativo"&&!a.anonimizadoEm&&mensModo(a)==="tabela"&&(+a.mens||0)!==valorTabela(a.posto,catDe(a)));
 
@@ -4219,7 +4227,7 @@ function o1Change(e){const s=e.target.closest("[data-o1gestor]");if(!s)return fa
 function tabelaMensHTML(){const t=tabMens(),v=p=>t[p]!=null?t[p]:MENS_PADRAO(p),i0=POSTOS.indexOf("Aspirante"),dif=o1DifTabela();
   const inp=(k,n,val)=>`<label>${esc(n)}<input data-tm="${esc(k)}" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(val)}"></label>`;
   return `<div class="panel" style="margin-top:14px" id="tabmens"><h3>Tabela de mensalidades</h3><p class="rank" style="margin:0 0 12px">Valor por posto/graduação. Quem está com "valor da tabela" segue estes valores nas próximas mensalidades geradas. Sócio remido não paga.</p>
-   <form class="tm" id="ftm"><fieldset><legend>Praças</legend>${POSTOS.slice(0,i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Oficiais</legend>${POSTOS.slice(i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Outros</legend>${inp("_naoSocio","Não sócio (usa serviços)",t._naoSocio??50)}</fieldset><div class="actions"><button class="btn ghost" type="submit">Salvar tabela</button></div></form>
+   <form class="tm" id="ftm"><fieldset><legend>Praças</legend>${POSTOS.slice(0,i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Oficiais</legend>${POSTOS.slice(i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Outros</legend>${inp("_naoSocio","Não sócio (usa serviços)",t._naoSocio??94.5)}</fieldset><div class="actions"><button class="btn ghost" type="submit">Salvar tabela</button></div></form>
    ${dif.length?`<div class="callout" style="margin-top:12px"><span>${dif.length} ${dif.length===1?"associado está":"associados estão"} com valor diferente da tabela. O total mensal passa de ${brl(dif.reduce((s,a)=>s+(+a.mens||0),0))} para ${brl(dif.reduce((s,a)=>s+valorTabela(a.posto,catDe(a)),0))}.</span><button class="btn sm" data-o1aplicartab ${o1UI.lote?"disabled":""}>Atualizar ${dif.length===1?"esse associado":"esses associados"}</button></div>`:""}</div>`}
 function o1ClickFin(e){if(viewAtual!=="financeiro"||!e.target.closest("[data-o1aplicartab]"))return false;const l=o1DifTabela();
   emLote(l,(r,a)=>{const v=valorTabela(a.posto,catDe(a));return r.update({mens:v,mensModo:"tabela",hist:hist(a,`Mensalidade ajustada à tabela: ${brl(v)}`)})},k=>`${k} ${k===1?"mensalidade atualizada":"mensalidades atualizadas"} pela tabela`).then(k=>registrar("Aplicou a tabela de mensalidades",null,k+" associados"));return true}
@@ -4299,6 +4307,7 @@ function o2Coletar(tipo,c){
   (itensMes(c)||[]).forEach(i=>{if(i.status==="pago"||i.status==="informado"||i.status==="acordo")return;
     if((i.forma===forma&&!i[tipo==="folha"?"cobrarBanco":"cobrarFolha"])||i[flag])out.push({k:"m-"+i.id,assocId:i.id,origem:"mens",comp:c,valor:+i.valor||0,rub:"mens",desc:"Mensalidade de "+mesSo(c)})});
   Object.keys(fin.mens).filter(m=>m<c).forEach(m=>(itensMes(m)||[]).forEach(i=>{if(i.status!=="pago"&&i.status!=="acordo"&&i[flag])out.push({k:`x-${m}-${i.id}`,assocId:i.id,origem:"mens",comp:m,valor:+i.valor||0,rub:"mens",desc:`Mensalidade de ${curtoMes(m)} (reenvio)`})}));
+  const outro=tipo==="folha"?"cobrarBanco":"cobrarFolha";fin.lanc.filter(l=>l.origem==="plano"&&l.status!=="pago"&&((l.comp===c&&l.forma===forma&&!l[outro])||(l[flag]&&l.comp<=c))).forEach(l=>out.push({k:"l-"+l.id,assocId:l.assocId,origem:"lanc",lanc:l.id,comp:l.comp,valor:+l.valor||0,rub:"benef",desc:l.comp===c?"Plano de saúde de "+mesSo(c):`Plano de saúde de ${curtoMes(l.comp)} (reenvio)`}));
   o2Fats.filter(f=>!f.cancelada&&f.forma===forma).forEach(f=>(f.parcelas||[]).forEach(p=>{if(p.status!=="pago"&&String(p.venc).slice(0,7)===c)out.push({k:`p-${f.id}-${p.n}`,assocId:f.assocId,origem:"parc",fat:f.id,n:p.n,comp:c,valor:+p.valor||0,rub:"benef",desc:`${f.desc} · parcela ${p.n}/${f.parcelas.length}`})}));
   return out.map(it=>{const a=lista.find(x=>x.id===it.assocId)||{},b=o2Banco(a);return Object.assign(it,{nome:a.nome||"",mat:a.mat||"",cpf:a.cpf||"",orgao:a.orgao||"",matFunc:a.matFunc||"",ag:b.ag||"",conta:b.conta||"",autor:!!b.autorizadoEm})});
 }
@@ -4308,7 +4317,7 @@ function o2Analisar(tipo,c){
     else{if(!it.ag||!it.conta)m="sem agência e conta";else if(!it.autor)m="sem autorização de débito assinada"}(m?fora:ok).push(Object.assign(it,m?{motivo:m}:{}))});
   if(tipo==="folha"){const por={};ok.forEach(i=>por[i.assocId]=(por[i.assocId]||0)+i.valor);ok.forEach(i=>{const a=lista.find(x=>x.id===i.assocId);if(a&&+a.margem>0&&por[i.assocId]>+a.margem+0.001)i.aviso=`acima da margem (${brl(a.margem)})`})}
   const prev=o2Rem.filter(r=>r.tipo===tipo&&r.comp<c).sort((a,b)=>b.comp.localeCompare(a.comp))[0];
-  const chave=i=>i.assocId+"|"+i.rub+(i.origem==="parc"?"|"+i.fat:"");
+  const chave=i=>i.assocId+"|"+i.rub+(i.origem==="parc"?"|"+i.fat:i.origem==="lanc"?"|pl":"");
   const pm={};if(prev)Object.values(prev.itens||{}).forEach(i=>{if(i.op!=="E")pm[chave(i)]=i});
   ok.forEach(i=>{const p=pm[chave(i)];i.op=!p?"I":Math.abs((+p.valor||0)-i.valor)>0.009?"A":"N"});
   const atuais=new Set(ok.map(chave)),exc=tipo==="folha"&&prev?Object.values(prev.itens||{}).filter(i=>i.op!=="E"&&i.origem==="mens"&&!atuais.has(chave(i))&&!(lista.find(a=>a.id===i.assocId&&a.sit==="Ativo"&&a.formaPag===FORMA_FOLHA))).map(i=>Object.assign({},i,{k:"e-"+i.assocId,op:"E",valor:0,desc:"Fim do desconto (saiu da folha)",ret:null})):[];
@@ -4316,6 +4325,7 @@ function o2Analisar(tipo,c){
 }
 const OPN={I:"Inclusão",A:"Alteração",N:"Sem mudança",E:"Exclusão"};
 function o2Resolvido(it){
+  if(it.origem==="lanc"){const l=fin.lanc.find(x=>x.id===it.lanc);if(!l)return"removido";if(l.status==="pago")return"pago";if(l.cobrarBanco)return"banco";if(l.cobrarFolha)return"folha";return""}
   if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur)return"removido";if(cur.status==="pago")return"pago";if(cur.status==="acordo")return"acordo";if(cur.cobrarBanco)return"banco";if(cur.cobrarFolha)return"folha";return""}
   const f=o2Fats.find(x=>x.id===it.fat);if(!f)return"removido";if(f.cancelada)return"cancelada";const p=(f.parcelas||[]).find(x=>x.n===it.n);return p&&p.status==="pago"?"pago":""}
 const o2RejPend=()=>o2Rem.flatMap(r=>Object.entries(r.itens||{}).filter(([,i])=>i.ret&&i.ret.st==="rej").map(([k,i])=>Object.assign({k,rem:r.id,tipo:r.tipo},i))).filter(i=>!o2Resolvido(i));
@@ -4325,7 +4335,7 @@ const RESOLV={acordo:"Entrou em acordo",pago:"Recebido",banco:"Vai para o débit
 views.cobranca=function(){
   const c=cobUI.mes,ed=o2Pode(),mesAba=cobUI.aba==="folha"||cobUI.aba==="banco";
   const nav=mesAba?`<div class="mesnav"><button class="btn ghost sm" data-o2mes="-1" aria-label="Mês anterior">‹</button><b>${nomeMes(c)}</b><button class="btn ghost sm" data-o2mes="1" aria-label="Próximo mês">›</button>${c!==hoje().slice(0,7)?`<button class="btn ghost sm" data-o2mes="0">Mês atual</button>`:""}</div>`:"";
-  const nRej=o2RejPend().length,abas=[["folha","Desconto em folha"],["banco","Débito em conta"],["faturas","Faturas e parcelas"],["orgaos","Órgãos e margens"],["layouts","Layouts dos arquivos"]];
+  const nRej=o2RejPend().length,abas=[["folha","Desconto em folha"],["banco","Débito em conta"],["faturas","Faturas e parcelas"],["orgaos","Órgãos e margens"],["layouts","Arquivos e e-mail"]];
   return cabecalho("Gestão","Cobrança","Remessa para a folha e para o banco, retorno com baixa automática e faturas parceladas.",nav)+aviso()+
    `<div class="tabs" role="tablist" style="margin-bottom:16px">${abas.map(([k,n])=>`<button class="tab" role="tab" aria-selected="${cobUI.aba===k}" data-o2aba="${k}">${n}${k==="folha"||k==="banco"?(()=>{const q=o2RejPend().filter(i=>i.tipo===k).length;return q?` <span class="pill bad">${q}</span>`:""})():""}</button>`).join("")}</div>`+
    ({folha:()=>o2Remessa("folha",c,ed),banco:()=>o2Remessa("banco",c,ed),faturas:()=>o2Faturas(ed),orgaos:()=>o2OrgMarg(ed),layouts:()=>o2Layouts(ed)}[cobUI.aba]||(()=>""))(); 
@@ -4342,8 +4352,8 @@ function o2Remessa(tipo,c,ed){
   const tabela=l=>`<div class="tablewrap"><table><thead><tr><th>Associado</th><th>Lançamento</th><th>${folha?"Órgão":"Conta"}</th><th class="num">Valor</th>${folha?"<th>Operação</th>":""}<th>Retorno</th></tr></thead><tbody>${l.map(linha).join("")||`<tr><td colspan="6" style="color:var(--muted)">Nada para ${folha?"descontar na folha":"debitar"} neste mês.</td></tr>`}</tbody></table></div>`;
   const nOp=o=>itens.filter(i=>i.op===o).length;
   if(!rem){
-    const vazio=!an.ok.length&&!an.fora.length;
-    return passos+`<p class="resumo-l"><b>${an.ok.filter(i=>i.op!=="E").length}</b> ${folha?"descontos":"débitos"} · <b>${brl(an.total)}</b>${folha?` · ${nOp("I")} inclusões · ${nOp("A")} alterações · ${nOp("E")} exclusões`:""}${an.prev?` · comparado com ${curtoMes(an.prev.comp)}`:""}</p>`+
+    const vazio=!an.ok.length&&!an.fora.length,plp=o2PlanosPend(c);
+    return passos+(ed&&plp.length?`<div class="callout" style="margin-bottom:14px"><span>A cobrança dos planos de saúde de ${mesSo(c)} ainda não foi lançada: ${plp.length} ${plp.length===1?"adesão ativa":"adesões ativas"}, com as coparticipações do mês.</span><button class="btn sm" data-o2planos>Lançar cobrança dos planos</button></div>`:"")+`<p class="resumo-l"><b>${an.ok.filter(i=>i.op!=="E").length}</b> ${folha?"descontos":"débitos"} · <b>${brl(an.total)}</b>${folha?` · ${nOp("I")} inclusões · ${nOp("A")} alterações · ${nOp("E")} exclusões`:""}${an.prev?` · comparado com ${curtoMes(an.prev.comp)}`:""}</p>`+
      (an.fora.length?`<div class="callout" style="margin-bottom:14px"><span><b>${an.fora.length} ${an.fora.length===1?"lançamento fica":"lançamentos ficam"} de fora</b> por falta de dados: ${an.fora.slice(0,6).map(i=>`<button class="lnk" data-open="${i.assocId}">${esc(i.nome.split(" ")[0])}</button> (${i.motivo})`).join(", ")}${an.fora.length>6?"…":""}. Complete a ficha e a remessa inclui.</span></div>`:"")+
      (vazio?`<div class="panel empty"><b>Nada para ${folha?"descontar na folha":"debitar em conta"} em ${nomeMes(c)}.</b><span>${folha?"Associados com forma de pagamento “Desconto em folha” entram aqui.":"Associados com forma de pagamento “Débito em conta” entram aqui. Também os não descontados na folha que você mandar para o banco."}</span></div>`:
       tabela(an.ok)+(ed&&an.ok.length?`<div class="actions" style="margin-top:14px"><button class="btn" data-o2gerar="${tipo}" ${cobUI.lote?"disabled":""}>Gerar remessa de ${mesSo(c)}</button><span class="rank">Layout ${esc(lay.tipo==="csv"?"CSV":"posições fixas")}${lay.provisorio?" · provisório":""}</span></div>`:""));
@@ -4355,13 +4365,13 @@ function o2Remessa(tipo,c,ed){
     ${!ret?`<button class="btn ghost" data-o2refazer="${id}">Gerar de novo</button>`:""}</div>`:""}
    ${novos&&!ret?`<p class="rank" style="margin:10px 0 0">${novos} ${novos===1?"lançamento novo apareceu":"lançamentos novos apareceram"} depois da geração. Use “Gerar de novo” para incluir.</p>`:""}
    ${ret?`<p class="resumo-l" style="margin:12px 0 0">Retorno lido em ${new Date(ret.lidoEm).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}${ret.simulado?" (simulação)":""}: <b>${ret.ok}</b> ${folha?"descontados":"debitados"} (${brl(ret.valorOk)}) · <b>${ret.rej}</b> não ${folha?"descontados":"debitados"}${ret.naoAchados?` · ${ret.naoAchados} linhas do arquivo sem par na remessa`:""}</p>`:""}</div>`+
-   (rej.length?`<div class="panel" style="margin-top:14px"><h3>Não ${folha?"descontados na folha":"debitados"} (${pend.length} em aberto)</h3><div class="lista-l o2-rej">${rej.map(i=>{const res=o2Resolvido(i),a=lista.find(x=>x.id===i.assocId);return `<div class="o2-rj"><span class="t"><b>${esc(i.nome)}</b><small>${esc(i.desc)} · ${brl(i.valor)} · ${esc(i.ret.motivo)}</small></span>${res?`<span class="pill neutral">${RESOLV[res]}</span>`:ed?`<span class="actions">${i.origem==="mens"?(folha?(o2TemBanco(a)?`<button class="btn sm" data-o2acao="${id}|${i.k}|banco">Mandar para o débito em conta</button>`:`<button class="btn ghost sm" data-open="${i.assocId}" title="Cadastre agência, conta e autorização">Sem conta no banco</button>`):`<button class="btn sm" data-o2acao="${id}|${i.k}|folha">Mandar para a folha</button>`):""}<button class="btn ghost sm" data-o2acao="${id}|${i.k}|pago">Recebi de outra forma</button></span>`:""}</div>`}).join("")}</div><p class="rank" style="margin:10px 0 0">${folha?"Mandar para o débito em conta inclui o valor na próxima remessa do banco.":"Mandar para a folha inclui o valor na próxima remessa da folha (reenvio ao SEAD)."}</p></div>`:"")+
+   (rej.length?`<div class="panel" style="margin-top:14px"><h3>Não ${folha?"descontados na folha":"debitados"} (${pend.length} em aberto)</h3><div class="lista-l o2-rej">${rej.map(i=>{const res=o2Resolvido(i),a=lista.find(x=>x.id===i.assocId);return `<div class="o2-rj"><span class="t"><b>${esc(i.nome)}</b><small>${esc(i.desc)} · ${brl(i.valor)} · ${esc(i.ret.motivo)}</small></span>${res?`<span class="pill neutral">${RESOLV[res]}</span>`:ed?`<span class="actions">${i.origem!=="parc"?(folha?(o2TemBanco(a)?`<button class="btn sm" data-o2acao="${id}|${i.k}|banco">Mandar para o débito em conta</button>`:`<button class="btn ghost sm" data-open="${i.assocId}" title="Cadastre agência, conta e autorização">Sem conta no banco</button>`):`<button class="btn sm" data-o2acao="${id}|${i.k}|folha">Mandar para a folha</button>`):""}<button class="btn ghost sm" data-o2acao="${id}|${i.k}|pago">Recebi de outra forma</button></span>`:""}</div>`}).join("")}</div><p class="rank" style="margin:10px 0 0">${folha?"Mandar para o débito em conta inclui o valor na próxima remessa do banco.":"Mandar para a folha inclui o valor na próxima remessa da folha (reenvio ao SEAD)."}</p></div>`:"")+
    `<div style="margin-top:14px">${tabela(itens)}</div>`;
 }
 async function o2Gerar(tipo,c){
   if(cobUI.lote)return;const an=o2Analisar(tipo,c),id=`${tipo}-${c}`;if(!an.ok.length)return toast("Nada para incluir na remessa.");
   cobUI.lote=true;let reg=+(cobCfg.regSeq||1000);const itens={};
-  an.ok.forEach(i=>{const r=o2Rub(i.rub);itens[i.k]=o2Limpo({assocId:i.assocId,nome:i.nome,mat:i.mat,cpf:i.cpf,orgao:i.orgao,matFunc:i.matFunc,ag:i.ag,conta:i.conta,origem:i.origem,comp:i.comp,fat:i.fat||null,n:i.n||null,valor:i.valor,rub:i.rub,rubrica:r.cod,desc:i.desc,op:i.op,registro:String(++reg).padStart(11,"0"),aviso:i.aviso||null,ret:null})});
+  an.ok.forEach(i=>{const r=o2Rub(i.rub);itens[i.k]=o2Limpo({assocId:i.assocId,nome:i.nome,mat:i.mat,cpf:i.cpf,orgao:i.orgao,matFunc:i.matFunc,ag:i.ag,conta:i.conta,origem:i.origem,comp:i.comp,fat:i.fat||null,lanc:i.lanc||null,n:i.n||null,valor:i.valor,rub:i.rub,rubrica:r.cod,desc:i.desc,op:i.op,registro:String(++reg).padStart(11,"0"),aviso:i.aviso||null,ret:null})});
   const seq=o2Rem.filter(r=>r.tipo===tipo).length+1;
   const ok=await escrever(id,r=>r.set({tipo,comp:c,seq,geradaEm:new Date().toISOString(),enviadaEm:null,retorno:null,status:"gerada",itens}),`Remessa ${tipo==="folha"?"da folha":"do banco"} gerada: ${Object.keys(itens).length} lançamentos`,"cob_remessas");
   if(ok){await o2SalvarCfg({regSeq:reg},null);registrar("Gerou remessa de cobrança",null,`${tipo} · ${c} · ${Object.keys(itens).length} lançamentos`)}
@@ -4389,15 +4399,17 @@ async function o2LerRetorno(id,txt,arq,simulado){
     res[it.k]={st:ok?"ok":"rej",cod,motivo:ok?"":((L.motivos||{})[cod]||r.motivo||"Código "+cod),em:hoje()}});
   if(!Object.keys(res).length)return toast("Nenhuma linha do arquivo bate com esta remessa. Confira o mês e o layout.");
   cobUI.lote=true;rerender();
-  const forma=folha?FORMA_FOLHA:FORMA_DEB,mensUpd={},fatUpd={},lancs=[];let nOk=0,nRej=0,valorOk=0;
+  const forma=folha?FORMA_FOLHA:FORMA_DEB,mensUpd={},fatUpd={},lancs=[],lancUpd={};let nOk=0,nRej=0,valorOk=0;
   Object.entries(res).forEach(([k,r])=>{const it=rem.itens[k];if(r.st==="ok"){nOk++;valorOk+=+it.valor||0}else nRej++;
     if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur||cur.status==="pago")return;
       (mensUpd[it.comp]||(mensUpd[it.comp]={}))[it.assocId]=r.st==="ok"?{status:"pago",pagoEm:hoje(),pagForma:forma,recusaCob:null,cobrarFolha:null,cobrarBanco:null}:{recusaCob:{tipo:rem.tipo,motivo:r.motivo,em:hoje()},cobrarFolha:null,cobrarBanco:null}}
+    else if(it.origem==="lanc"){const l=fin.lanc.find(x=>x.id===it.lanc);if(!l||l.status==="pago")return;lancUpd[l.id]=r.st==="ok"?{status:"pago",pagoEm:hoje(),forma,recusaCob:null,cobrarFolha:null,cobrarBanco:null}:{recusaCob:{tipo:rem.tipo,motivo:r.motivo,em:hoje()},cobrarFolha:null,cobrarBanco:null}}
     else{const f=o2Fats.find(x=>x.id===it.fat);if(!f)return;const ps=fatUpd[f.id]||(fatUpd[f.id]=(f.parcelas||[]).map(p=>Object.assign({},p))),p=ps.find(x=>x.n===it.n);if(!p||p.status==="pago")return;
       if(r.st==="ok"){p.status="pago";p.pagoEm=hoje();p.forma=forma;p.recusa=null;lancs.push(o2LancParc(f,p))}else p.recusa=r.motivo}});
   for(const [comp,m] of Object.entries(mensUpd))await escrever(comp,r=>r.update({itens:m}),null,"fin_mens");
   for(const [fid,ps] of Object.entries(fatUpd))await escrever(fid,r=>r.update({parcelas:ps}),null,"fin_faturas");
   for(const l of lancs)await escrever(l.id,r=>r.set(l.d),null,"fin_lanc");
+  for(const [lid,u] of Object.entries(lancUpd))await escrever(lid,r=>r.update(u),null,"fin_lanc");
   const upd={};Object.entries(res).forEach(([k,v])=>upd[k]={ret:v});
   await escrever(id,r=>r.update({itens:upd,retorno:{lidoEm:new Date().toISOString(),arquivo:arq||"",ok:nOk,rej:nRej,valorOk:Math.round(valorOk*100)/100,naoAchados,simulado:!!simulado},status:"retornada"}),null,"cob_remessas");
   cobUI.lote=false;toast(`Retorno lido: ${nOk} ${folha?"descontados":"debitados"} com baixa feita, ${nRej} não ${folha?"descontados":"debitados"}`);
@@ -4408,6 +4420,8 @@ async function o2Acao(id,k,acao){
   if(it.origem==="mens"){const flag={banco:{cobrarBanco:true},folha:{cobrarFolha:true},pago:{status:"pago",pagoEm:hoje(),pagForma:"Baixa manual"}}[acao];
     const msg={banco:"Vai na próxima remessa do débito em conta",folha:"Vai na próxima remessa da folha",pago:"Mensalidade recebida"}[acao];
     await comDesfazer(it.comp,r=>r.update({itens:{[it.assocId]:flag}}),msg,r=>r.update({itens:{[it.assocId]:acao==="pago"?{status:"aberto",pagoEm:null,pagForma:null}:{cobrarBanco:null,cobrarFolha:null}}}),"fin_mens");return}
+  if(it.origem==="lanc"){const u={banco:{cobrarBanco:true},folha:{cobrarFolha:true},pago:{status:"pago",pagoEm:hoje(),forma:"Baixa manual"}}[acao];
+    await comDesfazer(it.lanc,r=>r.update(u),{banco:"Vai na próxima remessa do débito em conta",folha:"Vai na próxima remessa da folha",pago:"Plano recebido"}[acao],r=>r.update(acao==="pago"?{status:"aberto",pagoEm:null}:{cobrarBanco:null,cobrarFolha:null}),"fin_lanc");return}
   if(acao==="pago")o2ReceberParc(it.fat,it.n,"Baixa manual");
 }
 
@@ -4481,7 +4495,7 @@ function o2OrgMarg(ed){
 
 /* ---- layouts dos arquivos (configuração) ---- */
 function o2Layouts(ed){
-  return `<p class="o1-lead">Cada arquivo segue um layout: em CSV (colunas separadas) ou em posições fixas (cada campo começa numa coluna). Os layouts abaixo são <b>provisórios</b>: quando chegar o layout oficial do SEAD/SEPLAG e do BANESE, ajuste aqui, sem mexer no sistema.</p>`+
+  return o2PainelEmail(ed)+`<p class="o1-lead" style="margin-top:18px">Cada arquivo segue um layout: em CSV (colunas separadas) ou em posições fixas (cada campo começa numa coluna). Os layouts abaixo são <b>provisórios</b>: quando chegar o layout oficial do SEAD/SEPLAG e do BANESE, ajuste aqui, sem mexer no sistema.</p>`+
    Object.keys(LAYOUT_PADRAO).map(k=>{const L=o2Lay(k),fixo=L.tipo==="fixo",ab=cobUI.lay===k;
     return `<div class="panel" style="margin-top:14px"><div class="serv-h"><div><h3>${esc(L.n)}</h3><p class="rank" style="margin:0">${fixo?`Posições fixas · ${L.tam||"?"} caracteres por linha`:`CSV · separador “${esc(L.sep||";")}”${L.cab?" · com cabeçalho":""}`}${L.ok?` · aceito: ${esc((L.ok||[]).join(", "))}`:""}${L.soAlteracoes?" · envia só inclusões, alterações e exclusões":""}</p></div><span class="pill ${L.provisorio?"warn":"ok"}">${L.provisorio?"Provisório":"Oficial"}</span></div>
      <div class="tablewrap" style="margin-top:12px"><table class="mini"><thead><tr><th>Campo</th>${fixo?"<th class=\"num\">Início</th><th class=\"num\">Tamanho</th>":"<th class=\"num\">Coluna</th>"}<th>Formato</th></tr></thead><tbody>${L.campos.map((f,i)=>`<tr><td class="mono">${esc(f.c)}</td>${fixo?`<td class="num">${f.i}</td><td class="num">${f.t}</td>`:`<td class="num">${i+1}</td>`}<td>${f.fix!=null?`fixo “${esc(f.fix)}”`:esc(f.fmt||"texto")}</td></tr>`).join("")}</tbody></table></div>
@@ -4528,10 +4542,33 @@ async function o2Extrato(id){const a=lista.find(x=>x.id===id);if(!a)return;const
   rows.sort((x,y)=>String(x[0]).localeCompare(String(y[0])));const pago=rows.filter(r=>r[3]==="Paga").reduce((s,r)=>s+r[2],0);
   await exportarTabela({nome:`extrato-${a.mat}-${ano}`,titulo:`Extrato financeiro ${ano}`,sub:`${a.nome} · matrícula ${a.mat} · pago no ano ${brl(pago)}`,cols:["Mês","Lançamento","Valor","Situação","Pago em","Forma"],rows,formato:"pdf",log:["Gerou extrato financeiro",a,ano]})}
 
+
+/* ---- planos de saúde viram cobrança do mês (fin_lanc origem "plano"); entram na remessa da folha/banco como benefício ---- */
+const o2PlanosPend=c=>(typeof o4!=="undefined"&&o4.ades||[]).filter(x=>x.status==="ativo"&&lista.some(a=>a.id===x.associadoId&&a.sit==="Ativo")&&!fin.lanc.some(l=>l.id===`pl-${x.id}-${c}`));
+async function o2LancarPlanos(c,silencioso){const l=o2PlanosPend(c);let n=0,tot=0;
+  for(const x of l){const a=lista.find(y=>y.id===x.associadoId),p=o4Plano(x.planoId),mensal=Math.round(o4Recalc(x)*100)/100,cop=(x.copart||[]).filter(k=>k.mes===c),vc=Math.round(soma(cop)*100)/100,valor=Math.round((mensal+vc)*100)/100;if(!a||!(valor>0))continue;
+    if(await escrever(`pl-${x.id}-${c}`,r=>r.set({tipo:"entrada",desc:`Plano de saúde${p&&p.nome?" "+p.nome:""} · ${a.nome}`,cat:"Planos de saúde",valor,venc:c+"-"+pad2(diaVenc()),comp:c,status:"aberto",pagoEm:null,forma:a.formaPag||FORMA_FOLHA,obs:[`Mensalidade do plano ${brl(mensal)}`,...cop.map(k=>`${k.desc}: ${brl(k.valor)}`)].join(" · "),origem:"plano",assocId:a.id,adesaoId:x.id,mensal,copart:vc,criadoEm:new Date().toISOString()}),null,"fin_lanc")){n++;tot+=valor}}
+  if(n||!silencioso)toast(n?`Cobrança dos planos lançada: ${n} ${n===1?"adesão":"adesões"} · ${brl(tot)}`:"Nenhum plano para lançar neste mês.");if(n)registrar("Lançou cobrança dos planos de saúde",null,`${c} · ${n} adesões · ${brl(tot)}`)}
+
+/* ---- envio de e-mail pelo servidor (api/enviar-email.js, Resend). Sem servidor configurado, quem chama volta ao programa de e-mail ---- */
+const tokenEmail=()=>{try{return localStorage.getItem("envio_token")||""}catch{return""}};
+async function chamarEnvio(mensagens){try{const r=await fetch("/api/enviar-email",{method:"POST",headers:{"Content-Type":"application/json","x-envio-token":tokenEmail()},body:JSON.stringify({mensagens})});const d=await r.json().catch(()=>({}));return{st:r.status,d}}catch{return{st:0,d:{}}}}
+async function enviarEmails(msgs){if(!/^https?:$/.test(location.protocol)||!tokenEmail())return{modo:"sem"};let env=0;
+  for(let i=0;i<msgs.length;i+=100){const{st,d}=await chamarEnvio(msgs.slice(i,i+100));if(st===200){env+=d.enviados||0;continue}
+    const modo=st===401?"senha":[0,404,405,503].includes(st)?"sem":"erro";return env?{enviados:env,parcial:true,modo,erro:d.erro}:{modo,erro:d.erro}}
+  return{enviados:env}}
+function o2PainelEmail(ed){return `<div class="panel"><div class="serv-h"><div><h3>Envio de e-mail</h3><p class="rank" style="margin:0">A cobrança em lote sai direto pelo servidor, uma mensagem para cada associado. Sem servidor configurado, o sistema abre o seu programa de e-mail.</p></div><span class="pill ${tokenEmail()?"ok":"neutral"}">${tokenEmail()?"Senha salva neste computador":"Não configurado aqui"}</span></div>
+  ${ed?`<div class="o1-row" style="margin-top:12px"><input id="o2-etk" type="password" autocomplete="off" placeholder="${tokenEmail()?"Senha salva · digite para trocar":"Senha de envio (EMAIL_TOKEN do servidor)"}" aria-label="Senha de envio"><button class="btn ghost" data-o2etk>Salvar e testar</button></div><p class="rank" id="o2-est" style="margin:8px 0 0"></p>`:""}
+  <details class="saiba" style="margin-top:10px"><summary>Como configurar o servidor</summary><ol class="rank" style="margin:8px 0 0;padding-left:18px"><li>Crie uma conta no Resend (resend.com) e verifique o domínio do e-mail da associação.</li><li>Na Vercel, em Settings › Environment Variables, cadastre <span class="mono">RESEND_API_KEY</span>, <span class="mono">EMAIL_FROM</span> (ex.: Secretaria &lt;secretaria@dominio.com.br&gt;) e <span class="mono">EMAIL_TOKEN</span> (uma senha forte). Opcional: <span class="mono">EMAIL_REPLY_TO</span>.</li><li>Faça um novo deploy e digite aqui a mesma senha do <span class="mono">EMAIL_TOKEN</span>, uma vez em cada computador da equipe.</li></ol></details></div>`}
+async function o2TestarEnvio(){const v=($("#o2-etk")?.value||"").trim();if(v){try{localStorage.setItem("envio_token",v)}catch{}}const el=$("#o2-est");if(!tokenEmail()){if(el)el.textContent="Digite a senha de envio.";return}
+  if(el)el.textContent="Testando…";const{st,d}=await chamarEnvio([]);
+  const m=st===400?"Servidor pronto: senha aceita. A cobrança por e-mail já sai direto.":st===401?"Senha incorreta. Confira o EMAIL_TOKEN na Vercel.":st===503?"O servidor ainda não tem as variáveis do Resend configuradas.":[0,404,405].includes(st)?"Esta versão não tem o servidor de e-mail (só no deploy da Vercel). O sistema vai abrir o programa de e-mail.":"Resposta inesperada: "+(d.erro||st);
+  if(el)el.textContent=m;toast(m);if(v)$("#o2-etk").value=""}
 /* ---- Ordem do dia ---- */
 function o2Pend(add,pl){
   const c=hoje().slice(0,7);
   if(fin.mens[c])["folha","banco"].forEach(t=>{if(!o2Rem.find(r=>r.id===`${t}-${c}`)&&o2Coletar(t,c).length)add("cobranca","!",`Remessa ${t==="folha"?"da folha":"do débito em conta"} de ${mesSo(c)} ainda não gerada`,"#cobranca","neutral")});
+  const pp=fin.mens[c]?o2PlanosPend(c).length:0;add("cobranca",pp,pl(pp,"plano de saúde sem cobrança lançada no mês","planos de saúde sem cobrança lançada no mês"),"#cobranca","neutral");
   const rj=o2RejPend().length;add("cobranca",rj,pl(rj,"lançamento não descontado (folha ou banco) para resolver","lançamentos não descontados (folha ou banco) para resolver"),"#cobranca","warn");
   const sb=lista.filter(a=>a.sit==="Ativo"&&a.formaPag===FORMA_DEB&&(!o2TemBanco(a)||!o2Banco(a).autorizadoEm)).length;add("cobranca",sb,pl(sb,"associado no débito em conta sem conta ou autorização","associados no débito em conta sem conta ou autorização"),"#cobranca","neutral");
 }
@@ -4549,6 +4586,8 @@ function o2Click(e){const b=s=>e.target.closest(s);let x;
   if(viewAtual!=="cobranca"||!$("#view").contains(e.target))return false;
   if(x=b("[data-o2aba]")){cobUI.aba=x.dataset.o2aba;cobUI.lay=null;route();return true}
   if(x=b("[data-o2mes]")){const n=+x.dataset.o2mes;cobUI.mes=n?somaMes(cobUI.mes,n):hoje().slice(0,7);rerender();return true}
+  if(b("[data-o2planos]")){o2LancarPlanos(cobUI.mes);return true}
+  if(b("[data-o2etk]")){o2TestarEnvio();return true}
   if(x=b("[data-o2gerar]")){o2Gerar(x.dataset.o2gerar,cobUI.mes);return true}
   if(x=b("[data-o2refazer]")){const id=x.dataset.o2refazer,r=o2Rem.find(y=>y.id===id);if(r)escrever(id,ref=>ref.delete(),null,"cob_remessas").then(ok=>{if(ok)setTimeout(()=>o2Gerar(r.tipo,r.comp),300)});return true}
   if(x=b("[data-o2baixar]")){o2Baixar(x.dataset.o2baixar);return true}
