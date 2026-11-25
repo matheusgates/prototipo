@@ -1,0 +1,41 @@
+- id: "1"
+  title: Dívida completa e acordo com qualquer item
+  description: >-
+    CAP-2: dívida = mensalidades + fin_lanc cobrados (plano, caminhão, telefonia) + parcelas de fatura
+    vencidas; acordo marca cada item com status acordo e acordoId; item em acordo fora da remessa;
+    quebrar devolve tudo; acordos antigos seguem funcionando.
+  invoke_dev_with: >-
+    o3Div é const na v32: trocar por let ou generalizar ali mesmo; o2Coletar é function, embrulhar no v38.
+- id: "2"
+  title: Acordo com tipo, forma de cobrança, remessa, termo e acompanhamento
+  description: >-
+    CAP-3: tiposAcordo configuráveis com tipo de contrato; forma das parcelas; parcelas nascem como
+    fin_lanc ac-<id>-p<n> em aberto (origem acordo) e entram na remessa; baixa pelo retorno reflete
+    no acordo; termo de acordo em PDF; acompanhamento vira contato em fin_negoc.
+- id: "3"
+  title: Pré-inadimplência
+  description: >-
+    CAP-1: aba com os recusados não resolvidos (o2RejPend) agrupados por remessa, motivo e ações
+    de reenvio, baixa e contato; contador na aba.
+- id: "4"
+  title: Calendário da agenda e lista de atendimento
+  description: >-
+    CAP-4: calendário mensal na agenda com filtro por dia; aba Lista de atendimento por responsável
+    e período com telefone, dívida e último contato; exporta Excel e PDF.
+- id: "5"
+  title: Lote por remessa e SMS
+  description: >-
+    CAP-5: seletor de origem do lote (filtro ou remessa retornada); SMS em lote como CSV e link sms:
+    individual; WhatsApp, e-mail e carta usam a mesma seleção.
+- id: "6"
+  title: Histórico de cobrança e modelos editáveis
+  description: >-
+    CAP-6: coleção fin_contatos gravada por todo envio; último contato na lista; painel na aba
+    Financeiro da ficha; modelos de mensagem, e-mail e carta com campos em app_config/cobranca.textos.
+- id: "7"
+  title: Relatórios por faixa de atraso e pré-inadimplência
+  description: >-
+    CAP-7: REL o38faixas (faixa x responsável) e o38pre (recusados por remessa), exportáveis.
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com os campos novos, regerar apresentacao-assomise, teste de ponta a ponta
+    do sinal de sucesso do SPEC, commit e push.

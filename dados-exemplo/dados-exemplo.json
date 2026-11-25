@@ -3441,5 +3441,40 @@
    ],
    "criadoEm": "2026-02-20T12:00:00.000Z"
   }
+ },
+ "fin_contatos": {
+  "ct-ex1": {
+   "assocId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "canal": "whatsapp",
+   "txt": "Lote · R$ 283,50",
+   "ref": null,
+   "em": "2026-11-18T14:20:00.000Z",
+   "por": "equipe",
+   "porNome": "Ana Paula Menezes",
+   "porPapel": "Secretaria"
+  },
+  "ct-ex2": {
+   "assocId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "canal": "carta",
+   "txt": "R$ 283,50",
+   "ref": null,
+   "em": "2026-11-20T10:05:00.000Z",
+   "por": "equipe",
+   "porNome": "Bruno Teles",
+   "porPapel": "Tesouraria"
+  },
+  "ct-ex3": {
+   "assocId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "canal": "agenda",
+   "txt": "Telefone: Prometeu pagar",
+   "ref": null,
+   "em": "2026-11-21T09:30:00.000Z",
+   "por": "equipe",
+   "porNome": "Aparecida Santos",
+   "porPapel": "Secretaria"
+  }
  }
 }
