@@ -46,9 +46,9 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Função do sistema atual | Protótipo |
 |---|---|
 | Cadastro, dependentes, documentos, foto | ✅ |
-| Campos extras da ficha (3 e-mails, telefone do trabalho, 3 referências, pai/mãe, naturalidade, estado civil, profissão, indicação, recadastro, bloqueado, enviar correspondência) | 🟡 faltam esses campos |
-| Status Sócio Remido / Desligado / Não sócio | 🟡 só Ativo/Pendente/Inativo |
-| Mensalidade por patente | 🟡 só praça/oficial/isento |
+| Campos extras da ficha (3 e-mails, telefone do trabalho, 3 referências, pai/mãe, naturalidade, estado civil, profissão, indicação, recadastro, bloqueado, enviar correspondência) | ✅ todos, com bloqueio e pendências (Onda 1 revisada) |
+| Status Sócio Remido / Desligado / Não sócio | ✅ vínculo efetivo/remido/não sócio + desligamento com data e motivo |
+| Mensalidade por patente | ✅ tabela por posto e vínculo, última mensalidade paga |
 | Mensalidades do mês, baixa, inadimplência simples | ✅ |
 | **Desconto em folha SEPLAG/SEAD (remessa, retorno, baixa, órgãos)** | ❌ |
 | **Margem consignável** | ❌ |
@@ -58,7 +58,7 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | **Faturas com parcelamento** | ❌ |
 | Ficha financeira / extrato anual do associado | 🟡 histórico no app |
 | **Inadimplência com acordo, agenda de negociação, carta, e-mail/SMS em lote** | 🟡 só "Cobrar no WhatsApp" individual |
-| **Carteiras de gestão (gestor responsável por sócio)** | ❌ |
+| **Carteiras de gestão (gestor responsável por sócio)** | ✅ distribuir, remanejar, lista agrupada por responsável |
 | **Planos de saúde (contratos, responsáveis, coparticipação, faixa etária)** | 🟡 "Plano de saúde" é só um serviço simples |
 | Informe de IRPF | ❌ |
 | Assomise Card (adesão, extrato, conferência) | 🟡 "Cartão da associação" simples |
@@ -71,7 +71,7 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Termos/contratos editáveis e impressos | 🟡 ficha de filiação em PDF |
 | Carteirinha de não sócio (alunos) | ❌ |
 | Prefeitura de Aracaju | ❌ |
-| Pesquisa com filtros salvos; exportar Excel/PDF | 🟡 busca, filtros e CSV |
+| Pesquisa com filtros salvos; exportar Excel/PDF | ✅ ~20 filtros, buscas salvas, Excel/PDF/CSV, listagem de dependentes, ficha em PDF |
 | Painel gráfico, extrato de contas | ✅ resumo, gráfico, prestação de contas |
 | Notificações para a equipe | 🟡 sino só no app do associado |
 | Usuários, grupos e permissão por tela | 🟡 papéis só na interface |

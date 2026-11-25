@@ -9,12 +9,15 @@
     {
      "nasc": "1984-06-02",
      "nome": "Luciana Ramos",
-     "par": "Cônjuge"
+     "par": "Cônjuge",
+     "cpf": "852.524.649-28",
+     "sexo": "Feminino"
     },
     {
      "nasc": "2012-09-18",
      "nome": "Pedro Ramos",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "084.591.508-87"
     }
    ],
    "docs": {
@@ -106,7 +109,11 @@
    "matFunc": "3201457",
    "margem": 480,
    "margemEm": "2026-11-05",
-   "mensModo": "tabela"
+   "mensModo": "tabela",
+   "profissao": "Militar",
+   "uf": "PI",
+   "telTrab": "(86) 3216-0001",
+   "email3": "carlos.trabalho@exemplo.com"
   },
   "a0002": {
    "cep": "",
@@ -117,7 +124,8 @@
     {
      "nasc": "2017-02-11",
      "nome": "Ana Clara Lima",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "017.505.700-17"
     }
    ],
    "docs": {
@@ -217,7 +225,10 @@
     "conta": "0003456789",
     "autorizadoEm": "2026-03-10"
    },
-   "mensModo": "tabela"
+   "mensModo": "tabela",
+   "profissao": "Servidor público",
+   "uf": "PI",
+   "pend": "Falta assinar a autorização de débito do BANESE."
   },
   "a0003": {
    "cep": "",
@@ -277,17 +288,22 @@
     {
      "nasc": "1962-03-14",
      "nome": "Maria José Moura",
-     "par": "Cônjuge"
+     "par": "Cônjuge",
+     "cpf": "351.252.917-81",
+     "sexo": "Feminino"
     },
     {
      "nasc": "1990-07-07",
      "nome": "Rafael Moura",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "514.291.287-04"
     },
     {
      "nasc": "1994-12-01",
      "nome": "Bianca Moura",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "756.960.497-02",
+     "sit": "Inativo"
     }
    ],
    "docs": {
@@ -370,7 +386,15 @@
    "orgao": "21340",
    "matFunc": "1188290",
    "margem": 310,
-   "margemEm": "2026-11-05"
+   "margemEm": "2026-11-05",
+   "profissao": "Militar",
+   "uf": "PI",
+   "bloqueio": {
+    "motivo": "Documentação do dependente irregular",
+    "em": "2026-11-20",
+    "por": "equipe",
+    "porPapel": "Secretaria"
+   }
   },
   "a0005": {
    "cep": "",
@@ -381,7 +405,8 @@
     {
      "nasc": "2020-04-25",
      "nome": "Davi Alencar",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "880.158.711-23"
     }
    ],
    "docs": {
@@ -458,7 +483,18 @@
      "tel": "(79) 9 9120-7788"
     }
    ],
-   "mensModo": "tabela"
+   "mensModo": "tabela",
+   "uf": "PI",
+   "docsExtra": [
+    {
+     "id": "dxex1",
+     "tipo": "Certidão de casamento",
+     "em": "2026-10-02",
+     "papel": true,
+     "por": "equipe",
+     "porPapel": "Secretaria"
+    }
+   ]
   },
   "a0006": {
    "cep": "",
@@ -530,12 +566,15 @@
     {
      "nasc": "1985-10-10",
      "nome": "Gustavo Batista",
-     "par": "Cônjuge"
+     "par": "Cônjuge",
+     "cpf": "663.760.493-38",
+     "sexo": "Masculino"
     },
     {
      "nasc": "2015-03-08",
      "nome": "Sofia Batista",
-     "par": "Filho(a)"
+     "par": "Filho(a)",
+     "cpf": "392.011.120-68"
     }
    ],
    "docs": {
@@ -626,7 +665,9 @@
     {
      "nasc": "1999-08-22",
      "nome": "Larissa Pereira",
-     "par": "Cônjuge"
+     "par": "Cônjuge",
+     "cpf": "279.907.828-12",
+     "sexo": "Feminino"
     }
    ],
    "docs": {

@@ -147,6 +147,11 @@ a{color:var(--accent)}
 .form [aria-invalid="true"]{border-color:var(--bad)}
 .err{color:var(--bad);font-size:12.5px;font-weight:500}
 .deprow{display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr) minmax(0,1fr) auto;gap:8px;align-items:end}
+.deprow.o35dr{grid-template-columns:repeat(4,minmax(0,1fr));border:1px solid var(--line);border-radius:12px;padding:10px 12px}.deprow.o35dr label:first-child{grid-column:span 2}.deprow.o35dr [data-rmdep]{justify-self:start}
+.o35grp{grid-column:1/-1;margin:14px 0 2px;font-size:15px}tr.o35grp td{background:var(--surface);padding-top:14px}
+.o35per{display:grid;grid-template-columns:1fr 1fr;gap:6px}.o35per label{display:flex;flex-direction:column;gap:2px;font-size:12px;color:var(--muted)}.o35per input{width:100%}
+.o35dx{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin-top:12px}.o35dx input{flex:1;min-width:200px}.o35dep-t{flex:1;min-width:0}.o35dep{justify-content:flex-start}.o35dep .r{display:flex;gap:6px;flex-wrap:wrap}.o35bl{display:flex;gap:10px;align-items:center;justify-content:space-between;flex-wrap:wrap}
+@media (max-width:760px){.deprow.o35dr{grid-template-columns:1fr 1fr}.deprow.o35dr label:first-child{grid-column:1/-1}}
 .chkline{display:flex!important;flex-direction:row!important;gap:9px;align-items:flex-start;font-size:13.5px;color:var(--fg)!important;line-height:1.45;font-weight:400!important}
 .chkline input{margin-top:2px;width:17px;height:17px;flex:none;accent-color:var(--accent)}
 .chk{width:18px;height:18px;accent-color:var(--accent)}
@@ -1080,7 +1085,7 @@ const idade=n=>{if(!n)return"";const d=new Date(n+"T12:00"),h=new Date();let a=h
 /* ---------- regras da Etapa 1 ---------- */
 const DOCS=[{k:"idmil",n:"Identidade militar"},{k:"cpf",n:"CPF"},{k:"resid",n:"Comprovante de residência"},{k:"ficha",n:"Ficha de filiação assinada"},{k:"contra",n:"Contracheque"},{k:"foto",n:"Foto 3x4"}];
 const FORCAS=["Polícia Militar","Corpo de Bombeiros","Exército","Marinha","Aeronáutica"];
-const POSTOS=["Soldado","Cabo","3º Sargento","2º Sargento","1º Sargento","Subtenente","Aspirante","2º Tenente","1º Tenente","Capitão","Major","Tenente-Coronel","Coronel"];
+const POSTOS=["Aluno Soldado","Soldado","Cabo","3º Sargento","2º Sargento","1º Sargento","Subtenente","Cadete","Aluno-Oficial","Aspirante","2º Tenente","1º Tenente","Capitão","Major","Tenente-Coronel","Coronel"];
 const SITMIL=["Ativa","Reserva remunerada","Reformado","Pensionista"];
 const CATS=[{v:94.5,n:"Praça · R$ 94,50"},{v:134,n:"Oficial · R$ 134,00"},{v:0,n:"Isento"}];
 const PARENT=["Cônjuge","Filho(a)","Enteado(a)","Pai/Mãe","Outro"];
@@ -1131,7 +1136,7 @@ async function escrever(id,fn,okMsg,col="associados"){
     else toast("Não foi possível salvar. Tente de novo.");
     return false}
 }
-const hist=(a,t)=>[{em:new Date().toISOString(),t},...(a.hist||[])].slice(0,40);
+const hist=(a,t)=>[{em:new Date().toISOString(),t,...o35Autor()},...(a.hist||[])].slice(0,40);
 
 /* Fora do Claude (ex.: Vercel) não existe window.claude: carrega o banco simulado com os dados de exemplo.
    Nada é salvo; ao recarregar a página os dados voltam ao exemplo. */
@@ -1174,7 +1179,7 @@ async function iniciar(){
   sub("reservas",s=>{portal.res=s.docs.map(d=>Object.assign({id:d.id},d.data()))});
   db.doc("fin_config/geral").onSnapshot(d=>{fin.cfg=d.exists?d.data():{};refresh()},()=>{});
   iniciarLgpd();iniciarApp();iniciarOnda1();iniciarOnda2();
-  iniciarOnda34();iniciarOnda5();
+  iniciarOnda34();iniciarOnda5();iniciarOnda35();
 }
 
 /* ---------- interface ---------- */
@@ -1248,20 +1253,20 @@ function filtrados(){
   return l.sort(cmp);
 }
 let vistaAss=(()=>{try{return localStorage.getItem("vista_ass")||"cards"}catch{return "cards"}})();
-const POSTO_AB={"Soldado":"Sd","Cabo":"Cb","3º Sargento":"3º Sgt","2º Sargento":"2º Sgt","1º Sargento":"1º Sgt","Subtenente":"ST","Aspirante":"Asp","2º Tenente":"2º Ten","1º Tenente":"1º Ten","Capitão":"Cap","Major":"Maj","Tenente-Coronel":"TC","Coronel":"Cel"};
+const POSTO_AB={"Aluno Soldado":"Al Sd","Cadete":"Cad","Aluno-Oficial":"Al Of","Soldado":"Sd","Cabo":"Cb","3º Sargento":"3º Sgt","2º Sargento":"2º Sgt","1º Sargento":"1º Sgt","Subtenente":"ST","Aspirante":"Asp","2º Tenente":"2º Ten","1º Tenente":"1º Ten","Capitão":"Cap","Major":"Maj","Tenente-Coronel":"TC","Coronel":"Cel"};
 const FORCA_AB={"Polícia Militar":"PM","Corpo de Bombeiros":"CBM","Exército":"EB","Marinha":"MB","Aeronáutica":"FAB"};
 function cardAss(a,i){const f=faltam(a).length,sv=SERVICOS.filter(s=>servAtivo(a,s.k));
   return `<div class="idc" data-open="${a.id}" tabindex="0" style="--i:${Math.min(i,14)}"><div class="idc-h"><span class="idc-p">${esc(ehNaoSocio(a)?(a.nsTipo||"Não sócio"):POSTO_AB[a.posto]||a.posto||"")}</span><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></div>
   <div class="idc-n">${avatar(a)}<span><b>${esc(a.nome)}</b><small>${esc(FORCA_AB[a.forca]||a.forca||"")}${a.om?", "+esc(a.om):""}. Matrícula ${esc(a.mat)}</small></span></div>
-  <div class="idc-f">${catDe(a)!=="efetivo"?`<span class="pill neutral">${catInfo(a).curto}</span>`:""}${f&&a.sit!=="Inativo"?`<span class="pill warn">${f===1?"Falta 1 documento":`Faltam ${f} documentos`}</span>`:""}${sv.map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")}${a.origem==="app"&&a.sit==="Pendente"?`<span class="pill neutral">Pedido pelo app</span>`:""}</div></div>`}
+  <div class="idc-f">${a.bloqueio?`<span class="pill bad">Bloqueado</span>`:""}${catDe(a)!=="efetivo"?`<span class="pill neutral">${catInfo(a).curto}</span>`:""}${f&&a.sit!=="Inativo"?`<span class="pill warn">${f===1?"Falta 1 documento":`Faltam ${f} documentos`}</span>`:""}${sv.map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")}${a.origem==="app"&&a.sit==="Pendente"?`<span class="pill neutral">Pedido pelo app</span>`:""}</div></div>`}
 function renderRows(){
   if(!$("#rows"))return;
   const l=filtrados(),cards=vistaAss==="cards"||mqCel.matches;
   $("#cards").hidden=!cards;$("#twrap").hidden=cards;
   document.querySelectorAll("[data-vista]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.vista===vistaAss));
-  const nf=["ff","fd","fv","fc","fp","fg","fr"].filter(id=>$("#"+id)?.value).length;if($("#fnum"))$("#fnum").textContent=nf||"";
-  if(cards)$("#cards").innerHTML=l.map(cardAss).join("")||`<div class="tk-vazio" style="grid-column:1/-1">${lista.length?"Nenhum associado com esses filtros. Limpe a busca ou os filtros para ver todos.":estado==="ok"?"Nenhum associado cadastrado ainda. Use o botão Novo associado.":"Carregando…"}</div>`;
-  $("#rows").innerHTML=l.map(a=>`<tr data-open="${a.id}" tabindex="0"><td><div class="who">${avatar(a)}<div>${esc(a.nome)}${a.origem==="app"&&a.sit==="Pendente"?` <span class="pill neutral">app</span>`:""}<div class="rank">${esc(ehNaoSocio(a)?(a.nsTipo||"Não sócio"):a.posto)}${a.sitMil&&a.sitMil!=="Ativa"&&!ehNaoSocio(a)?" · "+esc(a.sitMil):""}${catDe(a)==="remido"?" · Remido":""}</div></div></div></td><td class="mono">${esc(a.mat)}</td><td>${esc(a.forca)}<div class="rank">${esc(a.om)}</div></td><td><span class="chips">${SERVICOS.filter(s=>servAtivo(a,s.k)).map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")||`<span class="rank">—</span>`}</span></td><td><span class="pill ${docsOk(a)===DOCS.length?"ok":"warn"}">${docsOk(a)}/${DOCS.length}</span></td><td><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></td></tr>`).join("")||
+  const nf=["ff","fd","fv","fc","fp","fg","fr",...O35_FIDS].filter(id=>$("#"+id)?.value).length;if($("#fnum"))$("#fnum").textContent=nf||"";
+  if(cards)$("#cards").innerHTML=o35Agrupar(l,cardAss,"card")||`<div class="tk-vazio" style="grid-column:1/-1">${lista.length?"Nenhum associado com esses filtros. Limpe a busca ou os filtros para ver todos.":estado==="ok"?"Nenhum associado cadastrado ainda. Use o botão Novo associado.":"Carregando…"}</div>`;
+  $("#rows").innerHTML=o35Agrupar(l,a=>`<tr data-open="${a.id}" tabindex="0"><td><div class="who">${avatar(a)}<div>${esc(a.nome)}${o35Tags(a)}${a.origem==="app"&&a.sit==="Pendente"?` <span class="pill neutral">app</span>`:""}<div class="rank">${esc(ehNaoSocio(a)?(a.nsTipo||"Não sócio"):a.posto)}${a.sitMil&&a.sitMil!=="Ativa"&&!ehNaoSocio(a)?" · "+esc(a.sitMil):""}${catDe(a)==="remido"?" · Remido":""}</div></div></div></td><td class="mono">${esc(a.mat)}</td><td>${esc(a.forca)}<div class="rank">${esc(a.om)}</div></td><td><span class="chips">${SERVICOS.filter(s=>servAtivo(a,s.k)).map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")||`<span class="rank">—</span>`}</span></td><td><span class="pill ${docsOk(a)===DOCS.length?"ok":"warn"}">${docsOk(a)}/${DOCS.length}</span></td><td><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></td></tr>`,"tr")||
     `<tr><td colspan="6" style="color:var(--muted)">${lista.length?"Nenhum associado encontrado com esses filtros.":estado==="ok"?"Nenhum associado cadastrado ainda.":"Carregando…"}</td></tr>`;
   $("#count").textContent=`${l.length} de ${lista.length} associados`;
 }
@@ -1302,13 +1307,13 @@ function renderFicha(id,anim){
       return`<div class="doc"><span>${d.n}<br><span class="rank">${x.tipo==="arquivo"?esc(x.arquivo||"arquivo"):"recebido em papel"} · ${fmtData(x.em)}${x.origem==="portal"?" · enviado pelo portal":""}</span></span><span class="r"><span class="pill ${pend?"warn":"ok"}">${pend?"Conferir":x.tipo==="arquivo"?"Anexado":"Recebido"}</span>${link}${ed&&pend?`<button class="btn sm" data-conf="${d.k}">Conferido</button>`:""}${ed?`<button class="btn ghost sm" data-rmdoc="${d.k}">Remover</button>`:""}</span></div>`}
     return`<div class="doc"><span>${d.n}</span><span class="r"><span class="pill warn">Pendente</span>${ed&&assets?`<label class="btn ghost sm" style="cursor:pointer">Anexar arquivo<input type="file" hidden accept="image/*,application/pdf" data-up="${d.k}"></label>`:""}${ed?`<button class="btn ghost sm" data-papel="${d.k}">Recebido em papel</button>`:""}</span></div>`};
   $("#layer").innerHTML=`<div class="drawer" id="dr"><div class="sheet${anim?" anim":""}" role="dialog" aria-modal="true" aria-label="Ficha de ${esc(a.nome)}">
-   <header class="fh">${avatar(a)}<div class="fh-t"><small>${esc(a.posto)}${a.forca?", "+esc(a.forca):""}${a.om?", "+esc(a.om):""}. Matrícula <span class="mono">${esc(a.mat)}</span></small><h2>${esc(a.nome)}</h2><div class="r2" style="flex-wrap:wrap"><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span>${a.origem==="app"?`<span class="pill neutral">Pedido feito pelo app</span>`:""}${a.sit==="Inativo"&&a.motivo?`<span class="fh-mot">${esc(a.motivo)}</span>`:""}</div>${sinaisFicha(a)}</div><button class="btn ghost fh-x" data-fechar aria-label="Fechar ficha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
+   <header class="fh">${avatar(a)}<div class="fh-t"><small>${esc(a.posto)}${a.forca?", "+esc(a.forca):""}${a.om?", "+esc(a.om):""}. Matrícula <span class="mono">${esc(a.mat)}</span></small><h2>${esc(a.nome)}</h2><div class="r2" style="flex-wrap:wrap"><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span>${o35Tags(a)}${a.origem==="app"?`<span class="pill neutral">Pedido feito pelo app</span>`:""}${a.sit==="Inativo"&&a.motivo?`<span class="fh-mot">${esc(a.motivo)}</span>`:""}</div>${sinaisFicha(a)}</div><button class="btn ghost fh-x" data-fechar aria-label="Fechar ficha"><svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6 6 18"/></svg></button></header>
    ${ed?`<div class="actions">
      ${a.sit==="Pendente"?`<button class="btn" id="aprovar" ${f.length||aConf(a).length||!lgpdOk(a)?"disabled":""}>Aprovar filiação</button>`:""}
      ${a.sit==="Inativo"&&!a.anonimizadoEm?`<button class="btn" id="reativar">Reativar</button>`:""}
      <button class="btn ghost" data-editar>Editar dados</button>
      ${a.sit==="Pendente"?`<button class="btn ghost" id="recusar">Recusar filiação</button>`:""}
-     <details class="mais"><summary class="btn ghost">Mais ações</summary><div class="mais-m">${a.sit!=="Inativo"?`<button class="btn ghost" id="inativar">Inativar associado</button>`:""}<button class="btn ghost" id="excluir">Excluir ficha</button></div></details></div>
+     <details class="mais"><summary class="btn ghost">Mais ações</summary><div class="mais-m">${o35Mais(a)}${a.sit!=="Inativo"?`<button class="btn ghost" id="inativar">Inativar associado</button>`:""}<button class="btn ghost" id="excluir">Excluir ficha</button></div></details></div>
      ${a.sit==="Pendente"&&!f.length&&aConf(a).length?`<p class="rank" style="margin:-6px 0 0">Para aprovar, confira os documentos enviados pelo portal: ${aConf(a).map(d=>d.n).join(", ")}.</p>`:""}
      ${a.sit==="Pendente"&&f.length?`<p class="rank" style="margin:-6px 0 0">Para aprovar, faltam ${f.length} documento${f.length>1?"s":""}: ${f.map(d=>d.n).join(", ")}.</p>`:""}
      ${fichaUI.inativar?`<div class="inline"><label for="mot" class="rank">Motivo</label><select id="mot">${MOTIVOS.map(m=>`<option>${m}</option>`).join("")}</select><button class="btn" id="conf-inat">Confirmar inativação</button><button class="btn ghost" id="canc">Cancelar</button></div>`:""}
@@ -1316,15 +1321,15 @@ function renderFicha(id,anim){
      ${fichaUI.excluir?`<div class="inline bad"><span>Excluir a ficha de <b>${esc(a.nome)}</b> e os arquivos anexados? Isso não pode ser desfeito.</span><button class="btn danger" id="conf-exc">Excluir de vez</button><button class="btn ghost" id="canc">Cancelar</button></div>`:""}`:""}
    ${solDados(a)?`<div class="notice">Pedido de atualização de dados feito pelo app aguardando resposta. <a href="#solicitacoes" data-fechar>Abrir Solicitações</a>${mudancasHTML(solDados(a))}</div>`:""}
    ${a.sit==="Ativo"&&f.length&&dadosCompletos()&&aba!=="documentos"?`<div class="callout"><span>${f.length===1?"Falta":"Faltam"} ${f.map(d=>d.n.toLowerCase()).join(", ")} para completar a ficha.</span><button class="btn sm" data-aba="documentos">Ver documentos</button></div>`:""}
-   ${tabs}${aba==="dados"?`<div class="panel"><h3>Dados militares</h3><dl class="dl"><dt>Posto/graduação</dt><dd>${esc(a.posto)}</dd><dt>Força</dt><dd>${esc(a.forca)}</dd><dt>Situação militar</dt><dd>${esc(a.sitMil||"—")}</dd><dt>OM / lotação</dt><dd>${esc(a.om||"—")}</dd><dt>Identidade militar</dt><dd class="mono">${esc(a.idMil||"—")}</dd></dl></div>
-   <div class="panel"><h3>Dados pessoais e contato</h3><dl class="dl"><dt>CPF</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.cpf||"—"):cpfMask(a.cpf)}${fichaUI.rev!==a.id&&a.cpf&&dadosCompletos()?` <button class="btn ghost sm" data-revelar>Mostrar CPF e RG</button>`:""}</dd><dt>RG</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.rg||"—"):a.rg?"•••••":"—"}</dd><dt>Nascimento</dt><dd>${fmtData(a.nasc)}${idade(a.nasc)}</dd><dt>Telefone</dt><dd>${esc(a.tel||"—")}</dd><dt>E-mail</dt><dd>${esc(a.email||"—")}</dd><dt>Endereço</dt><dd>${dadosCompletos()?esc(a.end||"—"):`<span class="rank">restrito ao seu papel</span>`}</dd><dt>Cidade</dt><dd>${esc(a.cidade||"—")}${a.cep&&dadosCompletos()?` · CEP ${esc(a.cep)}`:""}</dd>${o1FichaPessoais(a)}</dl></div>
-   <div class="panel"><h3>Associação</h3><dl class="dl"><dt>Matrícula</dt><dd class="mono">${esc(a.mat)}</dd><dt>Associado desde</dt><dd>${fmtData(a.ing)}</dd><dt>Mensalidade</dt><dd>${+a.mens?brl(a.mens):"Isento"}${o1MensTag(a)}</dd><dt>Forma de pagamento</dt><dd>${esc(a.formaPag||"Desconto em folha")}</dd>${o1FichaAssoc(a,ed)}</dl></div>
-   ${o1FichaContatos(a)}${painelAppFicha(a,ed)}${painelLgpdFicha(a)}<div class="panel"><h3>Dependentes (${dep.length})</h3>${dep.length?`<div class="list">${dep.map(d=>`<div class="tile"><span>${esc(d.nome)}<br><span class="rank">${esc(d.par)}${d.nasc?" · "+fmtData(d.nasc)+idade(d.nasc):""}</span></span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum dependente cadastrado.</p>`}</div>
+   ${o35Avisos(a,ed)}${tabs}${aba==="dados"?`<div class="panel"><h3>Dados militares</h3><dl class="dl"><dt>Posto/graduação</dt><dd>${esc(a.posto)}</dd><dt>Força</dt><dd>${esc(a.forca)}</dd><dt>Situação militar</dt><dd>${esc(a.sitMil||"—")}</dd><dt>OM / lotação</dt><dd>${esc(a.om||"—")}</dd><dt>Identidade militar</dt><dd class="mono">${esc(a.idMil||"—")}</dd></dl></div>
+   <div class="panel"><h3>Dados pessoais e contato</h3><dl class="dl"><dt>CPF</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.cpf||"—"):cpfMask(a.cpf)}${fichaUI.rev!==a.id&&a.cpf&&dadosCompletos()?` <button class="btn ghost sm" data-revelar>Mostrar CPF e RG</button>`:""}</dd><dt>RG</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.rg||"—"):a.rg?"•••••":"—"}</dd><dt>Nascimento</dt><dd>${fmtData(a.nasc)}${idade(a.nasc)}</dd><dt>Telefone</dt><dd>${esc(a.tel||"—")}</dd><dt>E-mail</dt><dd>${esc(a.email||"—")}</dd><dt>Endereço</dt><dd>${dadosCompletos()?esc(a.end||"—"):`<span class="rank">restrito ao seu papel</span>`}</dd><dt>Cidade</dt><dd>${esc(a.cidade||"—")}${a.uf&&!String(a.cidade||"").includes("/")?"/"+esc(a.uf):""}${a.cep&&dadosCompletos()?` · CEP ${esc(a.cep)}`:""}</dd>${o1FichaPessoais(a)}</dl></div>
+   <div class="panel"><h3>Associação</h3><dl class="dl"><dt>Matrícula</dt><dd class="mono">${esc(a.mat)}</dd><dt>Associado desde</dt><dd>${fmtData(a.ing)}</dd><dt>Mensalidade</dt><dd>${+a.mens?brl(a.mens):"Isento"}${o1MensTag(a)}</dd><dt>Forma de pagamento</dt><dd>${esc(a.formaPag||"Desconto em folha")}</dd>${o1FichaAssoc(a,ed)}${o35FichaAssoc(a)}</dl></div>
+   ${o1FichaContatos(a)}${painelAppFicha(a,ed)}${painelLgpdFicha(a)}${o35DepsFicha(a,ed)}
    ${a.obs?`<div class="panel"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:""}`:""}
    ${aba==="servicos"?servicosHTML:""}
    ${aba==="financeiro"?o2FichaFin(a,o2Pode()):""}
-   ${aba==="documentos"?`<div class="panel"><h3>Documentos (${docsOk(a)}/${DOCS.length})</h3><div class="docs">${DOCS.map(docRow).join("")}</div>${ed&&!assets?`<p class="sample">Anexar arquivos fica disponível para quem é editor da página. Você pode marcar o que foi recebido em papel.</p>`:""}</div>`:""}
-   ${aba==="historico"?`<div class="panel"><h3>Histórico</h3>${(a.hist||[]).length?`<ul class="hist">${a.hist.slice(0,12).map(h=>`<li><span class="mono">${new Date(h.em).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}</span> · ${esc(h.t)}</li>`).join("")}</ul>`:`<p class="rank" style="margin:0">Sem registros.</p>`}</div>`:""}
+   ${aba==="documentos"?`<div class="panel"><h3>Documentos (${docsOk(a)}/${DOCS.length})</h3><div class="docs">${DOCS.map(docRow).join("")}</div>${ed&&!assets?`<p class="sample">Anexar arquivos fica disponível para quem é editor da página. Você pode marcar o que foi recebido em papel.</p>`:""}</div>${o35DocsExtra(a,ed)}`:""}
+   ${aba==="historico"?`<div class="panel"><h3>Histórico</h3>${(a.hist||[]).length?`<ul class="hist">${a.hist.slice(0,12).map(h=>`<li><span class="mono">${new Date(h.em).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}</span> · ${esc(h.t)}${o35Por(h)}</li>`).join("")}</ul>`:`<p class="rank" style="margin:0">Sem registros.</p>`}</div>`:""}
   </div></div>`;
   const sh=$(".sheet");if(!anim)sh.scrollTop=old;
   if(!anim&&renderFicha.aba!==aba)sh.classList.add("troca");renderFicha.aba=aba;secoesFicha();
@@ -1334,7 +1339,7 @@ function renderFicha(id,anim){
 
 /* ---------- formulário ---------- */
 function opts(arr,sel){return arr.map(o=>typeof o==="object"?`<option value="${o.v}" ${+sel===o.v?"selected":""}>${o.n}</option>`:`<option ${o===sel?"selected":""}>${o}</option>`).join("")}
-function depRow(d={}){return`<div class="deprow"><label>Nome<input data-dn value="${esc(d.nome||"")}"></label><label>Parentesco<select data-dp>${opts(PARENT,d.par)}</select></label><label>Nascimento<input type="date" data-dd value="${esc(d.nasc||"")}"></label><button type="button" class="btn ghost sm" data-rmdep aria-label="Remover dependente">Remover</button></div>`}
+function depRow(d={}){return`<div class="deprow o35dr" data-dfoto="${esc(d.foto?JSON.stringify(d.foto):"")}"><label>Nome<input data-dn value="${esc(d.nome||"")}"></label><label>Parentesco<select data-dp>${opts(PARENT,d.par)}</select></label><label>Nascimento<input type="date" data-dd value="${esc(d.nasc||"")}"></label><label>CPF<input data-dc inputmode="numeric" placeholder="Opcional" value="${esc(d.cpf||"")}"></label><label>Sexo<select data-dsx><option value="">Não informado</option>${opts(SEXOS,d.sexo)}</select></label><label>Situação<select data-dst>${opts(["Ativo","Inativo"],d.sit||"Ativo")}</select></label><button type="button" class="btn ghost sm" data-rmdep aria-label="Remover dependente">Remover</button></div>`}
 function abrirForm(id){
   const a=id?lista.find(x=>x.id===id):null;const v=a||{forca:"Polícia Militar",posto:"Soldado",sitMil:"Ativa",mens:94.5,ing:hoje(),deps:[]};
   aberto={tipo:"form",id:id||null};
@@ -1359,10 +1364,10 @@ function abrirForm(id){
    ${fld("om","OM / lotação *",'required placeholder="Ex.: 1º BPM"',1)}</div>
    <div class="fp" data-p="3"><h4>Endereço e dependentes</h4>
    ${fld("end","Endereço",'placeholder="Rua, número, bairro"',1)}
-   ${fld("cidade","Cidade/UF",'placeholder="Teresina/PI"')}
+   ${fld("cidade","Cidade",'placeholder="Aracaju"')}${o35FormUF(v)}
    ${fld("cep","CEP",'inputmode="numeric" placeholder="00000-000"')}
    <div class="full rank" style="font-weight:600;color:var(--fg);margin-top:4px">Dependentes</div>
-   <div class="full list" id="deps">${(v.deps||[]).map(depRow).join("")}</div>
+   <div class="full list" id="deps">${(v.deps||[]).map(depRow).join("")}</div><input type="hidden" id="f-depcpf"><span class="full err" id="e-depcpf"></span>
    <div class="full"><button type="button" class="btn ghost sm" id="adddep">+ Adicionar dependente</button></div>
    ${o1FormContatos(v)}
    <label class="full" for="f-obs">Observações<textarea id="f-obs" rows="3">${esc(v.obs||"")}</textarea></label></div>
@@ -1387,7 +1392,7 @@ function abrirForm(id){
   $("#adddep").addEventListener("click",()=>{$("#deps").insertAdjacentHTML("beforeend",depRow());$("#deps").lastElementChild.querySelector("input").focus()});
   $("#deps").addEventListener("click",e=>{const b=e.target.closest("[data-rmdep]");if(b)b.closest(".deprow").remove()});
   $("#fn").addEventListener("submit",e=>{e.preventDefault();if(!a&&fpUI.p<4){fpIr(fpUI.p+1);return}salvarForm(a)});
-  o1LigarForm();o2LigarForm();
+  o1LigarForm();o2LigarForm();o35LigarForm();
   if(!a){fpUI.p=1;fpIr(1,true);$("#fp-prox").addEventListener("click",()=>fpIr(fpUI.p+1));$("#fp-voltar").addEventListener("click",()=>fpIr(fpUI.p-1))}
   $("#f-nome").focus();
 }
@@ -1403,7 +1408,7 @@ function validar(a,so){
   if(!a&&!erros.email&&!val("email")&&document.querySelector('input[name="f-acesso"]:checked')?.value==="convite")erros.email="Para enviar o convite, informe o e-mail (ou escolha outra forma de acesso).";
   o1Validar(erros);o2Validar(erros);
   if(so)Object.keys(erros).forEach(k=>{if(!so.includes(k))delete erros[k]});
-  ["nome","cpf","om","tel","email","nasc","tel2","email2","indic","mensVal"].forEach(k=>{if(!$("#f-"+k))return;$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""});
+  ["nome","cpf","om","tel","email","nasc","tel2","email2","indic","mensVal","telTrab","email3","depcpf"].forEach(k=>{if(!$("#f-"+k))return;$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""});
   const first=Object.keys(erros)[0];if(first){const det=$("#f-"+first).closest("details");if(det)det.open=true;const st=$("#f-"+first).closest(".fp");if(!so&&st&&$("#fn.passos"))fpIr(+st.dataset.p,true);$("#f-"+first).focus()}
   return !first;
 }
@@ -1411,17 +1416,17 @@ async function salvarForm(a){
   if(!editavel()){toast("Sem conexão com o banco para salvar.");return}
   if(!validar(a))return;
   const val=k=>($("#f-"+k).value||"").trim();
-  const deps=[...document.querySelectorAll(".deprow:not(.ctrow)")].map(r=>({nome:r.querySelector("[data-dn]").value.trim(),par:r.querySelector("[data-dp]").value,nasc:r.querySelector("[data-dd]").value})).filter(d=>d.nome);
+  const deps=o35LerDeps();
   const dados={nome:val("nome"),cpf:maskCPF(val("cpf")),rg:val("rg"),nasc:val("nasc"),forca:val("forca"),posto:val("posto"),sitMil:val("sitMil"),idMil:val("idMil"),om:val("om"),tel:val("tel"),email:val("email"),end:val("end"),cidade:val("cidade"),cep:val("cep"),formaPag:val("formaPag"),ing:val("ing")||hoje(),deps,obs:$("#f-obs").value.trim()};
   Object.assign(dados,o1DadosForm(),o2DadosForm(),dadosLgpdForm(a,deps));
   $("#salvar").disabled=true;
   let ok,id;
-  if(a){id=a.id;ok=await escrever(id,ref=>ref.update({...dados,atualizadoEm:new Date().toISOString(),hist:hist(a,"Dados atualizados")}),"Alterações salvas");if(ok)registrar("Alterou dados da ficha",a)}
+  if(a){id=a.id;ok=await escrever(id,ref=>ref.update({...dados,atualizadoEm:new Date().toISOString(),atualizadoPor:o35AutorTxt(o35Autor()),hist:hist(a,"Dados atualizados")}),"Alterações salvas");if(ok)registrar("Alterou dados da ficha",a)}
   else{
     id=db.collection("associados").doc().id;
     const n=Math.max(0,...lista.map(x=>parseInt(x.mat)||0))+1;
     const mat=String(n).padStart(4,"0")+"-"+String(new Date().getFullYear()).slice(2);
-    ok=await escrever(id,ref=>ref.set({...dados,mat,sit:"Pendente",docs:{},criadoEm:new Date().toISOString(),hist:[{em:new Date().toISOString(),t:"Cadastro criado. Filiação pendente de documentos."}]}),`${dados.nome.split(" ")[0]} cadastrado. Filiação pendente de documentos.`);
+    ok=await escrever(id,ref=>ref.set({...dados,mat,sit:"Pendente",docs:{},criadoEm:new Date().toISOString(),hist:[{em:new Date().toISOString(),t:"Cadastro criado. Filiação pendente de documentos.",...o35Autor()}]}),`${dados.nome.split(" ")[0]} cadastrado. Filiação pendente de documentos.`);
   }
   if(ok&&!a)registrar("Cadastrou associado",{id,mat:""},dados.nome.split(" ")[0]);
   const modoAcesso=!a&&ok?(document.querySelector('input[name="f-acesso"]:checked')?.value||"depois"):"depois";
@@ -1458,7 +1463,7 @@ async function acaoFicha(e){
   if(t.id==="conf-inat"){const m=$("#mot").value,ant={sit:a.sit,motivo:a.motivo??null,inativadoEm:a.inativadoEm??null};fichaUI.inativar=false;await comDesfazer(id,r=>r.update({sit:"Inativo",motivo:m,inativadoEm:hoje(),hist:hist(a,"Inativado: "+m)}),"Associado inativado",r=>r.update({...ant,hist:hist(lista.find(x=>x.id===id)||a,"Inativação desfeita")}));return}
   if(t.id==="reativar"){await escrever(id,r=>r.update({sit:"Ativo",motivo:null,inativadoEm:null,hist:hist(a,"Reativado")}),"Associado reativado");return}
   if(t.id==="conf-exc"){
-    const ids=DOCS.map(d=>a.docs&&a.docs[d.k]&&a.docs[d.k].assetId).filter(Boolean);
+    const ids=[...DOCS.map(d=>a.docs&&a.docs[d.k]&&a.docs[d.k].assetId).filter(Boolean),...o35Assets(a)];
     if(await escrever(id,r=>r.delete(),"Ficha excluída")){registrar("Excluiu a ficha",a);fecharGaveta();if(assets)ids.forEach(x=>assets.delete(x).catch(()=>{}))}return}
   const ab=t.closest("[data-aba]");if(ab){fichaUI={...fichaUI,aba:ab.dataset.aba,serv:null,cancServ:null};renderFicha(id);$(".sheet").scrollTop=0;return}
   const se=t.closest("[data-serv-edit]");if(se){fichaUI={...fichaUI,serv:se.dataset.servEdit,cancServ:null};return renderFicha(id)}
@@ -2780,7 +2785,7 @@ function dadosLgpdForm(a,deps){
 
 /* anonimização */
 async function anonimizar(a,motivo){
-  const ids=[...Object.values(a.docs||{}).map(x=>x&&x.assetId),a.fotoPerfil&&a.fotoPerfil.assetId].filter(Boolean),nome=`Ex-associado ${a.mat}`;
+  const ids=[...Object.values(a.docs||{}).map(x=>x&&x.assetId),a.fotoPerfil&&a.fotoPerfil.assetId,...o35Assets(a)].filter(Boolean),nome=`Ex-associado ${a.mat}`;
   const ok=await escrever(a.id,r=>r.set({mat:a.mat,nome,posto:a.posto||"",forca:a.forca||"",sit:"Inativo",motivo:a.motivo||"Pedido do associado",ing:a.ing||"",mens:0,formaPag:"",inativadoEm:desligadoEm(a)||hoje(),anonimizadoEm:hoje(),cpf:"",rg:"",nasc:"",tel:"",email:"",end:"",cidade:"",cep:"",idMil:"",om:"",sitMil:"",deps:[],obs:"",docs:{},servicos:{},criadoEm:a.criadoEm||null,hist:[{em:new Date().toISOString(),t:"Dados pessoais anonimizados (LGPD): "+motivo}]}),null);
   if(!ok)return false;
   if(assets)ids.forEach(x=>assets.delete(x).catch(()=>{}));
@@ -3246,7 +3251,7 @@ function novaMat(){const n=Math.max(0,...lista.map(x=>parseInt(x.mat)||0))+1;ret
 const emailOk=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 async function esperarFicha(id,ms=8000){const t0=Date.now();while(!lista.find(x=>x.id===id)&&Date.now()-t0<ms)await new Promise(r=>setTimeout(r,150));return lista.find(x=>x.id===id)}
 const CAD_PASSOS=["Seus dados","Dados militares","Endereço e dependentes","Privacidade e senha"];
-const normDep=d=>({nome:String(d.nome||"").trim(),par:d.par||PARENT[0],nasc:d.nasc||""});
+const normDep=d=>{const o={nome:String(d.nome||"").trim(),par:d.par||PARENT[0],nasc:d.nasc||""};["cpf","sexo","sit","foto"].forEach(k=>{if(d[k])o[k]=d[k]});return o};
 function depApp(d,i,pref,dis){const D=dis?"disabled":"";return `<div class="ac-dep"><input id="${pref}-${i}-nome" data-${pref}="${i}:nome" aria-label="Nome do dependente" placeholder="Nome completo do dependente" value="${esc(d.nome||"")}" ${D}><select id="${pref}-${i}-par" data-${pref}="${i}:par" aria-label="Parentesco" ${D}>${opts(PARENT,d.par||PARENT[0])}</select><input id="${pref}-${i}-nasc" type="date" data-${pref}="${i}:nasc" aria-label="Nascimento do dependente" value="${esc(d.nasc||"")}" ${D}>${dis?"":`<button type="button" class="btn ghost sm" data-${pref}rm="${i}">Remover</button>`}</div>`}
 
 function appCadastro(){
@@ -3351,8 +3356,8 @@ async function baixarFichaFiliacao(a){
 }
 
 /* atualizar meus dados: contato muda na hora; o resto vai para a secretaria conferir */
-const DIRETOS=["tel","email","tel2","email2","cep","end","cidade"],CONFERIR=["nome","nasc","rg","forca","posto","sitMil","om","idMil"];
-const ROT={tel:"Telefone",email:"E-mail",tel2:"Outro telefone",email2:"Outro e-mail",cep:"CEP",end:"Endereço",cidade:"Cidade/UF",nome:"Nome",nasc:"Nascimento",rg:"RG",forca:"Força",posto:"Posto/graduação",sitMil:"Situação militar",om:"OM / lotação",idMil:"Identidade militar",deps:"Dependentes"};
+const DIRETOS=["tel","email","tel2","email2","email3","telTrab","cep","end","cidade","uf","profissao"],CONFERIR=["nome","nasc","rg","forca","posto","sitMil","om","idMil"];
+const ROT={tel:"Telefone",email:"E-mail",tel2:"Outro telefone",email2:"Outro e-mail",email3:"Terceiro e-mail",telTrab:"Telefone do trabalho",uf:"UF",profissao:"Profissão",cep:"CEP",end:"Endereço",cidade:"Cidade/UF",nome:"Nome",nasc:"Nascimento",rg:"RG",forca:"Força",posto:"Posto/graduação",sitMil:"Situação militar",om:"OM / lotação",idMil:"Identidade militar",deps:"Dependentes"};
 const fmtV=(k,v)=>k==="nasc"?fmtData(v):(v||"—");
 const depsTxt=l=>(l||[]).length?(l||[]).map(d=>`${d.nome} (${d.par})`).join(", "):"nenhum";
 const solDados=a=>portal.sol.find(s=>s.associadoId===a.id&&s.tipo==="dados"&&s.status==="pendente");
@@ -3366,7 +3371,7 @@ function pEditar(a,ed){
   return `<button class="btn ghost sm" data-ppriv="" style="align-self:flex-start">‹ Voltar</button><h3 class="p-h">Atualizar meus dados</h3>
   ${recadVencido(a)?`<div class="p-card" style="border-color:var(--warn)"><b>Hora do recadastramento</b><p class="rank" style="margin:0">Confira seus dados abaixo. Se estiver tudo certo, toque em <b>Salvar</b> para confirmar. Não precisa ir à secretaria.</p></div>`:""}
   <div class="p-card"><b>Contato e endereço</b><p class="rank" style="margin:0">Muda na hora no cadastro da associação.</p>
-   ${inp("tel","Celular com DDD",'inputmode="tel"')}${inp("tel2","Outro telefone (opcional)",'inputmode="tel"')}${inp("email","E-mail",'type="email"')}${inp("email2","Outro e-mail (opcional)",'type="email"')}${inp("cep","CEP",'inputmode="numeric"')}${inp("end","Endereço")}${inp("cidade","Cidade/UF")}</div>
+   ${inp("tel","Celular com DDD",'inputmode="tel"')}${inp("tel2","Outro telefone (opcional)",'inputmode="tel"')}${inp("email","E-mail",'type="email"')}${inp("email2","Outro e-mail (opcional)",'type="email"')}${inp("telTrab","Telefone do trabalho (opcional)",'inputmode="tel"')}${inp("email3","Terceiro e-mail (opcional)",'type="email"')}${inp("cep","CEP",'inputmode="numeric"')}${inp("end","Endereço")}${inp("cidade","Cidade")}${sel("uf","UF",["",...UFS])}${inp("profissao","Profissão (opcional)")}</div>
   <div class="p-card"><b>Dados do cadastro</b><p class="rank" style="margin:0">${pend?"Enquanto a filiação está em análise, você pode corrigir tudo por aqui.":bloq?"Você já tem um pedido de atualização em análise. Espere a resposta para pedir outra mudança.":"Mudanças aqui vão para a secretaria conferir antes de valer."}</p>
    ${inp("nome","Nome completo","",bloq)}${inp("nasc","Data de nascimento",'type="date"',bloq)}${inp("rg","RG","",bloq)}${sel("forca","Força",FORCAS,bloq)}${sel("posto","Posto/graduação",POSTOS,bloq)}${sel("sitMil","Situação militar",SITMIL,bloq)}${inp("om","OM / lotação","",bloq)}${inp("idMil","Nº da identidade militar","",bloq)}
    <b style="margin-top:6px">Dependentes</b>${(pUI.pdDeps||[]).map((d,i)=>depApp(d,i,"pdd",bloq||!ed)).join("")||`<p class="rank" style="margin:0">Nenhum dependente.</p>`}${!bloq&&ed?`<button type="button" class="btn ghost sm" data-pddadd style="align-self:flex-start">+ Adicionar dependente</button>`:""}</div>
@@ -3379,6 +3384,8 @@ async function salvarDadosApp(a,btn){
   if(g("email")&&!emailOk(g("email")))return toast("E-mail inválido.");
   if(g("email2")&&!emailOk(g("email2")))return toast("O outro e-mail está inválido.");
   if(g("tel2")&&g("tel2").replace(/\D/g,"").length<10)return toast("Informe o outro telefone com DDD.");
+  if(g("telTrab")&&g("telTrab").replace(/\D/g,"").length<10)return toast("Informe o telefone do trabalho com DDD.");
+  if(g("email3")&&!emailOk(g("email3")))return toast("O terceiro e-mail está inválido.");
   if(g("nome").split(/\s+/).length<2)return toast("Informe nome e sobrenome.");
   if(g("nasc")&&g("nasc")>hoje())return toast("A data de nascimento está no futuro.");
   if(!g("om"))return toast("Informe a OM ou lotação.");
@@ -3515,7 +3522,7 @@ function odClick(e){
   return false;
 }
 const nDocPend=()=>lista.filter(a=>a.sit!=="Inativo").reduce((s,a)=>s+faltam(a).length+aConf(a).length,0);
-const abasAss=k=>{const n=dadosCompletos()?nDocPend():0,ns=gestAtivos().length?naCarteira(null).length:0;return `<nav class="tabs" aria-label="Associados" style="margin-bottom:16px"><a class="tab" href="#associados" aria-selected="${k==="associados"}">Todos os associados</a>${dadosCompletos()?`<a class="tab" href="#documentos" aria-selected="${k==="documentos"}">Documentos a cobrar${n?` (${n})`:""}</a>`:""}${podeVer("carteiras")?`<a class="tab" href="#carteiras" aria-selected="${k==="carteiras"}">Carteiras${ns?` (${ns} sem responsável)`:""}</a>`:""}</nav>`};
+const abasAss=k=>{const n=dadosCompletos()?nDocPend():0,ns=gestAtivos().length?naCarteira(null).length:0;return `<nav class="tabs" aria-label="Associados" style="margin-bottom:16px"><a class="tab" href="#associados" aria-selected="${k==="associados"}">Todos os associados</a>${dadosCompletos()?`<a class="tab" href="#documentos" aria-selected="${k==="documentos"}">Documentos a cobrar${n?` (${n})`:""}</a>`:""}${podeVer("dependentes")?`<a class="tab" href="#dependentes" aria-selected="${k==="dependentes"}">Dependentes</a>`:""}${podeVer("carteiras")?`<a class="tab" href="#carteiras" aria-selected="${k==="carteiras"}">Carteiras${ns?` (${ns} sem responsável)`:""}</a>`:""}</nav>`};
 /* ---------- novo associado em passos ---------- */
 const FP_NOMES=["Dados pessoais e contato","Vínculo e dados militares","Endereço e dependentes","Associação e acesso ao app"];
 const FP_CAMPOS={1:["nome","cpf","tel","email","nasc","tel2","email2"],2:["om"],3:[],4:["indic","mensVal"]};
@@ -4025,7 +4032,7 @@ function ligarOnda34(){
 /* ---------- v31 · onda 1: ficha completa, vínculo do sócio, tabela de mensalidades, carteiras de gestão, exportar Excel/PDF, buscas salvas, recadastramento ---------- */
 /* Vínculo fica separado do posto (no sistema antigo "Academia", "Natação", "Funcionário" e "Falecido" eram patentes). Desligado = Inativo com motivo. */
 const CATEG=[{k:"efetivo",n:"Sócio efetivo",curto:"Efetivo"},{k:"remido",n:"Sócio remido (isento)",curto:"Remido"},{k:"contribuinte",n:"Não sócio (usa serviços)",curto:"Não sócio"}];
-const NS_TIPOS=["Academia","Natação","Aluno de curso","Funcionário","Prestador de serviço","Outro"];
+const NS_TIPOS=["Academia","Natação","Aluno de curso","Só plano de saúde","Só odontológico","Funcionário","Prestador de serviço","Outro"];
 const SEXOS=["Masculino","Feminino","Prefiro não informar"];
 const ESTCIVIL=["Solteiro(a)","Casado(a)","União estável","Divorciado(a)","Viúvo(a)"];
 const RECAD_MESES=24;
@@ -4062,8 +4069,8 @@ function ctRow(c={}){return`<div class="deprow ctrow"><label>Nome<input data-cn 
 function o1FormPessoais(v){
   const s=(k,l,arr)=>`<label for="f-${k}">${l}<select id="f-${k}"><option value="">Não informado</option>${opts(arr,v[k])}</select></label>`;
   const f=(k,l,at="",full)=>`<label class="${full?"full":""}" for="f-${k}">${l}<input id="f-${k}" value="${esc(v[k]||"")}" ${at}><span class="err" id="e-${k}"></span></label>`;
-  const tem=["sexo","estCivil","natural","tel2","email2","pai","mae"].some(k=>v[k]);
-  return `<details class="full mais-dados"${tem?" open":""}><summary>Mais dados pessoais <span class="rank">· opcional</span></summary><div class="form">${s("sexo","Sexo",SEXOS)}${s("estCivil","Estado civil",ESTCIVIL)}${f("natural","Naturalidade",'placeholder="Cidade/UF onde nasceu"')}${f("tel2","Outro telefone",'inputmode="tel" placeholder="Trabalho ou fixo"')}${f("email2","Outro e-mail",'type="email" placeholder="nome@email.com"',1)}${f("pai","Nome do pai","",1)}${f("mae","Nome da mãe","",1)}</div></details>`;
+  const tem=["sexo","estCivil","natural","tel2","email2","pai","mae","profissao","telTrab","email3"].some(k=>v[k]);
+  return `<details class="full mais-dados"${tem?" open":""}><summary>Mais dados pessoais <span class="rank">· opcional</span></summary><div class="form">${s("sexo","Sexo",SEXOS)}${s("estCivil","Estado civil",ESTCIVIL)}${f("natural","Naturalidade",'placeholder="Cidade/UF onde nasceu"')}${f("tel2","Outro telefone",'inputmode="tel" placeholder="Trabalho ou fixo"')}${f("email2","Outro e-mail",'type="email" placeholder="nome@email.com"',1)}${o35FormPessoais(v)}${f("pai","Nome do pai","",1)}${f("mae","Nome da mãe","",1)}</div></details>`;
 }
 function o1FormCat(v){const c=catDe(v);
   return `<label for="f-cat">Vínculo com a associação<select id="f-cat">${CATEG.map(x=>`<option value="${x.k}" ${x.k===c?"selected":""}>${x.n}</option>`).join("")}</select></label><label for="f-nsTipo" id="l-nsTipo" ${c==="contribuinte"?"":"hidden"}>Usa a associação como<select id="f-nsTipo">${opts(NS_TIPOS,v.nsTipo)}</select></label>`}
@@ -4075,7 +4082,7 @@ function o1FormAssoc(v,novo){const g=novo?sugerirGestor():(v.gestor||""),ind=v.i
   return `<label for="f-gestor">Responsável na equipe<select id="f-gestor"><option value="">Sem responsável</option>${gestAtivos().map(x=>`<option value="${x.id}" ${x.id===g?"selected":""}>${esc(x.nome)}</option>`).join("")}</select>${novo&&g?`<small class="hint">Sugerido: quem está com a menor carteira.</small>`:!gestores.length?`<small class="hint">Cadastre a equipe em Associados › Carteiras.</small>`:""}</label>
    <label for="f-recadEm">Último recadastramento<input id="f-recadEm" type="date" value="${esc(novo?hoje():v.recadEm||"")}"></label>
    <label class="full" for="f-indic">Indicado por<input id="f-indic" list="dl-ass" value="${ind?esc(ind.nome+" · "+ind.mat):""}" placeholder="Opcional: comece a digitar o nome de quem indicou" autocomplete="off"><datalist id="dl-ass">${lista.filter(x=>x.id!==v.id&&x.sit!=="Inativo").sort(porNome).map(x=>`<option value="${esc(x.nome+" · "+x.mat)}">`).join("")}</datalist><span class="err" id="e-indic"></span></label>
-   <label class="full chkline"><input type="checkbox" id="f-corresp" ${v.corresp?"checked":""}> Enviar correspondência impressa pelo correio</label>`}
+   <label class="full chkline"><input type="checkbox" id="f-corresp" ${v.corresp?"checked":""}> Enviar correspondência impressa pelo correio</label>${o35FormPend(v)}`}
 function o1Indic(){const v=($("#f-indic")?.value||"").trim();if(!v)return"";const x=lista.find(a=>a.nome+" · "+a.mat===v);return x?x.id:null}
 function o1LigarForm(){
   $("#f-tel2")?.addEventListener("input",e=>e.target.value=maskTel(e.target.value));
@@ -4096,17 +4103,18 @@ function o1Validar(erros){
   if(val("email2")&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email2")))erros.email2="E-mail inválido.";
   if(o1Indic()===null)erros.indic="Escolha um associado da lista (ou deixe em branco).";
   if(val("mensModo")==="manual"&&!(parseFloat(val("mensVal"))>=0))erros.mensVal="Informe o valor.";
+  o35Validar(erros);
 }
 function o1DadosForm(){const val=k=>($("#f-"+k)?.value||"").trim(),cat=val("cat")||"efetivo";
   const modo=cat==="remido"?"isento":val("mensModo")||"tabela";
   const mens=modo==="isento"?0:modo==="manual"?Math.round(parseFloat(val("mensVal")||"0")*100)/100:valorTabela(val("posto"),cat);
   const contatos=[...document.querySelectorAll(".ctrow")].map(r=>({nome:r.querySelector("[data-cn]").value.trim(),rel:r.querySelector("[data-cr]").value.trim(),tel:r.querySelector("[data-ct]").value.trim()})).filter(c=>c.nome||c.tel);
-  return {sexo:val("sexo"),estCivil:val("estCivil"),natural:val("natural"),tel2:val("tel2"),email2:val("email2"),pai:val("pai"),mae:val("mae"),cat,nsTipo:cat==="contribuinte"?val("nsTipo"):"",contatos,mensModo:modo,mens,gestor:val("gestor"),indicadoPor:o1Indic()||"",recadEm:val("recadEm"),corresp:!!$("#f-corresp")?.checked};
+  return {...o35DadosForm(),sexo:val("sexo"),estCivil:val("estCivil"),natural:val("natural"),tel2:val("tel2"),email2:val("email2"),pai:val("pai"),mae:val("mae"),cat,nsTipo:cat==="contribuinte"?val("nsTipo"):"",contatos,mensModo:modo,mens,gestor:val("gestor"),indicadoPor:o1Indic()||"",recadEm:val("recadEm"),corresp:!!$("#f-corresp")?.checked};
 }
 
 /* ---- ficha: blocos novos ---- */
 function o1FichaPessoais(a){const r=(t,v)=>v?`<dt>${t}</dt><dd>${esc(v)}</dd>`:"";
-  return r("Outro telefone",a.tel2)+r("Outro e-mail",a.email2)+r("Sexo",a.sexo)+r("Estado civil",a.estCivil)+r("Naturalidade",a.natural)+(dadosCompletos()?r("Pai",a.pai)+r("Mãe",a.mae):"")}
+  return r("Outro telefone",a.tel2)+r("Outro e-mail",a.email2)+r("Sexo",a.sexo)+r("Estado civil",a.estCivil)+r("Naturalidade",a.natural)+(dadosCompletos()?r("Pai",a.pai)+r("Mãe",a.mae):"")+o35FichaPessoais(a)}
 const o1MensTag=a=>catDe(a)==="remido"?` <span class="rank">· sócio remido</span>`:+a.mens?(mensModo(a)==="manual"?` <span class="rank">· valor próprio</span>`:` <span class="rank">· pela tabela</span>`):"";
 function o1FichaAssoc(a,ed){const c=catInfo(a),ind=a.indicadoPor&&lista.find(x=>x.id===a.indicadoPor),indicou=lista.filter(x=>x.indicadoPor===a.id),g=gestAtivos(),venc=recadVencido(a);
   const curto=n=>{const p=String(n).split(/\s+/);return p.length>1?p[0]+" "+p[p.length-1]:p[0]};
@@ -4124,10 +4132,10 @@ function o1Filtros(){return `<select id="fc" aria-label="Vínculo"><option value
   <select id="fp" aria-label="Posto"><option value="">Todos os postos</option>${POSTOS.map(p=>`<option>${p}</option>`).join("")}</select>
   ${gestores.length?`<select id="fg" aria-label="Responsável"><option value="">Todos os responsáveis</option>${gestAtivos().map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("")}<option value="sem">Sem responsável</option></select>`:""}
   <select id="fr" aria-label="Recadastramento"><option value="">Recadastro: todos</option><option value="venc">Recadastro vencido</option><option value="ok">Recadastro em dia</option></select>
-  <button type="button" class="btn ghost sm" data-o1salvarbusca>Salvar esta busca</button>`}
+  ${o35Filtros()}<button type="button" class="btn ghost sm" data-o1salvarbusca>Salvar esta busca</button>`}
 const o1Passa=a=>{const v=id=>$("#"+id)?.value||"",fc=v("fc"),fp=v("fp"),fg=v("fg"),fr=v("fr");
-  return(!fc||catDe(a)===fc)&&(!fp||a.posto===fp)&&(!fg||(fg==="sem"?!temGestor(a):a.gestor===fg))&&(!fr||(fr==="venc"?recadVencido(a):a.sit==="Ativo"&&!recadVencido(a)))};
-const BUSCA_IDS=["q","fs","ff","fd","fv","fo","fc","fp","fg","fr"];
+  return(!fc||catDe(a)===fc)&&(!fp||a.posto===fp)&&(!fg||(fg==="sem"?!temGestor(a):a.gestor===fg))&&(!fr||(fr==="venc"?recadVencido(a):a.sit==="Ativo"&&!recadVencido(a)))&&o35Passa(a)};
+const BUSCA_IDS=["q","fs","ff","fd","fv","fo","fc","fp","fg","fr","fci","fsx","fid","fan","ffp","forg","fdep","fbl","fing1","fing2","fgrp"];
 const lerBuscas=()=>{try{return JSON.parse(localStorage.getItem("buscas_ass")||"[]")}catch{return[]}};
 const gravarBuscas=l=>{try{localStorage.setItem("buscas_ass",JSON.stringify(l))}catch{}};
 function renderBuscas(){const el=$("#buscas");if(!el)return;const l=lerBuscas();el.hidden=!l.length;
@@ -4162,8 +4170,8 @@ async function exportarTabela({nome,titulo,sub,cols,rows,formato,log}){
 }
 function linhasAss(comCpf,curto){const dc=dadosCompletos(),l=filtrados(),srv=a=>SERVICOS.map(s=>{const x=a.servicos&&a.servicos[s.k];return !x?"Não contratado":x.status==="Ativo"?`Ativo desde ${fmtData(x.desde)}${x.valor?" · "+brl(x.valor):""}`:"Cancelado"});
   if(curto)return{cols:["Matrícula","Nome","Posto","Força / OM","Vínculo","Telefone","Responsável","Situação"],rows:l.map(a=>[a.mat,a.nome,ehNaoSocio(a)?a.nsTipo||"—":POSTO_AB[a.posto]||a.posto,[FORCA_AB[a.forca]||a.forca,a.om].filter(Boolean).join(" · "),catInfo(a).curto,a.tel||"",temGestor(a)?gestNome(a.gestor):"—",a.sit])};
-  const cols=["Matrícula","Nome","CPF","RG","Nascimento","Sexo","Estado civil","Naturalidade","Pai","Mãe","Vínculo","Usa como","Posto/graduação","Força","Situação militar","OM/lotação","Telefone","Outro telefone","E-mail","Outro e-mail","Endereço","Cidade","CEP","Contatos de emergência","Situação","Associado desde","Último recadastro","Recadastro","Responsável na equipe","Indicado por","Correspondência impressa","Mensalidade (R$)","Forma de pagamento","Dependentes","Documentos entregues","Documentos pendentes",...SERVICOS.map(s=>s.n)];
-  const rows=l.map(a=>{const ind=a.indicadoPor&&lista.find(x=>x.id===a.indicadoPor);return[a.mat,a.nome,comCpf?a.cpf:cpfMask(a.cpf),comCpf?a.rg:(a.rg?"***":""),fmtData(a.nasc),a.sexo||"",a.estCivil||"",a.natural||"",dc?a.pai||"":"",dc?a.mae||"":"",catInfo(a).curto,ehNaoSocio(a)?a.nsTipo||"":"",a.posto,a.forca,a.sitMil,a.om,a.tel,a.tel2||"",a.email,a.email2||"",dc?a.end:"",a.cidade,dc?a.cep:"",(a.contatos||[]).map(c=>[c.nome,c.rel,c.tel].filter(Boolean).join(" · ")).join(" | "),a.sit,fmtData(a.ing),a.recadEm?fmtData(a.recadEm):"",a.sit==="Ativo"?(recadVencido(a)?"Vencido":"Em dia"):"",temGestor(a)?gestNome(a.gestor):"",ind?ind.nome:"",a.corresp?"Sim":"Não",+a.mens||0,a.formaPag||"",(a.deps||[]).map(d=>`${d.nome} (${d.par})`).join(", "),docsOk(a)+"/"+DOCS.length,faltam(a).map(d=>d.n).join(", "),...srv(a)]});
+  const cols=["Matrícula","Nome","CPF","RG","Nascimento","Sexo","Estado civil","Naturalidade","Pai","Mãe","Vínculo","Usa como","Posto/graduação","Força","Situação militar","OM/lotação","Telefone","Outro telefone","E-mail","Outro e-mail","Endereço","Cidade","CEP","Contatos de emergência","Situação","Associado desde","Último recadastro","Recadastro","Responsável na equipe","Indicado por","Correspondência impressa","Mensalidade (R$)","Forma de pagamento","Dependentes","Documentos entregues","Documentos pendentes",...O35_COLS,...SERVICOS.map(s=>s.n)];
+  const rows=l.map(a=>{const ind=a.indicadoPor&&lista.find(x=>x.id===a.indicadoPor);return[a.mat,a.nome,comCpf?a.cpf:cpfMask(a.cpf),comCpf?a.rg:(a.rg?"***":""),fmtData(a.nasc),a.sexo||"",a.estCivil||"",a.natural||"",dc?a.pai||"":"",dc?a.mae||"":"",catInfo(a).curto,ehNaoSocio(a)?a.nsTipo||"":"",a.posto,a.forca,a.sitMil,a.om,a.tel,a.tel2||"",a.email,a.email2||"",dc?a.end:"",a.cidade,dc?a.cep:"",(a.contatos||[]).map(c=>[c.nome,c.rel,c.tel].filter(Boolean).join(" · ")).join(" | "),a.sit,fmtData(a.ing),a.recadEm?fmtData(a.recadEm):"",a.sit==="Ativo"?(recadVencido(a)?"Vencido":"Em dia"):"",temGestor(a)?gestNome(a.gestor):"",ind?ind.nome:"",a.corresp?"Sim":"Não",+a.mens||0,a.formaPag||"",(a.deps||[]).map(d=>`${d.nome} (${d.par})`).join(", "),docsOk(a)+"/"+DOCS.length,faltam(a).map(d=>d.n).join(", "),...o35Linha(a,dc),...srv(a)]});
   return{cols,rows}}
 async function exportarAss(formato,comCpf){comCpf=comCpf===true&&dadosCompletos();const pdf=formato==="pdf",{cols,rows}=linhasAss(comCpf,pdf);
   const f=[...document.querySelectorAll("#fbox select")].filter(s=>s.value&&s.id!=="fo").map(s=>s.options[s.selectedIndex].text),q=$("#q")?.value.trim();
@@ -4227,7 +4235,7 @@ function o1Change(e){const s=e.target.closest("[data-o1gestor]");if(!s)return fa
 function tabelaMensHTML(){const t=tabMens(),v=p=>t[p]!=null?t[p]:MENS_PADRAO(p),i0=POSTOS.indexOf("Aspirante"),dif=o1DifTabela();
   const inp=(k,n,val)=>`<label>${esc(n)}<input data-tm="${esc(k)}" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(val)}"></label>`;
   return `<div class="panel" style="margin-top:14px" id="tabmens"><h3>Tabela de mensalidades</h3><p class="rank" style="margin:0 0 12px">Valor por posto/graduação. Quem está com "valor da tabela" segue estes valores nas próximas mensalidades geradas. Sócio remido não paga.</p>
-   <form class="tm" id="ftm"><fieldset><legend>Praças</legend>${POSTOS.slice(0,i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Oficiais</legend>${POSTOS.slice(i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Outros</legend>${inp("_naoSocio","Não sócio (usa serviços)",t._naoSocio??94.5)}</fieldset><div class="actions"><button class="btn ghost" type="submit">Salvar tabela</button></div></form>
+   <form class="tm" id="ftm"><fieldset><legend>Praças e alunos</legend>${POSTOS.slice(0,i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Oficiais</legend>${POSTOS.slice(i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Outros</legend>${inp("_naoSocio","Não sócio (usa serviços)",t._naoSocio??94.5)}</fieldset><div class="actions"><button class="btn ghost" type="submit">Salvar tabela</button></div></form>
    ${dif.length?`<div class="callout" style="margin-top:12px"><span>${dif.length} ${dif.length===1?"associado está":"associados estão"} com valor diferente da tabela. O total mensal passa de ${brl(dif.reduce((s,a)=>s+(+a.mens||0),0))} para ${brl(dif.reduce((s,a)=>s+valorTabela(a.posto,catDe(a)),0))}.</span><button class="btn sm" data-o1aplicartab ${o1UI.lote?"disabled":""}>Atualizar ${dif.length===1?"esse associado":"esses associados"}</button></div>`:""}</div>`}
 function o1ClickFin(e){if(viewAtual!=="financeiro"||!e.target.closest("[data-o1aplicartab]"))return false;const l=o1DifTabela();
   emLote(l,(r,a)=>{const v=valorTabela(a.posto,catDe(a));return r.update({mens:v,mensModo:"tabela",hist:hist(a,`Mensalidade ajustada à tabela: ${brl(v)}`)})},k=>`${k} ${k===1?"mensalidade atualizada":"mensalidades atualizadas"} pela tabela`).then(k=>registrar("Aplicou a tabela de mensalidades",null,k+" associados"));return true}
@@ -5078,6 +5086,194 @@ function ligarOnda5(){
   if(viewAtual==="caminhao"){$("#o5-fc")?.addEventListener("submit",e=>{e.preventDefault();o5SalvarCam()});$("#o5-ft")?.addEventListener("submit",e=>{e.preventDefault();o5SalvarTel()});$("#o5-fcc")?.addEventListener("submit",e=>{e.preventDefault();o5SalvarCamCfg()})}
   const nb=$("#nav-o5");if(nb){const k=o5.at.filter(x=>x.data===hoje()&&x.status==="marcado").length;nb.hidden=!k||!podeVer("atendimento");nb.textContent=k}}
 
+/* ---------- v35 · onda 1 revisada (BMAD, spec-onda1-cadastro): campos que faltavam na ficha, dependentes completos, bloqueio e pendências, última mensalidade paga, documentos extras, pesquisa ampla, histórico com autor e ficha em PDF ---------- */
+const UFS=["AC","AL","AP","AM","BA","CE","DF","ES","GO","MA","MT","MS","MG","PA","PB","PR","PE","PI","RJ","RN","RS","RO","RR","SC","SP","SE","TO"];
+const PROFISSOES=["Militar","Policial civil","Policial penal","Servidor público","Professor(a)","Advogado(a)","Enfermeiro(a)","Médico(a)","Engenheiro(a)","Contador(a)","Administrador(a)","Comerciante","Autônomo(a)","Motorista","Vigilante","Técnico(a)","Estudante","Aposentado(a)","Do lar"];
+const TIPOS_DOCX=["Certidão de casamento","Certidão de nascimento de dependente","Declaração de união estável","Termo de adesão","Autorização de débito","Procuração","Laudo médico","Comprovante de escolaridade","Declaração","Outro"];
+let o35UI={bloq:null,rmx:null,envx:false,depEnv:null,dep:{q:"",par:"",id:"",st:"Ativo"}};
+ACESSO.secretaria.push("dependentes");ACESSO.tesouraria.push("dependentes");NAV_ALIAS.dependentes="associados";
+
+/* autor de cada alteração (hist, bloqueio, documentos) */
+function o35Autor(){if(viewAtual==="app"||viewAtual==="portal")return{por:"app"};return{por:quem.id||"equipe",porNome:(quem.id&&nomesU[quem.id])||"",porPapel:(PAPEIS[papel()]||{}).n||""}}
+const o35AutorTxt=h=>{if(!h||!h.por)return"";if(h.por==="app")return"associado, pelo app";const n=h.porNome||(h.por!=="equipe"&&nomesU[h.por])||"";return[n,h.porPapel].filter(Boolean).join(" · ")||"equipe"};
+const o35Por=h=>{const t=o35AutorTxt(h);return t?` <span class="rank">· por ${esc(t)}</span>`:""};
+function iniciarOnda35(){let n=0;const t=setInterval(()=>{if(quem.id){clearInterval(t);carregarNomes([quem.id])}else if(++n>20)clearInterval(t)},1000)}
+
+/* ---- parte 1: campos novos ---- */
+function o35FormPessoais(v){const f=(k,l,at="",full)=>`<label class="${full?"full":""}" for="f-${k}">${l}<input id="f-${k}" value="${esc(v[k]||"")}" ${at}><span class="err" id="e-${k}"></span></label>`;
+  return f("profissao","Profissão",'list="dl-prof" placeholder="Ex.: Servidor público" autocomplete="off"')+`<datalist id="dl-prof">${PROFISSOES.map(p=>`<option value="${p}">`).join("")}</datalist>`+f("telTrab","Telefone do trabalho",'inputmode="tel" placeholder="(79) 0000-0000"')+f("email3","Terceiro e-mail",'type="email" placeholder="nome@email.com"',1)}
+const o35FormUF=v=>`<label for="f-uf">UF<select id="f-uf"><option value="">Não informada</option>${UFS.map(u=>`<option ${u===v.uf?"selected":""}>${u}</option>`).join("")}</select></label>`;
+const o35FormPend=v=>`<label class="full" for="f-pend">Pendências <span class="rank">· o que falta resolver com o associado (opcional)</span><textarea id="f-pend" rows="2" placeholder="Ex.: falta assinar o termo BANESE">${esc(v.pend||"")}</textarea></label>`;
+function o35DadosForm(){const v=k=>($("#f-"+k)?.value||"").trim();return{profissao:v("profissao"),telTrab:v("telTrab"),email3:v("email3"),uf:v("uf"),pend:v("pend")}}
+function o35LigarForm(){$("#f-telTrab")?.addEventListener("input",e=>e.target.value=maskTel(e.target.value));
+  $("#deps")?.addEventListener("input",e=>{if(e.target.matches("[data-dc]"))e.target.value=maskCPF(e.target.value)})}
+function o35Validar(erros){const val=k=>($("#f-"+k)?.value||"").trim();
+  if(val("telTrab")&&val("telTrab").replace(/\D/g,"").length<10)erros.telTrab="Telefone com DDD.";
+  if(val("email3")&&!emailOk(val("email3")))erros.email3="E-mail inválido.";
+  const ruins=[...document.querySelectorAll("#deps .deprow")].filter(r=>{const c=r.querySelector("[data-dc]");const ok=!c||!c.value.trim()||cpfValido(c.value);if(c)c.setAttribute("aria-invalid",ok?"false":"true");return !ok});
+  if(ruins.length)erros.depcpf=ruins.length===1?"CPF de dependente inválido. Confira os números.":`${ruins.length} CPFs de dependentes inválidos.`}
+function o35LerDeps(){return[...document.querySelectorAll("#deps .deprow")].map(r=>{const q=s=>r.querySelector(s),d={nome:q("[data-dn]").value.trim(),par:q("[data-dp]").value,nasc:q("[data-dd]").value};
+  const cpf=(q("[data-dc]")?.value||"").trim(),sx=q("[data-dsx]")?.value||"",st=q("[data-dst]")?.value||"";if(cpf)d.cpf=maskCPF(cpf);if(sx)d.sexo=sx;if(st==="Inativo")d.sit="Inativo";
+  if(r.dataset.dfoto)try{d.foto=JSON.parse(r.dataset.dfoto)}catch{}return d}).filter(d=>d.nome)}
+function o35FichaPessoais(a){const r=(t,v)=>v?`<dt>${t}</dt><dd>${esc(v)}</dd>`:"";return r("Telefone do trabalho",a.telTrab)+r("Terceiro e-mail",a.email3)+(dadosCompletos()?r("Profissão",a.profissao):"")}
+
+/* ---- parte 2: dependentes ---- */
+const o35DepFoto=d=>d&&d.foto&&d.foto.assetId?(d.foto.url||"/_blob/"+d.foto.assetId):null;
+const o35Idade=n=>{if(!n)return null;const d=new Date(n+"T12:00"),h=new Date();let x=h.getFullYear()-d.getFullYear();if(h<new Date(h.getFullYear(),d.getMonth(),d.getDate()))x--;return x};
+function o35DepsFicha(a,ed){const dep=a.deps||[],dc=dadosCompletos(),at=dep.filter(d=>d.sit!=="Inativo").length;
+  return `<div class="panel"><h3>Dependentes (${at<dep.length?`${at} ativos de ${dep.length}`:dep.length})</h3>${dep.length?`<div class="list">${dep.map((d,j)=>{const u=o35DepFoto(d);
+    return `<div class="tile o35dep"><span class="av avx">${u?`<img src="${esc(u)}" alt="" onerror="this.remove()">`:""}<i>${esc(ini(d.nome))}</i></span><span class="o35dep-t">${esc(d.nome)}${d.sit==="Inativo"?` <span class="pill neutral">Inativo</span>`:""}<br><span class="rank">${[esc(d.par),d.nasc?fmtData(d.nasc)+idade(d.nasc):"",esc(d.sexo||""),dc&&d.cpf?"CPF "+cpfMask(d.cpf):""].filter(Boolean).join(" · ")}</span></span>${ed&&assets?(o35UI.depEnv===j?`<span class="rank">Enviando…</span>`:`<span class="r"><label class="btn ghost sm" style="cursor:pointer">${u?"Trocar foto":"Pôr foto"}<input type="file" hidden accept="image/*" data-o35depfoto="${j}"></label>${u?`<button class="btn ghost sm" data-o35depfotorm="${j}">Tirar foto</button>`:""}</span>`):""}</div>`}).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum dependente cadastrado.</p>`}</div>`}
+async function o35EnviarFotoDep(inp){const a=lista.find(x=>x.id===aberto?.id),j=+inp.dataset.o35depfoto,f=inp.files&&inp.files[0];if(!a||!f||!assets||!(a.deps||[])[j])return;
+  if(!/^image\//.test(f.type))return toast("Escolha uma foto (imagem).");
+  o35UI.depEnv=j;renderFicha(a.id);
+  try{let arq=f;try{arq=await reduzirFoto(f)}catch{}const r=await assets.upload(arq),old=a.deps[j].foto;
+    const deps=a.deps.map((d,i)=>i===j?{...d,foto:{assetId:r.id,url:r.url,ct:r.contentType||arq.type}}:d);
+    if(!await escrever(a.id,x=>x.update({deps,hist:hist(a,"Foto do dependente "+a.deps[j].nome.split(" ")[0]+" alterada")}),"Foto do dependente salva"))assets.delete(r.id).catch(()=>{});else if(old&&old.assetId)assets.delete(old.assetId).catch(()=>{});
+  }catch(e){toast({too_large:"Foto grande demais.",unsupported_type:"Use JPG ou PNG.",not_granted:"Sem permissão para enviar arquivos."}[e&&e.code]||"Não foi possível enviar a foto.")}
+  finally{o35UI.depEnv=null;if(aberto?.id===a.id)renderFicha(a.id)}}
+const O35_IDADES=[["0-17","Menores de 18"],["18-23","18 a 23 anos"],["24-200","24 anos ou mais"]];
+function o35DepLista(){const U=o35UI.dep,q=U.q.toLowerCase().trim(),l=[];
+  lista.filter(a=>!a.anonimizadoEm).forEach(a=>(a.deps||[]).forEach((d,j)=>{const ativo=d.sit!=="Inativo"&&a.sit!=="Inativo",k=o35Idade(d.nasc);
+    if(U.par&&d.par!==U.par)return;if(U.st&&(U.st==="Ativo")!==ativo)return;
+    if(U.id){const[x,y]=U.id.split("-").map(Number);if(k==null||k<x||k>y)return}
+    if(q&&!(d.nome+" "+a.nome+" "+a.mat).toLowerCase().includes(q))return;l.push({a,d,j,ativo,k})}));
+  return l.sort((x,y)=>String(x.d.nome).localeCompare(String(y.d.nome),"pt-BR"))}
+views.dependentes=function(){const U=o35UI.dep,dc=dadosCompletos(),l=o35DepLista(),tot=lista.reduce((s,a)=>s+(a.deps||[]).length,0);
+  const sel=(id,lbl,o,v)=>`<select id="${id}" aria-label="${lbl}">${o.map(([k,n])=>`<option value="${k}" ${k===v?"selected":""}>${n}</option>`).join("")}</select>`;
+  return cabecalho("Cadastro","Associados","Cadastro, busca e ficha completa de cada associado.",btnExportar())+aviso()+abasAss("dependentes")+
+  `<div class="toolbar"><input id="o35-dq" type="search" placeholder="Buscar dependente, titular ou matrícula" value="${esc(U.q)}" aria-label="Buscar">
+   ${sel("o35-dpar","Parentesco",[["","Todos os parentescos"],...PARENT.map(p=>[p,p])],U.par)}${sel("o35-did","Idade",[["","Todas as idades"],...O35_IDADES],U.id)}${sel("o35-dst","Situação",[["","Ativos e inativos"],["Ativo","Só ativos"],["Inativo","Só inativos"]],U.st)}</div>
+  <div class="tablewrap"><table><thead><tr><th>Dependente</th><th>Parentesco</th><th>Nascimento</th><th>Sexo</th>${dc?"<th>CPF</th>":""}<th>Titular</th><th>Situação</th></tr></thead><tbody>${l.map(({a,d,ativo})=>`<tr data-open="${a.id}" tabindex="0"><td><div class="who">${avatar({nome:d.nome,fotoPerfil:d.foto})}<div>${esc(d.nome)}</div></div></td><td>${esc(d.par||"")}</td><td>${d.nasc?fmtData(d.nasc)+idade(d.nasc):"—"}</td><td>${esc(d.sexo||"—")}</td>${dc?`<td class="mono">${d.cpf?cpfMask(d.cpf):"—"}</td>`:""}<td>${esc(a.nome)}<div class="rank mono">${esc(a.mat)}</div></td><td><span class="pill ${ativo?"ok":"neutral"}">${ativo?"Ativo":"Inativo"}</span></td></tr>`).join("")||`<tr><td colspan="7" style="color:var(--muted)">${tot?"Nenhum dependente com esses filtros.":"Nenhum dependente cadastrado ainda."}</td></tr>`}</tbody></table></div>
+  <p class="sample">${l.length} de ${tot} dependentes. Toque numa linha para abrir a ficha do titular.</p>`};
+function o35ExportarDeps(formato){const l=o35DepLista(),U=o35UI.dep;
+  exportarTabela({nome:"dependentes-"+hoje(),titulo:"Dependentes",sub:`${l.length} dependentes${U.par?" · "+U.par:""}${U.st?" · "+(U.st==="Ativo"?"ativos":"inativos"):""}`,cols:["Dependente","Parentesco","Nascimento","Idade","Sexo","CPF","Titular","Matrícula","Situação"],
+    rows:l.map(({a,d,ativo,k})=>[d.nome,d.par||"",fmtData(d.nasc),k==null?"":k,d.sexo||"",d.cpf?cpfMask(d.cpf):"",a.nome,a.mat,ativo?"Ativo":"Inativo"]),formato,log:["Exportou dependentes",null,`${l.length} · ${formato.toUpperCase()}`]})}
+
+/* ---- parte 3: bloqueio e pendências ---- */
+const o35Tags=a=>a.bloqueio?` <span class="pill bad">Bloqueado</span>`:"";
+const o35Mais=a=>`${a.sit!=="Inativo"&&!a.bloqueio?`<button class="btn ghost" data-o35bloq>Bloquear associado</button>`:""}<button class="btn ghost" data-o35pdf>Imprimir ficha (PDF)</button>`;
+function o35Avisos(a,ed){let h="";
+  if(ed&&o35UI.bloq===a.id)h+=`<div class="inline bad"><label for="o35-bm" class="rank">Motivo do bloqueio</label><input id="o35-bm" style="flex:1;min-width:180px" placeholder="Ex.: documentação irregular"><button class="btn danger" data-o35bloqok>Bloquear</button><button class="btn ghost" data-o35cancel>Cancelar</button></div>`;
+  if(a.bloqueio)h+=`<div class="notice bad o35bl"><span><b>Associado bloqueado</b> desde ${fmtData(a.bloqueio.em)}: ${esc(a.bloqueio.motivo||"")}. Continua sócio, mas não consegue pedir serviços nem reservas pelo app.</span>${ed?`<button class="btn sm" data-o35desbloq>Desbloquear</button>`:""}</div>`;
+  if(a.pend&&dadosCompletos())h+=`<div class="callout"><span><b>Pendências:</b> ${esc(a.pend)}</span>${ed?`<button class="btn ghost sm" data-o35pendok>Marcar como resolvido</button>`:""}</div>`;
+  return h}
+/* app: associado bloqueado não faz pedido de serviço, reserva, atendimento nem caminhão */
+document.addEventListener("click",e=>{if(viewAtual!=="app"&&viewAtual!=="portal")return;const t=e.target.closest("#ps-ok,#pq-ok,[data-psol],[data-p5pedir],[data-p5cpedir]");if(!t)return;
+  const a=pAssoc();if(a&&a.bloqueio){e.stopImmediatePropagation();e.preventDefault();toast("Seu cadastro está bloqueado. Procure a secretaria para regularizar.")}},true);
+
+/* ---- parte 4: última mensalidade paga e lista por responsável ---- */
+const o35UltPaga=a=>minhasMens(a).find(i=>i.status==="pago")||null;
+const o35MesTxt=c=>`${mesSo(c)}/${c.slice(0,4)}`;
+const o35Meses=(de,ate)=>(+ate.slice(0,4)*12+ +ate.slice(5,7))-(+de.slice(0,4)*12+ +de.slice(5,7));
+function o35FichaAssoc(a){const u=o35UltPaga(a);
+  return `<dt>Última mensalidade paga</dt><dd>${u?o35MesTxt(u.comp)+(u.pagoEm?` <span class="rank">· em ${fmtData(u.pagoEm)}</span>`:""):+a.mens?`<span class="rank">Nenhuma registrada</span>`:`<span class="rank">Não paga mensalidade</span>`}</dd>`+
+   (a.sit==="Inativo"&&a.inativadoEm?`<dt>Desligado em</dt><dd>${fmtData(a.inativadoEm)}${a.motivo?" · "+esc(a.motivo):""}</dd>`:"")+
+   (a.atualizadoEm?`<dt>Última alteração</dt><dd>${new Date(a.atualizadoEm).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}${a.atualizadoPor?" · "+esc(a.atualizadoPor):""}</dd>`:"")}
+function o35Agrupar(l,fn,modo){if(($("#fgrp")?.value||"")!=="resp")return l.map(fn).join("");
+  const g=new Map();l.forEach(a=>{const k=temGestor(a)?gestNome(a.gestor):"Sem responsável";if(!g.has(k))g.set(k,[]);g.get(k).push(a)});
+  return [...g.entries()].sort((x,y)=>x[0]==="Sem responsável"?1:y[0]==="Sem responsável"?-1:x[0].localeCompare(y[0],"pt-BR"))
+    .map(([k,v])=>(modo==="tr"?`<tr class="o35grp"><td colspan="6"><b>${esc(k)}</b> · ${v.length}</td></tr>`:`<h3 class="o35grp">${esc(k)} <span class="rank">· ${v.length} ${v.length===1?"associado":"associados"}</span></h3>`)+v.map(fn).join("")).join("")}
+REL.push({id:"o35ultima",t:"Última mensalidade por associado",d:"Quando cada associado pagou pela última vez, há quantos meses e quem da equipe acompanha.",mes:false,g(){const c=hoje().slice(0,7),l=lista.filter(a=>a.sit!=="Inativo"&&!a.anonimizadoEm&&+a.mens).sort(porNome);
+  const rows=l.map(a=>{const u=o35UltPaga(a);return[a.mat,a.nome,temGestor(a)?gestNome(a.gestor):"—",a.formaPag||"Desconto em folha",u?o35MesTxt(u.comp):"Nenhuma",u?o35Meses(u.comp,c):"—"]});
+  return{res:[["Associados que pagam",l.length],["Nenhuma paga registrada",rows.filter(r=>r[4]==="Nenhuma").length],["2 meses ou mais sem pagar",rows.filter(r=>typeof r[5]==="number"&&r[5]>=2).length]],cols:["Matrícula","Nome","Responsável","Forma de pagamento","Última paga","Meses desde a última"],rows}}});
+
+/* ---- parte 5: documentos extras ---- */
+const o35Assets=a=>[...(a.docsExtra||[]).map(x=>x&&x.assetId),...(a.deps||[]).map(d=>d&&d.foto&&d.foto.assetId)].filter(Boolean);
+function o35DocsExtra(a,ed){const l=a.docsExtra||[];
+  return `<div class="panel"><h3>Outros documentos (${l.length})</h3><p class="rank" style="margin:0 0 10px">Certidões, termos, laudos e o que mais for preciso. Não contam para aprovar a filiação.</p>${l.length?`<div class="docs">${l.map(x=>`<div class="doc"><span>${esc(x.tipo)}<br><span class="rank">${x.assetId?esc(x.arquivo||"arquivo"):"recebido em papel"} · ${fmtData(x.em)}</span></span><span class="r">${x.assetId?`<button class="btn ghost sm" data-o35verx="${x.id}">Ver arquivo</button>`:`<span class="pill ok">Recebido</span>`}${ed?(o35UI.rmx===x.id?`<button class="btn danger sm" data-o35rmxok="${x.id}">Apagar de vez</button><button class="btn ghost sm" data-o35rmx="">Voltar</button>`:`<button class="btn ghost sm" data-o35rmx="${x.id}">Remover</button>`):""}</span></div>`).join("")}</div>`:""}
+  ${ed?`<div class="o35dx"><input id="o35-dxt" list="dl-dx" placeholder="Tipo do documento (ex.: Certidão de casamento)" aria-label="Tipo do documento" autocomplete="off"><datalist id="dl-dx">${TIPOS_DOCX.map(t=>`<option value="${t}">`).join("")}</datalist>${o35UI.envx?`<span class="rank">Enviando arquivo…</span>`:`<span class="r">${assets?`<label class="btn ghost sm" style="cursor:pointer">Anexar arquivo<input type="file" hidden accept="image/*,application/pdf" data-o35upx></label>`:""}<button class="btn ghost sm" data-o35papelx>Recebido em papel</button></span>`}</div>`:""}</div>`}
+const o35NovoDx=(tipo,extra)=>({id:"dx"+Date.now().toString(36),tipo,em:hoje(),...extra,...o35Autor()});
+async function o35UploadExtra(inp){const a=lista.find(x=>x.id===aberto?.id),f=inp.files&&inp.files[0],tipo=($("#o35-dxt")?.value||"").trim();inp.value="";if(!a||!f||!assets)return;
+  if(!tipo){toast("Escreva o tipo do documento antes de anexar.");$("#o35-dxt")?.focus();return}
+  if(f.size>20*1024*1024)return toast("Arquivo maior que 20 MB.");
+  o35UI.envx=true;renderFicha(a.id);
+  try{const r=await assets.upload(f),x=o35NovoDx(tipo,{assetId:r.id,url:r.url,ct:r.contentType||f.type,arquivo:f.name});
+    if(!await escrever(a.id,ref=>ref.update({docsExtra:[...(a.docsExtra||[]),x],hist:hist(a,tipo+" anexado")}),tipo+" anexado"))assets.delete(r.id).catch(()=>{});else registrar("Anexou documento extra",a,tipo)}
+  catch(e){toast({too_large:"Arquivo grande demais.",unsupported_type:"Use PDF ou imagem.",not_granted:"Sem permissão para anexar arquivos."}[e&&e.code]||"Não foi possível enviar o arquivo.")}
+  finally{o35UI.envx=false;if(aberto?.id===a.id)renderFicha(a.id)}}
+
+/* ---- parte 6: pesquisa ampla ---- */
+const o35Cid=a=>String(a.cidade||"").split("/")[0].trim();
+function o35Filtros(){const cid=[...new Set(lista.map(o35Cid).filter(Boolean))].sort((x,y)=>x.localeCompare(y,"pt-BR")),org=[...new Set(lista.map(a=>a.orgao).filter(Boolean))].sort(),on=c=>(o2Orgaos().find(o=>o.cod===c)||{}).nome||"";
+  const s=(id,l,o)=>`<select id="${id}" aria-label="${l}">${o}</select>`;
+  return s("fci","Cidade",`<option value="">Todas as cidades</option>${cid.map(c=>`<option>${esc(c)}</option>`).join("")}`)+
+   s("fsx","Sexo",`<option value="">Sexo: todos</option>${SEXOS.slice(0,2).map(x=>`<option>${x}</option>`).join("")}`)+
+   s("fid","Idade",`<option value="">Idade: todas</option><option value="0-29">Até 29 anos</option><option value="30-44">30 a 44 anos</option><option value="45-59">45 a 59 anos</option><option value="60-200">60 anos ou mais</option>`)+
+   s("fan","Aniversário",`<option value="">Aniversário: qualquer mês</option>${MESES.map((m,i)=>`<option value="${pad2(i+1)}">Aniversário em ${m}</option>`).join("")}`)+
+   s("ffp","Forma de pagamento",`<option value="">Todas as formas de pagamento</option>${FORMAS_MENS.map(f=>`<option>${f}</option>`).join("")}`)+
+   (org.length?s("forg","Órgão de origem",`<option value="">Todos os órgãos</option>${org.map(c=>`<option value="${esc(c)}">${esc(c)}${on(c)?" · "+esc(on(c)):""}</option>`).join("")}`):"")+
+   s("fdep","Dependentes",`<option value="">Dependentes: todos</option><option value="com">Com dependentes</option><option value="sem">Sem dependentes</option>`)+
+   s("fbl","Bloqueio e pendências",`<option value="">Bloqueio e pendências: todos</option><option value="bloq">Bloqueados</option><option value="pend">Com pendências</option>`)+
+   `<div class="o35per"><label>Filiados de<input id="fing1" type="date"></label><label>até<input id="fing2" type="date"></label></div>`+
+   s("fgrp","Agrupar",`<option value="">Sem agrupar</option><option value="resp">Agrupar por responsável</option>`)}
+const O35_FIDS=["fci","fsx","fid","fan","ffp","forg","fdep","fbl","fing1","fing2"];
+function o35Passa(a){const v=id=>$("#"+id)?.value||"",ci=v("fci"),sx=v("fsx"),fi=v("fid"),an=v("fan"),fp=v("ffp"),og=v("forg"),dp=v("fdep"),bl=v("fbl"),i1=v("fing1"),i2=v("fing2");
+  if(ci&&o35Cid(a)!==ci)return false;if(sx&&a.sexo!==sx)return false;
+  if(fi){const[x,y]=fi.split("-").map(Number),k=o35Idade(a.nasc);if(k==null||k<x||k>y)return false}
+  if(an&&String(a.nasc||"").slice(5,7)!==an)return false;
+  if(fp&&(a.formaPag||"Desconto em folha")!==fp)return false;if(og&&a.orgao!==og)return false;
+  const nd=(a.deps||[]).filter(d=>d.sit!=="Inativo").length;if(dp&&(dp==="com"?!nd:nd))return false;
+  if(bl&&(bl==="bloq"?!a.bloqueio:!a.pend))return false;
+  if(i1&&String(a.ing||"")<i1)return false;if(i2&&String(a.ing||"")>i2)return false;return true}
+/* colunas extras da exportação de associados */
+const O35_COLS=["Profissão","UF","Telefone do trabalho","Terceiro e-mail","Bloqueado","Pendências","Última mensalidade paga","Desligado em"];
+const o35Linha=(a,dc)=>{const u=o35UltPaga(a);return[dc?a.profissao||"":"",a.uf||"",a.telTrab||"",a.email3||"",a.bloqueio?"Sim: "+(a.bloqueio.motivo||""):"Não",dc?a.pend||"":"",u?o35MesTxt(u.comp):"",a.sit==="Inativo"&&a.inativadoEm?fmtData(a.inativadoEm):""]};
+
+/* ---- parte 7: ficha em PDF ---- */
+async function o35FichaPDF(a){if(!downloads)return toast("Baixar arquivos não está disponível aqui.");
+  try{const J=await carregarAutoTable(),pdf=new J({unit:"mm",format:"a4"}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight(),dc=dadosCompletos(),ct=catInfo(a),u=o35UltPaga(a);
+    pdf.setFont("helvetica","bold");pdf.setFontSize(9);pdf.setTextColor(110);pdf.text(String(MARCA.nome).toUpperCase(),14,13);
+    pdf.setFontSize(16);pdf.setTextColor(20);pdf.text("Ficha do associado",14,21);
+    pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(100);pdf.text(`${a.nome} · matrícula ${a.mat} · ${a.sit}${a.bloqueio?" · BLOQUEADO":""} · emitida em ${new Date().toLocaleDateString("pt-BR")}`,14,27);
+    let y=32;const est={theme:"grid",margin:{left:14,right:14},styles:{fontSize:8.5,cellPadding:1.6,overflow:"linebreak"},headStyles:{fillColor:[26,48,105],textColor:255,fontStyle:"bold"}};
+    const sec=(t,pares)=>{pares=pares.filter(p=>p[1]!=null&&p[1]!=="");if(!pares.length)return;pdf.autoTable({...est,startY:y,head:[[{content:t,colSpan:2}]],body:pares.map(([k,v])=>[k,String(v)]),columnStyles:{0:{cellWidth:50,fontStyle:"bold",textColor:70}}});y=pdf.lastAutoTable.finalY+5};
+    const tab=(t,cols,rows)=>{if(!rows.length)return;pdf.autoTable({...est,startY:y,head:[[{content:t,colSpan:cols.length}],cols],body:rows});y=pdf.lastAutoTable.finalY+5};
+    sec("Dados pessoais",[["Nome",a.nome],["CPF",dc?a.cpf:cpfMask(a.cpf)],["RG",dc?a.rg:""],["Nascimento",a.nasc?fmtData(a.nasc)+idade(a.nasc):""],["Sexo",a.sexo],["Estado civil",a.estCivil],["Naturalidade",a.natural],["Profissão",dc?a.profissao:""],["Pai",dc?a.pai:""],["Mãe",dc?a.mae:""]]);
+    sec("Contato e endereço",[["Celular",a.tel],["Outro telefone",a.tel2],["Telefone do trabalho",a.telTrab],["E-mails",[a.email,a.email2,a.email3].filter(Boolean).join(" · ")],["Endereço",dc?a.end:""],["Cidade/UF",[a.cidade,a.uf].filter(Boolean).join(" / ")],["CEP",dc?a.cep:""],["Correspondência impressa",a.corresp?"Sim":"Não"]]);
+    sec("Vínculo e dados militares",[["Vínculo",ct.n+(ehNaoSocio(a)&&a.nsTipo?" · "+a.nsTipo:"")],["Posto/graduação",ehNaoSocio(a)?"":a.posto],["Força",a.forca],["Situação militar",a.sitMil],["OM / lotação",a.om],["Identidade militar",a.idMil]]);
+    sec("Associação",[["Associado desde",fmtData(a.ing)],["Mensalidade",+a.mens?brl(a.mens):"Isento"],["Forma de pagamento",a.formaPag||"Desconto em folha"],["Órgão de origem",a.orgao],["Responsável na equipe",temGestor(a)?gestNome(a.gestor):""],["Último recadastramento",a.recadEm?fmtData(a.recadEm):""],["Última mensalidade paga",u?o35MesTxt(u.comp):""],["Pendências",dc?a.pend:""],["Bloqueio",a.bloqueio?`${fmtData(a.bloqueio.em)}: ${a.bloqueio.motivo||""}`:""],["Desligamento",a.sit==="Inativo"&&a.inativadoEm?`${fmtData(a.inativadoEm)}${a.motivo?" · "+a.motivo:""}`:""]]);
+    tab("Contatos de emergência",["Nome","Relação","Telefone"],(a.contatos||[]).map(c=>[c.nome||"",c.rel||"",c.tel||""]));
+    tab("Dependentes",["Nome","Parentesco","Nascimento","Sexo","CPF","Situação"],(a.deps||[]).map(d=>[d.nome,d.par||"",fmtData(d.nasc),d.sexo||"",d.cpf?(dc?d.cpf:cpfMask(d.cpf)):"",d.sit==="Inativo"?"Inativo":"Ativo"]));
+    tab("Documentos",["Documento","Situação"],[...DOCS.map(d=>{const x=a.docs&&a.docs[d.k];return[d.n,x?(x.tipo==="arquivo"?"Anexado":"Recebido em papel")+" em "+fmtData(x.em):"Pendente"]}),...(a.docsExtra||[]).map(x=>[x.tipo,(x.assetId?"Anexado":"Recebido em papel")+" em "+fmtData(x.em)])]);
+    if(a.obs&&dc)sec("Observações",[["",a.obs]]);
+    if(y>H-40){pdf.addPage();y=30}else y=Math.max(y+14,H-50);
+    pdf.setDrawColor(120);pdf.setFontSize(9);pdf.setTextColor(60);[[14,"Assinatura do associado"],[W/2+6,"Secretaria"]].forEach(([x,t])=>{pdf.line(x,y,x+W/2-20,y);pdf.text(t,x,y+5)});
+    pdf.text(`Local e data: ____________________, ____/____/______`,14,y+16);
+    await downloads.save({filename:`ficha-${String(a.mat).replace(/\W+/g,"-")}.pdf`,data:pdf.output("blob")});toast("Ficha em PDF salva");registrar("Imprimiu a ficha",a);
+  }catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast(e&&e.msg||"Não foi possível gerar o PDF.")}}
+
+/* ---- cliques, mudanças e ligação ---- */
+function o35Click(e){const b=s=>e.target.closest(s);let x;
+  if(viewAtual==="dependentes"&&(x=b("[data-exp]"))){x.closest("details").open=false;o35ExportarDeps(x.dataset.exp);return true}
+  if(!aberto||aberto.tipo!=="ficha"||!$("#layer").contains(e.target))return false;
+  const a=lista.find(y=>y.id===aberto.id);if(!a)return false;
+  if(b("[data-o35pdf]")){b("details")&&(b("details").open=false);o35FichaPDF(a);return true}
+  if(b("[data-o35bloq]")){o35UI.bloq=a.id;fichaUI.rolar=false;renderFicha(a.id);$("#o35-bm")?.focus();return true}
+  if(b("[data-o35cancel]")){o35UI.bloq=null;renderFicha(a.id);return true}
+  if(b("[data-o35bloqok]")){const m=($("#o35-bm")?.value||"").trim();if(!m){toast("Escreva o motivo do bloqueio.");$("#o35-bm")?.focus();return true}
+    o35UI.bloq=null;escrever(a.id,r=>r.update({bloqueio:{motivo:m,em:hoje(),...o35Autor()},hist:hist(a,"Bloqueado: "+m)}),"Associado bloqueado").then(ok=>ok&&registrar("Bloqueou o associado",a,m));return true}
+  if(b("[data-o35desbloq]")){const ant=a.bloqueio;comDesfazer(a.id,r=>r.update({bloqueio:null,hist:hist(a,"Desbloqueado")}),"Associado desbloqueado",r=>r.update({bloqueio:ant}));registrar("Desbloqueou o associado",a);return true}
+  if(b("[data-o35pendok]")){const ant=a.pend;comDesfazer(a.id,r=>r.update({pend:"",hist:hist(a,"Pendência resolvida: "+ant)}),"Pendência resolvida",r=>r.update({pend:ant}));return true}
+  if(x=b("[data-o35depfotorm]")){const j=+x.dataset.o35depfotorm,old=(a.deps||[])[j]?.foto;if(!old)return true;
+    escrever(a.id,r=>r.update({deps:a.deps.map((d,i)=>{if(i!==j)return d;const c={...d};delete c.foto;return c}),hist:hist(a,"Foto do dependente removida")}),"Foto removida").then(ok=>{if(ok&&old.assetId&&assets)assets.delete(old.assetId).catch(()=>{})});return true}
+  if(b("[data-o35papelx]")){const t=($("#o35-dxt")?.value||"").trim();if(!t){toast("Escreva o tipo do documento.");$("#o35-dxt")?.focus();return true}
+    escrever(a.id,r=>r.update({docsExtra:[...(a.docsExtra||[]),o35NovoDx(t,{papel:true})],hist:hist(a,t+" recebido em papel")}),t+" registrado").then(ok=>ok&&registrar("Registrou documento extra",a,t));return true}
+  if(x=b("[data-o35verx]")){const d=(a.docsExtra||[]).find(y=>y.id===x.dataset.o35verx);if(d){registrar("Abriu documento",a,d.tipo);verArquivo(d)}return true}
+  if(x=b("[data-o35rmx]")){o35UI.rmx=x.dataset.o35rmx||null;renderFicha(a.id);return true}
+  if(x=b("[data-o35rmxok]")){const d=(a.docsExtra||[]).find(y=>y.id===x.dataset.o35rmxok);o35UI.rmx=null;if(!d)return true;
+    escrever(a.id,r=>r.update({docsExtra:(a.docsExtra||[]).filter(y=>y.id!==d.id),hist:hist(a,d.tipo+" removido")}),d.tipo+" removido").then(ok=>{if(ok){registrar("Removeu documento extra",a,d.tipo);if(d.assetId&&assets)assets.delete(d.assetId).catch(()=>{})}});return true}
+  return false}
+function o35Change(e){const t=e.target;
+  if(t.matches("input[data-o35depfoto]")){o35EnviarFotoDep(t);return true}
+  if(t.matches("input[data-o35upx]")){o35UploadExtra(t);return true}
+  return false}
+function ligarOnda35(){
+  if(viewAtual==="associados")["fgrp",...O35_FIDS].forEach(id=>$("#"+id)?.addEventListener("input",renderRows));
+  if(viewAtual==="dependentes"){const U=o35UI.dep;
+    $("#o35-dq")?.addEventListener("input",e=>{U.q=e.target.value;const p=e.target.selectionStart;rerender();const n=$("#o35-dq");if(n){n.focus();n.setSelectionRange(p,p)}});
+    [["o35-dpar","par"],["o35-did","id"],["o35-dst","st"]].forEach(([id,k])=>$("#"+id)?.addEventListener("input",e=>{U[k]=e.target.value;rerender()}))}
+}
+
 /* ---------- navegação ---------- */
 const SEC_FECHADAS=["Privacidade","Dependentes","Acesso ao app"];
 function secoesFicha(){document.querySelectorAll(".sheet .panel>h3:first-child").forEach(h=>{const p=h.parentElement,t=h.textContent.trim().replace(/\s*\(.*$/,"");p.classList.add("sec");h.dataset.sec=t;h.tabIndex=0;h.setAttribute("role","button");
@@ -5108,7 +5304,7 @@ function route(){
   if(viewAtual==="privacidade")ligarPriv();
   if(viewAtual==="app"){ligarApp();ligarPortal()}
   if(viewAtual==="associados")$("#csv2")?.addEventListener("click",()=>exportarCSV(true));
-  ligarOnda1();ligarOnda2();
+  ligarOnda1();ligarOnda2();ligarOnda35();
   ligarOnda34();ligarOnda5();
 }
 function refresh(){
@@ -5143,8 +5339,8 @@ function parabens(k){const[id,j]=k.split("|"),a=lista.find(x=>x.id===id);if(!a)r
   abrirZap(zapNum(a.tel),msg);registrar("Enviou parabéns pelo WhatsApp",a,d?d.nome:"")}
 /* carteirinha dos dependentes */
 const depCart=(a,j)=>{const d=(a.deps||[])[j];return d?{id:a.id+"-d"+j,nome:d.nome,posto:"Dependente ("+d.par+")",forca:"Titular: "+a.nome,om:"Titular matrícula "+a.mat,mat:a.mat+"-D"+(j+1),sit:"Ativo",dep:true,titular:a}:null};
-function cartDepsHTML(a){const ds=a.deps||[];if(!ds.length)return"";const v=cartVal();
-  return `<h3 class="p-h" style="margin-top:8px">Carteirinhas dos dependentes</h3>${ds.map((d,j)=>{const p=depCart(a,j);return `<div class="cart cart-dep" role="group" aria-label="Carteira de dependente de ${esc(d.nome)}">
+function cartDepsHTML(a){const ds=a.deps||[];if(!ds.some(d=>d.sit!=="Inativo"))return"";const v=cartVal();
+  return `<h3 class="p-h" style="margin-top:8px">Carteirinhas dos dependentes</h3>${ds.map((d,j)=>{if(d.sit==="Inativo")return"";const p=depCart(a,j);return `<div class="cart cart-dep" role="group" aria-label="Carteira de dependente de ${esc(d.nome)}">
    <div class="cart-h">${selo()}<span><b>${esc(MARCA.nome)}</b><small>Carteira de dependente</small></span></div>
    <div class="cart-b"><div class="cart-foto"><span>${esc(iniciais(d.nome))}</span></div><div class="cart-d"><b>${esc(d.nome)}</b><span>${esc(d.par)}${d.nasc?" · nasc. "+fmtData(d.nasc):""}</span><span class="op">Titular: ${esc(a.nome)}</span></div></div>
    <dl class="cart-f"><div><dt>Matrícula</dt><dd class="mono">${esc(p.mat)}</dd></div><div><dt>Válida até</dt><dd class="mono">${fmtData(v)}</dd></div><div><dt>Código</dt><dd class="mono">${codCart(p,v)}</dd></div></dl>
@@ -5302,7 +5498,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-gbusca]")){abrirBusca();return}
   if(secClick(e))return;
   if(v29Click(e))return;
-  if(o1Click(e)||o1ClickFin(e)||o2Click(e))return;
+  if(o35Click(e)||o1Click(e)||o1ClickFin(e)||o2Click(e))return;
   if(o34Click(e))return;
   if(o5Click(e))return;
   {const bx=$("#bx");if(bx&&bx.contains(e.target)){const r=e.target.closest("[data-bx]");if(r)bxAbrir(+r.dataset.bx);else if(e.target===bx)fecharBusca();return}}
@@ -5319,7 +5515,7 @@ document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]");if(o){fichaUI={inativar:false,excluir:false,enviando:null,aba:o.dataset.k?"documentos":"dados"};renderFicha(o.dataset.open,true);return}
   const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
 });
-document.addEventListener("change",e=>{if(o1Change(e))return;if(e.target.matches("input[data-o2ret],input[data-o2marg]")){o2Change(e);return}if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
+document.addEventListener("change",e=>{if(o35Change(e)||o1Change(e))return;if(e.target.matches("input[data-o2ret],input[data-o2marg]")){o2Change(e);return}if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
 document.addEventListener("change",e=>{if(o34Change(e))return;o5Change(e)});
 document.addEventListener("keydown",e=>{
   if(bxTecla(e))return;

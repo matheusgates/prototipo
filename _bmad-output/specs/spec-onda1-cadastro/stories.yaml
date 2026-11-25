@@ -1,0 +1,43 @@
+- id: "1"
+  title: Campos novos da ficha e postos de aluno/cadete
+  description: >-
+    CAP-1 e parte de CAP-3: profissão (texto com sugestões), UF, 3º e-mail e telefone do
+    trabalho no formulário, na ficha, no app (Atualizar meus dados) e na exportação; postos
+    Aluno Soldado, Cadete e Aluno-Oficial; tipos de não sócio Só plano de saúde e Só odontológico.
+- id: "2"
+  title: Dependentes completos e listagem
+  description: >-
+    CAP-2: dependente com CPF (validado e mascarado), sexo, situação e foto; listagem geral
+    de dependentes com filtros por parentesco, idade e situação e exportação.
+  invoke_dev_with: >-
+    Foto do dependente por assets, igual fotoPerfil. Relatório REL "Dependentes" ou aba em
+    Associados; acesso secretaria e tesouraria.
+- id: "3"
+  title: Bloqueio e pendências
+  description: >-
+    CAP-3: bloquear com motivo (sinal na ficha e na lista, app recusa pedidos de serviço e
+    reserva), desbloquear; campo Pendências em texto livre; tudo no histórico.
+- id: "4"
+  title: Última mensalidade paga e lista por responsável
+  description: >-
+    CAP-4 e CAP-5: "Última paga" na ficha e coluna na exportação; relatório de última
+    mensalidade por associado; opção Agrupar por responsável na lista de associados.
+- id: "5"
+  title: Documentos extras
+  description: >-
+    CAP-7: adicionar documento de tipo livre com arquivo ou recebido em papel, apagar;
+    aprovação continua exigindo só os 6 obrigatórios.
+- id: "6"
+  title: Pesquisa com mais filtros
+  description: >-
+    CAP-8: filtros por cidade, sexo, faixa de idade, forma de pagamento, órgão, tem
+    dependentes, serviço, período de filiação e mês de aniversário; entram em BUSCA_IDS
+    para busca salva e na exportação.
+- id: "7"
+  title: Histórico com operador e ficha em PDF
+  description: >-
+    CAP-9: hist grava por (nome de quem fez) e a ficha mostra; atualizadoEm/atualizadoPor;
+    botão Imprimir ficha gera PDF com dados, dependentes, documentos e assinatura.
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com os campos novos, regerar apresentacao-assomise, teste de ponta
+    a ponta do sinal de sucesso do SPEC (CAP-6 conferido no mesmo teste), commit e push.
