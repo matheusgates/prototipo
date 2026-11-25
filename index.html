@@ -971,6 +971,38 @@ details.saiba p,details.saiba ul{margin:6px 0;max-width:75ch;line-height:1.5}det
   .sheet>.actions .btn{min-height:36px;padding:6px 12px}
   .panel,body .panel{padding:16px}
 }
+/* v31 · onda 1 */
+.mais-dados{border:1px solid var(--line);border-radius:12px;padding:10px 14px;background:var(--surface-2)}
+.mais-dados>summary{cursor:pointer;font-weight:600;font-size:14px;color:var(--fg);list-style:none}
+.mais-dados>summary::-webkit-details-marker{display:none}
+.mais-dados>summary::before{content:"+ ";color:var(--accent);font-weight:700}.mais-dados[open]>summary::before{content:"− "}
+.mais-dados>.form{margin-top:12px}
+.form .hint{font-weight:400;font-size:12px;color:var(--muted)}
+.sel-in{font:inherit;font-size:14px;padding:4px 8px;border-radius:8px;border:1px solid var(--line);background:var(--surface);color:var(--fg);max-width:100%}
+.buscas{display:flex;flex-wrap:wrap;gap:8px;align-items:center;margin:-4px 0 14px}
+.bchip{display:inline-flex;align-items:center;border:1px solid var(--line);border-radius:999px;background:var(--surface);overflow:hidden;transition:border-color .15s}
+.bchip button{border:0;background:none;font:inherit;font-size:13px;color:var(--fg);padding:5px 4px 5px 12px;cursor:pointer}
+.bchip .bchip-x{padding:5px 10px 5px 6px;color:var(--muted)}
+.bchip:hover{border-color:var(--accent)}
+details.mais.exp{margin-left:0}
+.o1-lead{margin:0 0 16px;color:var(--muted);max-width:70ch}
+.grid.cws{grid-template-columns:repeat(auto-fill,minmax(270px,1fr))}
+.cw{animation:secIn .35s var(--ease) both;animation-delay:calc(var(--i,0)*40ms)}
+.cw-h{display:flex;gap:12px;align-items:center;margin-bottom:12px}.cw-h h3{margin:0}.cw-h small{color:var(--muted)}
+.cw-n{display:grid;grid-template-columns:repeat(4,1fr);gap:6px;margin-bottom:12px}
+.cw-n span{display:flex;flex-direction:column;font-size:11.5px;color:var(--muted);line-height:1.25}
+.cw-n b{font-size:22px;color:var(--fg);font-family:var(--f-display);font-variant-numeric:tabular-nums}
+.cw-n .n-bad b{color:var(--bad)}.cw-n .n-warn b{color:var(--warn)}
+.cw.sem{border-style:dashed}
+.grid.o1-2{grid-template-columns:repeat(auto-fit,minmax(300px,1fr));margin-top:14px}
+.o1-row{display:flex;gap:8px;flex-wrap:wrap}.o1-row input{flex:1;min-width:180px}
+.tm{display:grid;gap:14px}.tm fieldset{border:0;padding:0;margin:0;display:grid;grid-template-columns:repeat(auto-fill,minmax(140px,1fr));gap:10px}
+.tm input,.o1-row input{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:8px 11px;min-height:38px;min-width:0;font-variant-numeric:tabular-nums}
+.tm input:focus,.o1-row input:focus,.sel-in:focus{outline:none;border-color:var(--accent);box-shadow:0 0 0 3px var(--accent-soft)}
+.tm legend{font-weight:700;font-size:13px;margin-bottom:6px;color:var(--fg)}
+.tm label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
+@media (prefers-reduced-motion:reduce){.cw{animation:none}}
+@media (max-width:760px){.cw-n b{font-size:18px}.ctrow{grid-template-columns:1fr 1fr}}
 </style>
 
 <div class="app">
@@ -1121,7 +1153,7 @@ async function iniciar(){
   db.doc("app_config/ofertas").onSnapshot(d=>{ofCfg=d.exists?d.data():{};refresh()},()=>{});
   sub("reservas",s=>{portal.res=s.docs.map(d=>Object.assign({id:d.id},d.data()))});
   db.doc("fin_config/geral").onSnapshot(d=>{fin.cfg=d.exists?d.data():{};refresh()},()=>{});
-  iniciarLgpd();iniciarApp();
+  iniciarLgpd();iniciarApp();iniciarOnda1();
 }
 
 /* ---------- interface ---------- */
@@ -1156,16 +1188,18 @@ visao(){
   </div></details>`;
 },
 associados(){
-  const exp=(editavel()&&dadosCompletos()?`<button class="btn ghost" data-imp>Importar planilha</button>`:"")+(downloads?`<button class="btn ghost" id="csv">Exportar planilha</button>${dadosCompletos()?`<button class="btn ghost" id="csv2" title="Fica registrado em Privacidade">Exportar com CPF completo</button>`:""}`:"");
+  const exp=(editavel()&&dadosCompletos()?`<button class="btn ghost" data-imp>Importar planilha</button>`:"")+btnExportar(dadosCompletos()?`<button class="btn ghost" data-exp="xlsx-cpf" title="Fica registrado em Privacidade">Excel com CPF completo</button>`:"");
   return cabecalho("Cadastro","Associados","Cadastro, busca e ficha completa de cada associado.",exp+btnNovo())+aviso()+abasAss("associados")+
   `<div class="toolbar"><input id="q" type="search" placeholder="Buscar por nome, CPF, matrícula ou OM" aria-label="Buscar">
-   <details class="filtros" id="fbox"><summary class="btn ghost">Filtros <span class="fn" id="fn"></span></summary><div class="fpop">
+   <details class="filtros" id="fbox"><summary class="btn ghost">Filtros <span class="fn" id="fnum"></span></summary><div class="fpop">
    <select id="fs" aria-label="Situação"><option value="">Todas as situações</option><option>Ativo</option><option>Pendente</option><option>Inativo</option></select>
    <select id="ff" aria-label="Força"><option value="">Todas as forças</option>${FORCAS.map(f=>`<option>${f}</option>`).join("")}</select>
    <select id="fd" aria-label="Documentos"><option value="">Documentos: todos</option><option value="ok">Fichas completas</option><option value="pend">Com pendência</option></select>
    <select id="fv" aria-label="Serviços"><option value="">Serviços: todos</option>${SERVICOS.map(s=>`<option value="${s.k}">Com ${s.n.toLowerCase()}</option>`).join("")}<option value="nenhum">Sem serviço contratado</option></select>
+   ${o1Filtros()}
    <select id="fo" aria-label="Ordenar"><option value="nome">Ordenar por nome</option><option value="rec">Mais recentes</option><option value="mat">Matrícula</option></select></div></details>
    <div class="seg vista" role="group" aria-label="Exibição"><button data-vista="cards" aria-pressed="${vistaAss==="cards"}">Cartões</button><button data-vista="lista" aria-pressed="${vistaAss==="lista"}">Lista</button></div></div>
+  <div class="buscas" id="buscas" hidden></div>
   <div class="idgrid" id="cards"></div>
   <div class="tablewrap" id="twrap"><table><thead><tr><th>Associado</th><th>Matrícula</th><th>Força / OM</th><th>Serviços</th><th>Documentos</th><th>Situação</th></tr></thead><tbody id="rows"></tbody></table></div>
   <p class="sample" id="count"></p>`;
@@ -1188,7 +1222,7 @@ function filtrados(){
   const q=($("#q")?.value||"").toLowerCase().trim(),qd=q.replace(/\D/g,""),fs=$("#fs")?.value,ff=$("#ff")?.value,fd=$("#fd")?.value,fv=$("#fv")?.value,fo=$("#fo")?.value||"nome";
   const l=lista.filter(a=>(!fs||a.sit===fs)&&(!ff||a.forca===ff)&&(!fd||(fd==="ok"?docsOk(a)===DOCS.length:docsOk(a)<DOCS.length))&&
     (!fv||(fv==="nenhum"?!SERVICOS.some(s=>servAtivo(a,s.k)):servAtivo(a,fv)))&&
-    (!q||[a.nome,a.mat,a.om,a.posto].join(" ").toLowerCase().includes(q)||(qd.length>=3&&String(a.cpf||"").replace(/\D/g,"").includes(qd))));
+    o1Passa(a)&&(!q||[a.nome,a.mat,a.om,a.posto,a.email,a.nsTipo].join(" ").toLowerCase().includes(q)||(qd.length>=3&&String(a.cpf||"").replace(/\D/g,"").includes(qd))));
   const cmp={nome:(a,b)=>String(a.nome).localeCompare(String(b.nome),"pt-BR"),rec:(a,b)=>String(b.criadoEm||b.ing).localeCompare(String(a.criadoEm||a.ing)),mat:(a,b)=>String(a.mat).localeCompare(String(b.mat))}[fo];
   return l.sort(cmp);
 }
@@ -1196,17 +1230,17 @@ let vistaAss=(()=>{try{return localStorage.getItem("vista_ass")||"cards"}catch{r
 const POSTO_AB={"Soldado":"Sd","Cabo":"Cb","3º Sargento":"3º Sgt","2º Sargento":"2º Sgt","1º Sargento":"1º Sgt","Subtenente":"ST","Aspirante":"Asp","2º Tenente":"2º Ten","1º Tenente":"1º Ten","Capitão":"Cap","Major":"Maj","Tenente-Coronel":"TC","Coronel":"Cel"};
 const FORCA_AB={"Polícia Militar":"PM","Corpo de Bombeiros":"CBM","Exército":"EB","Marinha":"MB","Aeronáutica":"FAB"};
 function cardAss(a,i){const f=faltam(a).length,sv=SERVICOS.filter(s=>servAtivo(a,s.k));
-  return `<div class="idc" data-open="${a.id}" tabindex="0" style="--i:${Math.min(i,14)}"><div class="idc-h"><span class="idc-p">${esc(POSTO_AB[a.posto]||a.posto||"")}</span><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></div>
+  return `<div class="idc" data-open="${a.id}" tabindex="0" style="--i:${Math.min(i,14)}"><div class="idc-h"><span class="idc-p">${esc(ehNaoSocio(a)?(a.nsTipo||"Não sócio"):POSTO_AB[a.posto]||a.posto||"")}</span><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></div>
   <div class="idc-n">${avatar(a)}<span><b>${esc(a.nome)}</b><small>${esc(FORCA_AB[a.forca]||a.forca||"")}${a.om?", "+esc(a.om):""}. Matrícula ${esc(a.mat)}</small></span></div>
-  <div class="idc-f">${f&&a.sit!=="Inativo"?`<span class="pill warn">${f===1?"Falta 1 documento":`Faltam ${f} documentos`}</span>`:""}${sv.map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")}${a.origem==="app"&&a.sit==="Pendente"?`<span class="pill neutral">Pedido pelo app</span>`:""}</div></div>`}
+  <div class="idc-f">${catDe(a)!=="efetivo"?`<span class="pill neutral">${catInfo(a).curto}</span>`:""}${f&&a.sit!=="Inativo"?`<span class="pill warn">${f===1?"Falta 1 documento":`Faltam ${f} documentos`}</span>`:""}${sv.map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")}${a.origem==="app"&&a.sit==="Pendente"?`<span class="pill neutral">Pedido pelo app</span>`:""}</div></div>`}
 function renderRows(){
   if(!$("#rows"))return;
   const l=filtrados(),cards=vistaAss==="cards"||mqCel.matches;
   $("#cards").hidden=!cards;$("#twrap").hidden=cards;
   document.querySelectorAll("[data-vista]").forEach(b=>b.setAttribute("aria-pressed",b.dataset.vista===vistaAss));
-  const nf=["ff","fd","fv"].filter(id=>$("#"+id)?.value).length;if($("#fn"))$("#fn").textContent=nf||"";
+  const nf=["ff","fd","fv","fc","fp","fg","fr"].filter(id=>$("#"+id)?.value).length;if($("#fnum"))$("#fnum").textContent=nf||"";
   if(cards)$("#cards").innerHTML=l.map(cardAss).join("")||`<div class="tk-vazio" style="grid-column:1/-1">${lista.length?"Nenhum associado com esses filtros. Limpe a busca ou os filtros para ver todos.":estado==="ok"?"Nenhum associado cadastrado ainda. Use o botão Novo associado.":"Carregando…"}</div>`;
-  $("#rows").innerHTML=l.map(a=>`<tr data-open="${a.id}" tabindex="0"><td><div class="who">${avatar(a)}<div>${esc(a.nome)}${a.origem==="app"&&a.sit==="Pendente"?` <span class="pill neutral">app</span>`:""}<div class="rank">${esc(a.posto)}${a.sitMil&&a.sitMil!=="Ativa"?" · "+esc(a.sitMil):""}</div></div></div></td><td class="mono">${esc(a.mat)}</td><td>${esc(a.forca)}<div class="rank">${esc(a.om)}</div></td><td><span class="chips">${SERVICOS.filter(s=>servAtivo(a,s.k)).map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")||`<span class="rank">—</span>`}</span></td><td><span class="pill ${docsOk(a)===DOCS.length?"ok":"warn"}">${docsOk(a)}/${DOCS.length}</span></td><td><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></td></tr>`).join("")||
+  $("#rows").innerHTML=l.map(a=>`<tr data-open="${a.id}" tabindex="0"><td><div class="who">${avatar(a)}<div>${esc(a.nome)}${a.origem==="app"&&a.sit==="Pendente"?` <span class="pill neutral">app</span>`:""}<div class="rank">${esc(ehNaoSocio(a)?(a.nsTipo||"Não sócio"):a.posto)}${a.sitMil&&a.sitMil!=="Ativa"&&!ehNaoSocio(a)?" · "+esc(a.sitMil):""}${catDe(a)==="remido"?" · Remido":""}</div></div></div></td><td class="mono">${esc(a.mat)}</td><td>${esc(a.forca)}<div class="rank">${esc(a.om)}</div></td><td><span class="chips">${SERVICOS.filter(s=>servAtivo(a,s.k)).map(s=>`<span class="pill neutral">${s.curto}</span>`).join("")||`<span class="rank">—</span>`}</span></td><td><span class="pill ${docsOk(a)===DOCS.length?"ok":"warn"}">${docsOk(a)}/${DOCS.length}</span></td><td><span class="pill ${sitClass[a.sit]||"neutral"}">${esc(a.sit)}</span></td></tr>`).join("")||
     `<tr><td colspan="6" style="color:var(--muted)">${lista.length?"Nenhum associado encontrado com esses filtros.":estado==="ok"?"Nenhum associado cadastrado ainda.":"Carregando…"}</td></tr>`;
   $("#count").textContent=`${l.length} de ${lista.length} associados`;
 }
@@ -1262,9 +1296,9 @@ function renderFicha(id,anim){
    ${solDados(a)?`<div class="notice">Pedido de atualização de dados feito pelo app aguardando resposta. <a href="#solicitacoes" data-fechar>Abrir Solicitações</a>${mudancasHTML(solDados(a))}</div>`:""}
    ${a.sit==="Ativo"&&f.length&&dadosCompletos()&&aba!=="documentos"?`<div class="callout"><span>${f.length===1?"Falta":"Faltam"} ${f.map(d=>d.n.toLowerCase()).join(", ")} para completar a ficha.</span><button class="btn sm" data-aba="documentos">Ver documentos</button></div>`:""}
    ${tabs}${aba==="dados"?`<div class="panel"><h3>Dados militares</h3><dl class="dl"><dt>Posto/graduação</dt><dd>${esc(a.posto)}</dd><dt>Força</dt><dd>${esc(a.forca)}</dd><dt>Situação militar</dt><dd>${esc(a.sitMil||"—")}</dd><dt>OM / lotação</dt><dd>${esc(a.om||"—")}</dd><dt>Identidade militar</dt><dd class="mono">${esc(a.idMil||"—")}</dd></dl></div>
-   <div class="panel"><h3>Dados pessoais e contato</h3><dl class="dl"><dt>CPF</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.cpf||"—"):cpfMask(a.cpf)}${fichaUI.rev!==a.id&&a.cpf&&dadosCompletos()?` <button class="btn ghost sm" data-revelar>Mostrar CPF e RG</button>`:""}</dd><dt>RG</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.rg||"—"):a.rg?"•••••":"—"}</dd><dt>Nascimento</dt><dd>${fmtData(a.nasc)}${idade(a.nasc)}</dd><dt>Telefone</dt><dd>${esc(a.tel||"—")}</dd><dt>E-mail</dt><dd>${esc(a.email||"—")}</dd><dt>Endereço</dt><dd>${dadosCompletos()?esc(a.end||"—"):`<span class="rank">restrito ao seu papel</span>`}</dd><dt>Cidade</dt><dd>${esc(a.cidade||"—")}${a.cep&&dadosCompletos()?` · CEP ${esc(a.cep)}`:""}</dd></dl></div>
-   <div class="panel"><h3>Associação</h3><dl class="dl"><dt>Matrícula</dt><dd class="mono">${esc(a.mat)}</dd><dt>Associado desde</dt><dd>${fmtData(a.ing)}</dd><dt>Mensalidade</dt><dd>${+a.mens?brl(a.mens):"Isento"}</dd><dt>Forma de pagamento</dt><dd>${esc(a.formaPag||"Desconto em folha")}</dd></dl></div>
-   ${painelAppFicha(a,ed)}${painelLgpdFicha(a)}<div class="panel"><h3>Dependentes (${dep.length})</h3>${dep.length?`<div class="list">${dep.map(d=>`<div class="tile"><span>${esc(d.nome)}<br><span class="rank">${esc(d.par)}${d.nasc?" · "+fmtData(d.nasc)+idade(d.nasc):""}</span></span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum dependente cadastrado.</p>`}</div>
+   <div class="panel"><h3>Dados pessoais e contato</h3><dl class="dl"><dt>CPF</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.cpf||"—"):cpfMask(a.cpf)}${fichaUI.rev!==a.id&&a.cpf&&dadosCompletos()?` <button class="btn ghost sm" data-revelar>Mostrar CPF e RG</button>`:""}</dd><dt>RG</dt><dd class="mono">${fichaUI.rev===a.id?esc(a.rg||"—"):a.rg?"•••••":"—"}</dd><dt>Nascimento</dt><dd>${fmtData(a.nasc)}${idade(a.nasc)}</dd><dt>Telefone</dt><dd>${esc(a.tel||"—")}</dd><dt>E-mail</dt><dd>${esc(a.email||"—")}</dd><dt>Endereço</dt><dd>${dadosCompletos()?esc(a.end||"—"):`<span class="rank">restrito ao seu papel</span>`}</dd><dt>Cidade</dt><dd>${esc(a.cidade||"—")}${a.cep&&dadosCompletos()?` · CEP ${esc(a.cep)}`:""}</dd>${o1FichaPessoais(a)}</dl></div>
+   <div class="panel"><h3>Associação</h3><dl class="dl"><dt>Matrícula</dt><dd class="mono">${esc(a.mat)}</dd><dt>Associado desde</dt><dd>${fmtData(a.ing)}</dd><dt>Mensalidade</dt><dd>${+a.mens?brl(a.mens):"Isento"}${o1MensTag(a)}</dd><dt>Forma de pagamento</dt><dd>${esc(a.formaPag||"Desconto em folha")}</dd>${o1FichaAssoc(a,ed)}</dl></div>
+   ${o1FichaContatos(a)}${painelAppFicha(a,ed)}${painelLgpdFicha(a)}<div class="panel"><h3>Dependentes (${dep.length})</h3>${dep.length?`<div class="list">${dep.map(d=>`<div class="tile"><span>${esc(d.nome)}<br><span class="rank">${esc(d.par)}${d.nasc?" · "+fmtData(d.nasc)+idade(d.nasc):""}</span></span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum dependente cadastrado.</p>`}</div>
    ${a.obs?`<div class="panel"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:""}`:""}
    ${aba==="servicos"?servicosHTML:""}
    ${aba==="documentos"?`<div class="panel"><h3>Documentos (${docsOk(a)}/${DOCS.length})</h3><div class="docs">${DOCS.map(docRow).join("")}</div>${ed&&!assets?`<p class="sample">Anexar arquivos fica disponível para quem é editor da página. Você pode marcar o que foi recebido em papel.</p>`:""}</div>`:""}
@@ -1292,8 +1326,10 @@ function abrirForm(id){
    ${fld("rg","RG",'placeholder="Número e órgão"')}
    ${fld("nasc","Data de nascimento",'type="date"')}
    ${fld("tel","Telefone *",'required inputmode="tel" placeholder="(86) 9 0000-0000"')}
-   ${fld("email","E-mail",'type="email" placeholder="nome@email.com"',1)}</div>
-   <div class="fp" data-p="2"><h4>Dados militares</h4>
+   ${fld("email","E-mail",'type="email" placeholder="nome@email.com"',1)}
+   ${o1FormPessoais(v)}</div>
+   <div class="fp" data-p="2"><h4>Vínculo e dados militares</h4>
+   ${o1FormCat(v)}
    <label for="f-forca">Força *<select id="f-forca">${opts(FORCAS,v.forca)}</select></label>
    <label for="f-posto">Posto/graduação *<select id="f-posto">${opts(POSTOS,v.posto)}</select></label>
    <label for="f-sitMil">Situação militar<select id="f-sitMil">${opts(SITMIL,v.sitMil)}</select></label>
@@ -1306,11 +1342,13 @@ function abrirForm(id){
    <div class="full rank" style="font-weight:600;color:var(--fg);margin-top:4px">Dependentes</div>
    <div class="full list" id="deps">${(v.deps||[]).map(depRow).join("")}</div>
    <div class="full"><button type="button" class="btn ghost sm" id="adddep">+ Adicionar dependente</button></div>
+   ${o1FormContatos(v)}
    <label class="full" for="f-obs">Observações<textarea id="f-obs" rows="3">${esc(v.obs||"")}</textarea></label></div>
    <div class="fp" data-p="4"><h4>${a?"Associação e privacidade":"Associação e acesso ao app"}</h4>
-   <label for="f-mens">Mensalidade<select id="f-mens">${opts(CATS,v.mens)}</select></label>
+   ${o1FormMens(v,!a)}
    <label for="f-formaPag">Forma de pagamento<select id="f-formaPag">${opts(FORMAS_MENS,v.formaPag||"Desconto em folha")}</select></label>
    ${fld("ing","Associado desde",'type="date"')}
+   ${o1FormAssoc(v,!a)}
    ${camposLgpdForm(v)}
    ${a?"":`<div class="full rank" style="font-weight:600;color:var(--fg);margin-top:4px">Como o associado vai entrar no app</div>
    <div class="full acc-op" role="radiogroup" aria-label="Como o associado vai entrar no app">
@@ -1326,6 +1364,7 @@ function abrirForm(id){
   $("#adddep").addEventListener("click",()=>{$("#deps").insertAdjacentHTML("beforeend",depRow());$("#deps").lastElementChild.querySelector("input").focus()});
   $("#deps").addEventListener("click",e=>{const b=e.target.closest("[data-rmdep]");if(b)b.closest(".deprow").remove()});
   $("#fn").addEventListener("submit",e=>{e.preventDefault();if(!a&&fpUI.p<4){fpIr(fpUI.p+1);return}salvarForm(a)});
+  o1LigarForm();
   if(!a){fpUI.p=1;fpIr(1,true);$("#fp-prox").addEventListener("click",()=>fpIr(fpUI.p+1));$("#fp-voltar").addEventListener("click",()=>fpIr(fpUI.p-1))}
   $("#f-nome").focus();
 }
@@ -1334,23 +1373,24 @@ function validar(a,so){
   if(val("nome").split(/\s+/).length<2)erros.nome="Informe nome e sobrenome.";
   if(!cpfValido(val("cpf")))erros.cpf="CPF inválido. Confira os números.";
   else if(lista.some(x=>x.id!==(a&&a.id)&&String(x.cpf).replace(/\D/g,"")===val("cpf").replace(/\D/g,"")))erros.cpf="Já existe um associado com este CPF.";
-  if(!val("om"))erros.om="Informe a OM ou lotação.";
+  if(!val("om")&&$("#f-cat")?.value!=="contribuinte")erros.om="Informe a OM ou lotação.";
   if(val("tel").replace(/\D/g,"").length<10)erros.tel="Telefone com DDD.";
   if(val("email")&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email")))erros.email="E-mail inválido.";
   if(val("nasc")&&val("nasc")>hoje())erros.nasc="Data no futuro.";
   if(!a&&!erros.email&&!val("email")&&document.querySelector('input[name="f-acesso"]:checked')?.value==="convite")erros.email="Para enviar o convite, informe o e-mail (ou escolha outra forma de acesso).";
+  o1Validar(erros);
   if(so)Object.keys(erros).forEach(k=>{if(!so.includes(k))delete erros[k]});
-  ["nome","cpf","om","tel","email","nasc"].forEach(k=>{$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""});
-  const first=Object.keys(erros)[0];if(first){const st=$("#f-"+first).closest(".fp");if(!so&&st&&$("#fn.passos"))fpIr(+st.dataset.p,true);$("#f-"+first).focus()}
+  ["nome","cpf","om","tel","email","nasc","tel2","email2","indic","mensVal"].forEach(k=>{if(!$("#f-"+k))return;$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""});
+  const first=Object.keys(erros)[0];if(first){const det=$("#f-"+first).closest("details");if(det)det.open=true;const st=$("#f-"+first).closest(".fp");if(!so&&st&&$("#fn.passos"))fpIr(+st.dataset.p,true);$("#f-"+first).focus()}
   return !first;
 }
 async function salvarForm(a){
   if(!editavel()){toast("Sem conexão com o banco para salvar.");return}
   if(!validar(a))return;
   const val=k=>($("#f-"+k).value||"").trim();
-  const deps=[...document.querySelectorAll(".deprow")].map(r=>({nome:r.querySelector("[data-dn]").value.trim(),par:r.querySelector("[data-dp]").value,nasc:r.querySelector("[data-dd]").value})).filter(d=>d.nome);
-  const dados={nome:val("nome"),cpf:maskCPF(val("cpf")),rg:val("rg"),nasc:val("nasc"),forca:val("forca"),posto:val("posto"),sitMil:val("sitMil"),idMil:val("idMil"),om:val("om"),tel:val("tel"),email:val("email"),end:val("end"),cidade:val("cidade"),cep:val("cep"),mens:+val("mens"),formaPag:val("formaPag"),ing:val("ing")||hoje(),deps,obs:$("#f-obs").value.trim()};
-  Object.assign(dados,dadosLgpdForm(a,deps));
+  const deps=[...document.querySelectorAll(".deprow:not(.ctrow)")].map(r=>({nome:r.querySelector("[data-dn]").value.trim(),par:r.querySelector("[data-dp]").value,nasc:r.querySelector("[data-dd]").value})).filter(d=>d.nome);
+  const dados={nome:val("nome"),cpf:maskCPF(val("cpf")),rg:val("rg"),nasc:val("nasc"),forca:val("forca"),posto:val("posto"),sitMil:val("sitMil"),idMil:val("idMil"),om:val("om"),tel:val("tel"),email:val("email"),end:val("end"),cidade:val("cidade"),cep:val("cep"),formaPag:val("formaPag"),ing:val("ing")||hoje(),deps,obs:$("#f-obs").value.trim()};
+  Object.assign(dados,o1DadosForm(),dadosLgpdForm(a,deps));
   $("#salvar").disabled=true;
   let ok,id;
   if(a){id=a.id;ok=await escrever(id,ref=>ref.update({...dados,atualizadoEm:new Date().toISOString(),hist:hist(a,"Dados atualizados")}),"Alterações salvas");if(ok)registrar("Alterou dados da ficha",a)}
@@ -1495,7 +1535,7 @@ function finResumo(c,t,ed){
    </div>
    <div class="panel"><h3>Despesas de ${mesSo(c)} por categoria</h3>${catArr.length?`<div class="list">${catArr.map(([k,v])=>`<div class="hb hb2"><span>${esc(k)}</span><span class="tr"><i class="out" style="width:${v/cmx*100}%"></i></span><b class="num">${brl(v)}</b></div>`).join("")}</div>`:`<p class="rank">Nenhuma despesa lançada neste mês.</p>`}</div>
   </div>
-  ${ed?`<div class="panel" style="margin-top:14px"><h3>Ajustes do financeiro</h3><form class="form" id="fcfg" style="max-width:640px"><label for="cfg-saldo">Saldo inicial em caixa (R$)<input id="cfg-saldo" type="number" step="0.01" inputmode="decimal" value="${esc(fin.cfg.saldoInicial??"")}" placeholder="0,00"></label><label for="cfg-dia">Dia de vencimento das mensalidades<input id="cfg-dia" type="number" min="1" max="28" value="${diaVenc()}"></label><label class="full" for="cfg-chave">Chave PIX da associação (para o pagamento pelo portal)<input id="cfg-chave" value="${esc(fin.cfg.chavePix||"")}" placeholder="CNPJ, e-mail, telefone +55… ou chave aleatória" autocomplete="off"></label><label for="cfg-receb">Nome do recebedor<input id="cfg-receb" value="${esc(fin.cfg.recebedor||"")}" maxlength="25" placeholder="Como aparece no banco"></label><label for="cfg-cid">Cidade do recebedor<input id="cfg-cid" value="${esc(fin.cfg.cidadePix||"")}" maxlength="15" placeholder="Ex.: Aracaju"></label><div class="full"><button class="btn ghost" type="submit">Salvar ajustes</button></div></form></div>`:""}`;
+  ${ed?`<div class="panel" style="margin-top:14px"><h3>Ajustes do financeiro</h3><form class="form" id="fcfg" style="max-width:640px"><label for="cfg-saldo">Saldo inicial em caixa (R$)<input id="cfg-saldo" type="number" step="0.01" inputmode="decimal" value="${esc(fin.cfg.saldoInicial??"")}" placeholder="0,00"></label><label for="cfg-dia">Dia de vencimento das mensalidades<input id="cfg-dia" type="number" min="1" max="28" value="${diaVenc()}"></label><label class="full" for="cfg-chave">Chave PIX da associação (para o pagamento pelo portal)<input id="cfg-chave" value="${esc(fin.cfg.chavePix||"")}" placeholder="CNPJ, e-mail, telefone +55… ou chave aleatória" autocomplete="off"></label><label for="cfg-receb">Nome do recebedor<input id="cfg-receb" value="${esc(fin.cfg.recebedor||"")}" maxlength="25" placeholder="Como aparece no banco"></label><label for="cfg-cid">Cidade do recebedor<input id="cfg-cid" value="${esc(fin.cfg.cidadePix||"")}" maxlength="15" placeholder="Ex.: Aracaju"></label><div class="full"><button class="btn ghost" type="submit">Salvar ajustes</button></div></form></div>`:""}${ed?tabelaMensHTML():""}`;
 }
 function finMens(c,t,ed){
   const d=fin.mens[c],el=elegiveis();
@@ -2485,7 +2525,7 @@ views.relatorios=function(){
   const r=REL.find(x=>x.id===rUI.id),o=r.g(rUI.mes);
   const mes=r.mes?`<div class="mesnav"><button class="btn ghost sm" data-rmes="-1" aria-label="Mês anterior">‹</button><b>${nomeMes(rUI.mes)}</b><button class="btn ghost sm" data-rmes="1" aria-label="Próximo mês">›</button></div>`:"";
   const num=v=>typeof v==="number"||/^[−-]?R\$|^\d+( dias| anos)?$/.test(String(v));
-  return cabecalho("Relatórios",r.t,r.d,`${mes}${downloads?'<button class="btn" id="rel-csv">Exportar planilha</button>':""}<button class="btn ghost" data-rel="">‹ Todos os relatórios</button>`)+aviso()+
+  return cabecalho("Relatórios",r.t,r.d,`${mes}${btnExportar()}<button class="btn ghost" data-rel="">‹ Todos os relatórios</button>`)+aviso()+
   `<div class="grid kpis">${o.res.map(([k,v])=>`<div class="kpi"><small>${esc(k)}</small><strong>${esc(v)}</strong></div>`).join("")}</div>
   <div class="tablewrap" style="margin-top:14px"><table><thead><tr>${o.cols.map((c,i)=>`<th${o.rows.length&&num(o.rows[0][i])?' class="num"':""}>${esc(c)}</th>`).join("")}</tr></thead><tbody>${o.rows.map(row=>`<tr>${row.map(v=>`<td${num(v)?' class="num"':""}>${esc(v)}</td>`).join("")}</tr>`).join("")||`<tr><td colspan="${o.cols.length}" style="color:var(--muted)">Nada para mostrar${r.mes?" em "+nomeMes(rUI.mes):""}.</td></tr>`}</tbody></table></div>
   <p class="sample">Gerado em ${new Date().toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})} a partir dos dados do sistema. ${o.rows.length} linha${o.rows.length===1?"":"s"}.</p>`;
@@ -2628,7 +2668,7 @@ const POL_VER="1.0",POL_DATA="2026-11-12";
 let lgpd={cfg:{},ped:[],log:[],inc:[]},quem={id:null,owner:false,user:null},nomesU={},buscandoU=new Set();
 let lUI={aba:"painel",st:"aberto",q:"",so:"",papelSim:null,f:{},resp:null,anon:null,novoPed:false,busca:[],cfgMsg:""};
 const PAPEIS={admin:{n:"Administrador",d:"Tudo, inclusive papéis e configurações de privacidade."},secretaria:{n:"Secretaria",d:"Cadastro, documentos, portal, solicitações, eventos, comunicados, convênios, relatórios, arquivo da associação e pedidos LGPD."},tesouraria:{n:"Tesouraria",d:"Financeiro, relatórios e arquivo da associação. Vê a lista de associados com CPF mascarado, sem documentos nem endereço."},diretoria:{n:"Diretoria",d:"Visão geral, relatórios, eventos, comunicados, convênios e arquivo da associação. Sem acesso às fichas."}};
-const ACESSO={admin:"*",secretaria:["visao","associados","documentos","portal","solicitacoes","eventos","comunicados","relatorios","privacidade","arquivo","convenios"],tesouraria:["visao","associados","financeiro","relatorios","arquivo"],diretoria:["visao","relatorios","eventos","comunicados","arquivo","convenios"]};
+const ACESSO={admin:"*",secretaria:["visao","associados","documentos","carteiras","portal","solicitacoes","eventos","comunicados","relatorios","privacidade","arquivo","convenios"],tesouraria:["visao","associados","carteiras","financeiro","relatorios","arquivo"],diretoria:["visao","relatorios","eventos","comunicados","arquivo","convenios"]};
 const TIPOS_PED={correcao:"Correção de dados",exclusao:"Exclusão / anonimização",acesso:"Acesso aos dados",revogacao:"Revogação de consentimento",info:"Informação sobre uso e compartilhamento",outro:"Outro"};
 const papelReal=()=>quem.owner?"admin":((lgpd.cfg.papeis||{})[quem.id]||"secretaria");
 const papel=()=>(papelReal()==="admin"&&lUI.papelSim)||papelReal();
@@ -3155,7 +3195,7 @@ async function gerarAcesso(a,modo){
 async function copiarTexto(t){try{await navigator.clipboard.writeText(t);toast("Mensagem copiada. Cole no e-mail ou no WhatsApp.")}catch{const x=document.createElement("textarea");x.value=t;document.body.append(x);x.select();let ok=false;try{ok=document.execCommand("copy")}catch{}x.remove();toast(ok?"Mensagem copiada.":"Não foi possível copiar. Selecione e copie manualmente.")}}
 const VERBO={documentos:"Conferir",solicitacoes:"Responder",privacidade:"Responder",financeiro:"Ver"};
 const DIVISA=`<svg class="divisa" viewBox="0 0 150 130" aria-hidden="true"><g fill="none" stroke="var(--gold)" stroke-width="10"><path d="M12 58 75 22l63 36"/><path d="M12 90 75 54l63 36" opacity=".6"/><path d="M12 122 75 86l63 36" opacity=".32"/></g></svg>`;
-const NAV_ALIAS={documentos:"associados",app:"portal"};
+const NAV_ALIAS={documentos:"associados",carteiras:"associados",app:"portal"};
 const navInfo=v=>{const n=document.querySelector(`.nav[href="#${NAV_ALIAS[v]||v}"]`);return{ic:n?.querySelector("svg")?.outerHTML||"",n:n?.querySelector("span")?.textContent||""}};
 const tkHTML=(x,i)=>{const m=navInfo(x.v),miolo=`<span class="tk-ic ${x.cls}">${m.ic}</span><span class="tk-t"><b>${x.n==="!"?"":x.n+" "}${x.txt}</b><small>${esc(m.n)}</small></span>`;
   if(!x.k)return `<a class="tk" href="${x.href}" style="--i:${i}">${miolo}<span class="btn ghost sm">${VERBO[x.v]||"Abrir"}</span></a>`;
@@ -3171,12 +3211,13 @@ function pendencias(){
   const vc=fin.lanc.filter(l=>l.tipo==="saida"&&l.status!=="pago"&&l.venc<=addDias(hoje(),7)).length;add("financeiro",vc,pl(vc,"conta a pagar vencendo em até 7 dias","contas a pagar vencendo em até 7 dias"),"#financeiro");
   const av=arqs.filter(x=>["vencido","vence"].includes(stArq(x))).length;add("arquivo",av,pl(av,"documento da associação vencido ou vencendo em 30 dias","documentos da associação vencidos ou vencendo em 30 dias"),"#arquivo");
   const sa=lista.filter(a=>a.sit==="Ativo"&&!a.anonimizadoEm&&!contas[a.id]).length;add("associados",sa,pl(sa,"associado ativo ainda sem acesso ao app","associados ativos ainda sem acesso ao app"),"#associados","neutral");
+  const sg=gestAtivos().length?naCarteira(null).length:0;add("carteiras",sg,pl(sg,"associado sem responsável na equipe","associados sem responsável na equipe"),"#carteiras","neutral");
   const lp=lgpd.ped.filter(p=>p.status==="aberto").length;add("privacidade",lp,pl(lp,"pedido de privacidade (LGPD) em aberto","pedidos de privacidade (LGPD) em aberto"),"#privacidade");
   return it;
 }
 
 /* ---------- autocadastro pelo app e atualização de dados (app ⇄ secretaria) ---------- */
-const mensPorPosto=p=>POSTOS.indexOf(p)>=POSTOS.indexOf("Aspirante")?120:85;
+const mensPorPosto=p=>valorTabela(p,"efetivo");
 function novaMat(){const n=Math.max(0,...lista.map(x=>parseInt(x.mat)||0))+1;return String(n).padStart(4,"0")+"-"+String(new Date().getFullYear()).slice(2)}
 const emailOk=e=>/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(e);
 async function esperarFicha(id,ms=8000){const t0=Date.now();while(!lista.find(x=>x.id===id)&&Date.now()-t0<ms)await new Promise(r=>setTimeout(r,150));return lista.find(x=>x.id===id)}
@@ -3198,7 +3239,7 @@ function appCadastro(){
   if(p===3)corpo=inp("cep","CEP",'inputmode="numeric" placeholder="00000-000"')+inp("end","Endereço",'autocomplete="street-address" placeholder="Rua, número, bairro"')+inp("cidade","Cidade/UF")+
     `<div class="ac-deps"><b>Dependentes</b><small class="rank">Cônjuge, filhos e outras pessoas que vão usar os benefícios. Pode deixar em branco.</small>${deps.map((d,i)=>depApp(d,i,"acd",false)).join("")}<button type="button" class="btn ghost sm" data-acdep style="align-self:flex-start">+ Adicionar dependente</button></div>`;
   if(p===4){const men=deps.filter(d=>d.nome&&d.nasc&&idadeAnos(d.nasc)<18),po=F["ac-posto"]||"Soldado";
-    corpo=`<div class="ac-resumo"><b>${esc(F["ac-nome"]||"")}</b><br>${esc(po)} · ${esc(F["ac-forca"]||"Polícia Militar")} · ${esc(F["ac-om"]||"")}<br>Mensalidade prevista: <b>${brl(mensPorPosto(po))}</b> (${mensPorPosto(po)===120?"oficial":"praça"}), a secretaria confirma.</div>
+    corpo=`<div class="ac-resumo"><b>${esc(F["ac-nome"]||"")}</b><br>${esc(po)} · ${esc(F["ac-forca"]||"Polícia Militar")} · ${esc(F["ac-om"]||"")}<br>Mensalidade prevista: <b>${brl(mensPorPosto(po))}</b> (${POSTOS.indexOf(po)>=POSTOS.indexOf("Aspirante")?"oficial":"praça"}), a secretaria confirma.</div>
     <details class="ac-det"><summary>Ler o aviso de privacidade</summary><div class="ac-aviso">${textoAviso()}</div></details>
     ${chk("aceite","Li e aceito o aviso de privacidade. *")}
     ${men.length?chk("resp",`Sou o responsável legal ${men.length===1?"pelo dependente menor":"pelos dependentes menores"} (${men.map(d=>esc(d.nome.split(" ")[0])).join(", ")}) e autorizo o uso dos dados. *`):""}
@@ -3286,8 +3327,8 @@ async function baixarFichaFiliacao(a){
 }
 
 /* atualizar meus dados: contato muda na hora; o resto vai para a secretaria conferir */
-const DIRETOS=["tel","email","cep","end","cidade"],CONFERIR=["nome","nasc","rg","forca","posto","sitMil","om","idMil"];
-const ROT={tel:"Telefone",email:"E-mail",cep:"CEP",end:"Endereço",cidade:"Cidade/UF",nome:"Nome",nasc:"Nascimento",rg:"RG",forca:"Força",posto:"Posto/graduação",sitMil:"Situação militar",om:"OM / lotação",idMil:"Identidade militar",deps:"Dependentes"};
+const DIRETOS=["tel","email","tel2","email2","cep","end","cidade"],CONFERIR=["nome","nasc","rg","forca","posto","sitMil","om","idMil"];
+const ROT={tel:"Telefone",email:"E-mail",tel2:"Outro telefone",email2:"Outro e-mail",cep:"CEP",end:"Endereço",cidade:"Cidade/UF",nome:"Nome",nasc:"Nascimento",rg:"RG",forca:"Força",posto:"Posto/graduação",sitMil:"Situação militar",om:"OM / lotação",idMil:"Identidade militar",deps:"Dependentes"};
 const fmtV=(k,v)=>k==="nasc"?fmtData(v):(v||"—");
 const depsTxt=l=>(l||[]).length?(l||[]).map(d=>`${d.nome} (${d.par})`).join(", "):"nenhum";
 const solDados=a=>portal.sol.find(s=>s.associadoId===a.id&&s.tipo==="dados"&&s.status==="pendente");
@@ -3299,8 +3340,9 @@ function pEditar(a,ed){
   const inp=(k,l,at="",x)=>`<label class="p-lbl" for="pd-${k}">${l}<input id="pd-${k}" value="${v(k)}" ${at} ${dis(x)}></label>`;
   const sel=(k,l,arr,x)=>`<label class="p-lbl" for="pd-${k}">${l}<select id="pd-${k}" ${dis(x)}>${opts(arr,pUI.f["pd-"+k])}</select></label>`;
   return `<button class="btn ghost sm" data-ppriv="" style="align-self:flex-start">‹ Voltar</button><h3 class="p-h">Atualizar meus dados</h3>
+  ${recadVencido(a)?`<div class="p-card" style="border-color:var(--warn)"><b>Hora do recadastramento</b><p class="rank" style="margin:0">Confira seus dados abaixo. Se estiver tudo certo, toque em <b>Salvar</b> para confirmar. Não precisa ir à secretaria.</p></div>`:""}
   <div class="p-card"><b>Contato e endereço</b><p class="rank" style="margin:0">Muda na hora no cadastro da associação.</p>
-   ${inp("tel","Celular com DDD",'inputmode="tel"')}${inp("email","E-mail",'type="email"')}${inp("cep","CEP",'inputmode="numeric"')}${inp("end","Endereço")}${inp("cidade","Cidade/UF")}</div>
+   ${inp("tel","Celular com DDD",'inputmode="tel"')}${inp("tel2","Outro telefone (opcional)",'inputmode="tel"')}${inp("email","E-mail",'type="email"')}${inp("email2","Outro e-mail (opcional)",'type="email"')}${inp("cep","CEP",'inputmode="numeric"')}${inp("end","Endereço")}${inp("cidade","Cidade/UF")}</div>
   <div class="p-card"><b>Dados do cadastro</b><p class="rank" style="margin:0">${pend?"Enquanto a filiação está em análise, você pode corrigir tudo por aqui.":bloq?"Você já tem um pedido de atualização em análise. Espere a resposta para pedir outra mudança.":"Mudanças aqui vão para a secretaria conferir antes de valer."}</p>
    ${inp("nome","Nome completo","",bloq)}${inp("nasc","Data de nascimento",'type="date"',bloq)}${inp("rg","RG","",bloq)}${sel("forca","Força",FORCAS,bloq)}${sel("posto","Posto/graduação",POSTOS,bloq)}${sel("sitMil","Situação militar",SITMIL,bloq)}${inp("om","OM / lotação","",bloq)}${inp("idMil","Nº da identidade militar","",bloq)}
    <b style="margin-top:6px">Dependentes</b>${(pUI.pdDeps||[]).map((d,i)=>depApp(d,i,"pdd",bloq||!ed)).join("")||`<p class="rank" style="margin:0">Nenhum dependente.</p>`}${!bloq&&ed?`<button type="button" class="btn ghost sm" data-pddadd style="align-self:flex-start">+ Adicionar dependente</button>`:""}</div>
@@ -3311,6 +3353,8 @@ async function salvarDadosApp(a,btn){
   const g=k=>String(pUI.f["pd-"+k]??"").trim(),pend=a.sit==="Pendente",sol=solDados(a);
   if(g("tel").replace(/\D/g,"").length<10)return toast("Informe o celular com DDD.");
   if(g("email")&&!emailOk(g("email")))return toast("E-mail inválido.");
+  if(g("email2")&&!emailOk(g("email2")))return toast("O outro e-mail está inválido.");
+  if(g("tel2")&&g("tel2").replace(/\D/g,"").length<10)return toast("Informe o outro telefone com DDD.");
   if(g("nome").split(/\s+/).length<2)return toast("Informe nome e sobrenome.");
   if(g("nasc")&&g("nasc")>hoje())return toast("A data de nascimento está no futuro.");
   if(!g("om"))return toast("Informe a OM ou lotação.");
@@ -3320,7 +3364,9 @@ async function salvarDadosApp(a,btn){
   DIRETOS.forEach(k=>{if(g(k)!==String(a[k]||""))dir[k]=g(k)});
   if(!pend&&sol){}else CONFERIR.forEach(k=>{if(g(k)!==String(a[k]||""))conf[k]={de:a[k]||"",para:g(k)}});
   const depsMud=!(!pend&&sol)&&JSON.stringify(deps)!==JSON.stringify((a.deps||[]).map(normDep));
-  if(!Object.keys(dir).length&&!Object.keys(conf).length&&!depsMud)return toast("Nada mudou.");
+  if(!Object.keys(dir).length&&!Object.keys(conf).length&&!depsMud){
+    if(!recadVencido(a))return toast("Nada mudou.");
+    btn.disabled=true;if(await escrever(a.id,r=>r.update({recadEm:hoje(),hist:hist(a,"Recadastramento confirmado pelo app")}),"Obrigado! Recadastramento confirmado.")){registrar("App: confirmou o recadastramento",a);pUI.priv=null;pUI.pdIni=false;pUI.f={};rerender()}else btn.disabled=false;return}
   btn.disabled=true;const agora=new Date().toISOString(),nomes=o=>Object.keys(o).map(k=>ROT[k].toLowerCase()).join(", ");let ok=true,msg;
   if(pend){const up={...dir};Object.keys(conf).forEach(k=>up[k]=conf[k].para);if(depsMud)up.deps=deps;
     if(up.posto&&+a.mens===mensPorPosto(a.posto))up.mens=mensPorPosto(up.posto);
@@ -3328,7 +3374,7 @@ async function salvarDadosApp(a,btn){
     ok=await escrever(a.id,r=>r.update({...up,atualizadoEm:agora,hist:hist(a,"Atualizou pelo app: "+lst)}),"Dados atualizados");
     if(ok)registrar("App: atualizou os próprios dados",a,lst)}
   else{
-    if(Object.keys(dir).length){ok=await escrever(a.id,r=>r.update({...dir,atualizadoEm:agora,hist:hist(a,"Atualizou pelo app: "+nomes(dir))}),null);if(ok){registrar("App: atualizou contato",a,nomes(dir));msg="Contato atualizado"}}
+    if(Object.keys(dir).length){ok=await escrever(a.id,r=>r.update({...dir,recadEm:hoje(),atualizadoEm:agora,hist:hist(a,"Atualizou pelo app: "+nomes(dir))}),null);if(ok){registrar("App: atualizou contato",a,nomes(dir));msg="Contato atualizado"}}
     if(ok&&(Object.keys(conf).length||depsMud)){
       ok=await escrever(db.collection("solicitacoes").doc().id,r=>r.set({tipo:"dados",associadoId:a.id,nome:a.nome,mat:a.mat,mudancas:conf,deps:depsMud?{de:(a.deps||[]).map(normDep),para:deps}:null,status:"pendente",criadoEm:agora,origem:"app"}),null,"solicitacoes");
       if(ok){registrar("App: pediu atualização de dados",a,nomes({...conf,...(depsMud?{deps:1}:{})}));msg=(msg?msg+". ":"")+"As outras mudanças foram para a secretaria conferir"}}
@@ -3445,10 +3491,10 @@ function odClick(e){
   return false;
 }
 const nDocPend=()=>lista.filter(a=>a.sit!=="Inativo").reduce((s,a)=>s+faltam(a).length+aConf(a).length,0);
-const abasAss=k=>{const n=dadosCompletos()?nDocPend():0;return `<nav class="tabs" aria-label="Associados" style="margin-bottom:16px"><a class="tab" href="#associados" aria-selected="${k==="associados"}">Todos os associados</a>${dadosCompletos()?`<a class="tab" href="#documentos" aria-selected="${k==="documentos"}">Documentos a cobrar${n?` (${n})`:""}</a>`:""}</nav>`};
+const abasAss=k=>{const n=dadosCompletos()?nDocPend():0,ns=gestAtivos().length?naCarteira(null).length:0;return `<nav class="tabs" aria-label="Associados" style="margin-bottom:16px"><a class="tab" href="#associados" aria-selected="${k==="associados"}">Todos os associados</a>${dadosCompletos()?`<a class="tab" href="#documentos" aria-selected="${k==="documentos"}">Documentos a cobrar${n?` (${n})`:""}</a>`:""}${podeVer("carteiras")?`<a class="tab" href="#carteiras" aria-selected="${k==="carteiras"}">Carteiras${ns?` (${ns} sem responsável)`:""}</a>`:""}</nav>`};
 /* ---------- novo associado em passos ---------- */
-const FP_NOMES=["Dados pessoais e contato","Dados militares","Endereço e dependentes","Associação e acesso ao app"];
-const FP_CAMPOS={1:["nome","cpf","tel","email","nasc"],2:["om"],3:[],4:[]};
+const FP_NOMES=["Dados pessoais e contato","Vínculo e dados militares","Endereço e dependentes","Associação e acesso ao app"];
+const FP_CAMPOS={1:["nome","cpf","tel","email","nasc","tel2","email2"],2:["om"],3:[],4:["indic","mensVal"]};
 let fpUI={p:1};
 function fpIr(n,semValidar){
   const f=$("#fn.passos");if(!f)return;n=Math.max(1,Math.min(4,n));
@@ -3468,8 +3514,231 @@ function sinaisFicha(a){
   else if(cur){const st=stItem(cur);s.push(st==="Paga"?["ok",`Mensalidade de ${mesSo(c)} paga`]:st==="Em conferência"?["warn","PIX da mensalidade em conferência"]:["neutral",`Mensalidade de ${mesSo(c)} em aberto`])}
   else if(a.sit==="Ativo")s.push(["neutral",`Mensalidade de ${mesSo(c)} ainda não gerada`]);
   if(dadosCompletos()){const n=docsOk(a);s.push([n===DOCS.length?(aConf(a).length?"warn":"ok"):"warn",`Documentos ${n}/${DOCS.length}`,"documentos"])}
+  if(recadVencido(a))s.push(["warn","Recadastro vencido"]);
   if(a.sit!=="Inativo"){const[t,k]=stConta(contas[a.id]);s.push([k,t==="Ativo"?"Usa o app":t==="Sem acesso ao app"?t:"App: "+t.charAt(0).toLowerCase()+t.slice(1)])}
   return `<div class="sinais">${s.map(([k,t,aba])=>aba?`<button class="sinal ${k}" data-aba="${aba}">${t}</button>`:`<span class="sinal ${k}">${t}</span>`).join("")}</div>`;
+}
+/* ---------- v31 · onda 1: ficha completa, vínculo do sócio, tabela de mensalidades, carteiras de gestão, exportar Excel/PDF, buscas salvas, recadastramento ---------- */
+/* Vínculo fica separado do posto (no sistema antigo "Academia", "Natação", "Funcionário" e "Falecido" eram patentes). Desligado = Inativo com motivo. */
+const CATEG=[{k:"efetivo",n:"Sócio efetivo",curto:"Efetivo"},{k:"remido",n:"Sócio remido (isento)",curto:"Remido"},{k:"contribuinte",n:"Não sócio (usa serviços)",curto:"Não sócio"}];
+const NS_TIPOS=["Academia","Natação","Aluno de curso","Funcionário","Prestador de serviço","Outro"];
+const SEXOS=["Masculino","Feminino","Prefiro não informar"];
+const ESTCIVIL=["Solteiro(a)","Casado(a)","União estável","Divorciado(a)","Viúvo(a)"];
+const RECAD_MESES=24;
+const catDe=a=>(a&&a.cat)||"efetivo";
+const catInfo=a=>CATEG.find(c=>c.k===catDe(a))||CATEG[0];
+const ehNaoSocio=a=>catDe(a)==="contribuinte";
+let o1UI={ren:null,off:null,aplicar:null,lote:false};
+
+/* recadastramento: vale RECAD_MESES meses a partir do último (ou da filiação) */
+const recadBase=a=>a.recadEm||a.ing||"";
+const recadVence=a=>{const b=recadBase(a);return b?somaMes(b.slice(0,7),RECAD_MESES)+b.slice(7,10):""};
+const recadVencido=a=>a.sit==="Ativo"&&!a.anonimizadoEm&&(!recadBase(a)||recadVence(a)<=hoje());
+
+/* tabela de mensalidades por posto (fin_config/geral.tabela), com _naoSocio para quem não é sócio */
+const MENS_PADRAO=p=>POSTOS.indexOf(p)>=POSTOS.indexOf("Aspirante")?120:85;
+const tabMens=()=>(fin.cfg&&fin.cfg.tabela)||{};
+function valorTabela(posto,cat){if(cat==="remido")return 0;const t=tabMens();if(cat==="contribuinte")return t._naoSocio!=null?+t._naoSocio:50;return t[posto]!=null?+t[posto]:MENS_PADRAO(posto)}
+const mensModo=a=>{if(catDe(a)==="remido")return"isento";if(a.mensModo)return a.mensModo;const m=+a.mens||0;if(!m)return"isento";return m===valorTabela(a.posto,catDe(a))||m===MENS_PADRAO(a.posto)?"tabela":"manual"};
+const o1DifTabela=()=>lista.filter(a=>a.sit!=="Inativo"&&!a.anonimizadoEm&&mensModo(a)==="tabela"&&(+a.mens||0)!==valorTabela(a.posto,catDe(a)));
+
+/* carteiras de gestão (app_config/gestores.lista = [{id,nome,ativo}]) */
+let gestores=[];
+function iniciarOnda1(){db.doc("app_config/gestores").onSnapshot(d=>{gestores=(d.exists&&d.data().lista)||[];refresh()},()=>{})}
+const gestAtivos=()=>gestores.filter(g=>g.ativo!==false);
+const gestNome=id=>(gestores.find(g=>g.id===id)||{}).nome||"";
+const temGestor=a=>!!a.gestor&&gestAtivos().some(g=>g.id===a.gestor);
+const naCarteira=id=>lista.filter(a=>a.sit!=="Inativo"&&!a.anonimizadoEm&&(id?a.gestor===id:!temGestor(a)));
+function sugerirGestor(){const g=gestAtivos();if(!g.length)return"";return g.map(x=>[x.id,naCarteira(x.id).length]).sort((a,b)=>a[1]-b[1])[0][0]}
+const emAtraso=a=>minhasMens(a).some(i=>stItem(i)==="Em atraso");
+const salvarGestores=(l,msg)=>escrever("gestores",r=>r.set({lista:l}),msg,"app_config");
+
+/* ---- formulário: blocos novos ---- */
+function ctRow(c={}){return`<div class="deprow ctrow"><label>Nome<input data-cn value="${esc(c.nome||"")}"></label><label>Relação<input data-cr value="${esc(c.rel||"")}" placeholder="Ex.: esposa, irmão"></label><label>Telefone<input data-ct inputmode="tel" value="${esc(c.tel||"")}" placeholder="(79) 9 0000-0000"></label><button type="button" class="btn ghost sm" data-rmct aria-label="Remover contato">Remover</button></div>`}
+function o1FormPessoais(v){
+  const s=(k,l,arr)=>`<label for="f-${k}">${l}<select id="f-${k}"><option value="">Não informado</option>${opts(arr,v[k])}</select></label>`;
+  const f=(k,l,at="",full)=>`<label class="${full?"full":""}" for="f-${k}">${l}<input id="f-${k}" value="${esc(v[k]||"")}" ${at}><span class="err" id="e-${k}"></span></label>`;
+  const tem=["sexo","estCivil","natural","tel2","email2","pai","mae"].some(k=>v[k]);
+  return `<details class="full mais-dados"${tem?" open":""}><summary>Mais dados pessoais <span class="rank">· opcional</span></summary><div class="form">${s("sexo","Sexo",SEXOS)}${s("estCivil","Estado civil",ESTCIVIL)}${f("natural","Naturalidade",'placeholder="Cidade/UF onde nasceu"')}${f("tel2","Outro telefone",'inputmode="tel" placeholder="Trabalho ou fixo"')}${f("email2","Outro e-mail",'type="email" placeholder="nome@email.com"',1)}${f("pai","Nome do pai","",1)}${f("mae","Nome da mãe","",1)}</div></details>`;
+}
+function o1FormCat(v){const c=catDe(v);
+  return `<label for="f-cat">Vínculo com a associação<select id="f-cat">${CATEG.map(x=>`<option value="${x.k}" ${x.k===c?"selected":""}>${x.n}</option>`).join("")}</select></label><label for="f-nsTipo" id="l-nsTipo" ${c==="contribuinte"?"":"hidden"}>Usa a associação como<select id="f-nsTipo">${opts(NS_TIPOS,v.nsTipo)}</select></label>`}
+function o1FormContatos(v){return `<div class="full rank" style="font-weight:600;color:var(--fg);margin-top:4px">Contatos de emergência <span style="font-weight:400">· até 3</span></div><div class="full list" id="cts">${(v.contatos||[]).map(ctRow).join("")}</div><div class="full"><button type="button" class="btn ghost sm" id="addct">+ Adicionar contato</button></div>`}
+function o1FormMens(v,novo){const modo=novo?"tabela":mensModo(v),o=(k,n)=>`<option value="${k}" ${modo===k?"selected":""}>${n}</option>`;
+  return `<label for="f-mensModo">Mensalidade<select id="f-mensModo">${o("tabela","Valor da tabela")}${o("isento","Isento")}${o("manual","Outro valor")}</select><small class="hint" id="f-mens-hint"></small></label>
+   <label for="f-mensVal" id="l-mensVal" ${modo==="manual"?"":"hidden"}>Valor mensal (R$)<input id="f-mensVal" type="number" min="0" step="0.01" inputmode="decimal" value="${modo==="manual"?esc(+v.mens||""):""}"><span class="err" id="e-mensVal"></span></label>`}
+function o1FormAssoc(v,novo){const g=novo?sugerirGestor():(v.gestor||""),ind=v.indicadoPor?lista.find(x=>x.id===v.indicadoPor):null;
+  return `<label for="f-gestor">Responsável na equipe<select id="f-gestor"><option value="">Sem responsável</option>${gestAtivos().map(x=>`<option value="${x.id}" ${x.id===g?"selected":""}>${esc(x.nome)}</option>`).join("")}</select>${novo&&g?`<small class="hint">Sugerido: quem está com a menor carteira.</small>`:!gestores.length?`<small class="hint">Cadastre a equipe em Associados › Carteiras.</small>`:""}</label>
+   <label for="f-recadEm">Último recadastramento<input id="f-recadEm" type="date" value="${esc(novo?hoje():v.recadEm||"")}"></label>
+   <label class="full" for="f-indic">Indicado por<input id="f-indic" list="dl-ass" value="${ind?esc(ind.nome+" · "+ind.mat):""}" placeholder="Opcional: comece a digitar o nome de quem indicou" autocomplete="off"><datalist id="dl-ass">${lista.filter(x=>x.id!==v.id&&x.sit!=="Inativo").sort(porNome).map(x=>`<option value="${esc(x.nome+" · "+x.mat)}">`).join("")}</datalist><span class="err" id="e-indic"></span></label>
+   <label class="full chkline"><input type="checkbox" id="f-corresp" ${v.corresp?"checked":""}> Enviar correspondência impressa pelo correio</label>`}
+function o1Indic(){const v=($("#f-indic")?.value||"").trim();if(!v)return"";const x=lista.find(a=>a.nome+" · "+a.mat===v);return x?x.id:null}
+function o1LigarForm(){
+  $("#f-tel2")?.addEventListener("input",e=>e.target.value=maskTel(e.target.value));
+  $("#addct").addEventListener("click",()=>{if($("#cts").children.length>=3)return toast("Até 3 contatos de emergência.");$("#cts").insertAdjacentHTML("beforeend",ctRow());$("#cts").lastElementChild.querySelector("input").focus()});
+  $("#cts").addEventListener("click",e=>{const b=e.target.closest("[data-rmct]");if(b)b.closest(".ctrow").remove()});
+  $("#cts").addEventListener("input",e=>{if(e.target.matches("[data-ct]"))e.target.value=maskTel(e.target.value)});
+  const upd=()=>{const cat=$("#f-cat").value,remido=cat==="remido",ms=$("#f-mensModo");$("#l-nsTipo").hidden=cat!=="contribuinte";
+    if(remido){ms.value="isento";ms.disabled=true}else ms.disabled=false;
+    $("#l-mensVal").hidden=ms.value!=="manual";
+    const vt=valorTabela($("#f-posto").value,cat),ref=cat==="contribuinte"?"não sócio":$("#f-posto").value;
+    $("#f-mens-hint").textContent=remido?"Sócio remido não paga mensalidade.":ms.value==="tabela"?`${brl(vt)} pela tabela (${ref}).`:ms.value==="manual"?`Pela tabela seria ${brl(vt)}.`:"";
+    const om=$("#f-om");if(om&&om.closest("label").firstChild.nodeType===3)om.closest("label").firstChild.textContent=cat==="contribuinte"?"OM / lotação":"OM / lotação *"};
+  ["f-cat","f-posto","f-mensModo"].forEach(id=>$("#"+id).addEventListener("change",upd));upd();
+}
+function o1Validar(erros){
+  const val=k=>($("#f-"+k)?.value||"").trim();
+  if(val("tel2")&&val("tel2").replace(/\D/g,"").length<10)erros.tel2="Telefone com DDD.";
+  if(val("email2")&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email2")))erros.email2="E-mail inválido.";
+  if(o1Indic()===null)erros.indic="Escolha um associado da lista (ou deixe em branco).";
+  if(val("mensModo")==="manual"&&!(parseFloat(val("mensVal"))>=0))erros.mensVal="Informe o valor.";
+}
+function o1DadosForm(){const val=k=>($("#f-"+k)?.value||"").trim(),cat=val("cat")||"efetivo";
+  const modo=cat==="remido"?"isento":val("mensModo")||"tabela";
+  const mens=modo==="isento"?0:modo==="manual"?Math.round(parseFloat(val("mensVal")||"0")*100)/100:valorTabela(val("posto"),cat);
+  const contatos=[...document.querySelectorAll(".ctrow")].map(r=>({nome:r.querySelector("[data-cn]").value.trim(),rel:r.querySelector("[data-cr]").value.trim(),tel:r.querySelector("[data-ct]").value.trim()})).filter(c=>c.nome||c.tel);
+  return {sexo:val("sexo"),estCivil:val("estCivil"),natural:val("natural"),tel2:val("tel2"),email2:val("email2"),pai:val("pai"),mae:val("mae"),cat,nsTipo:cat==="contribuinte"?val("nsTipo"):"",contatos,mensModo:modo,mens,gestor:val("gestor"),indicadoPor:o1Indic()||"",recadEm:val("recadEm"),corresp:!!$("#f-corresp")?.checked};
+}
+
+/* ---- ficha: blocos novos ---- */
+function o1FichaPessoais(a){const r=(t,v)=>v?`<dt>${t}</dt><dd>${esc(v)}</dd>`:"";
+  return r("Outro telefone",a.tel2)+r("Outro e-mail",a.email2)+r("Sexo",a.sexo)+r("Estado civil",a.estCivil)+r("Naturalidade",a.natural)+(dadosCompletos()?r("Pai",a.pai)+r("Mãe",a.mae):"")}
+const o1MensTag=a=>catDe(a)==="remido"?` <span class="rank">· sócio remido</span>`:+a.mens?(mensModo(a)==="manual"?` <span class="rank">· valor próprio</span>`:` <span class="rank">· pela tabela</span>`):"";
+function o1FichaAssoc(a,ed){const c=catInfo(a),ind=a.indicadoPor&&lista.find(x=>x.id===a.indicadoPor),indicou=lista.filter(x=>x.indicadoPor===a.id),g=gestAtivos(),venc=recadVencido(a);
+  const curto=n=>{const p=String(n).split(/\s+/);return p.length>1?p[0]+" "+p[p.length-1]:p[0]};
+  return `<dt>Vínculo</dt><dd>${c.n}${ehNaoSocio(a)&&a.nsTipo?" · "+esc(a.nsTipo):""}</dd>
+   <dt>Responsável na equipe</dt><dd>${ed&&g.length?`<select class="sel-in" data-o1gestor aria-label="Responsável na equipe"><option value="">Sem responsável</option>${g.map(x=>`<option value="${x.id}" ${x.id===a.gestor?"selected":""}>${esc(x.nome)}</option>`).join("")}</select>`:esc(temGestor(a)?gestNome(a.gestor):"Sem responsável")}</dd>
+   <dt>Recadastramento</dt><dd>${a.recadEm?fmtData(a.recadEm):"Nunca registrado"}${a.sit==="Ativo"?` <span class="pill ${venc?"warn":"ok"}">${venc?"Vencido":"Em dia até "+fmtData(recadVence(a))}</span>`:""}${ed&&a.sit!=="Inativo"&&a.recadEm!==hoje()?` <button class="btn ghost sm" data-o1recad>Recadastrado hoje</button>`:""}</dd>
+   ${ind?`<dt>Indicado por</dt><dd><button class="lnk" data-o1open="${ind.id}">${esc(ind.nome)}</button></dd>`:""}
+   ${indicou.length?`<dt>Indicou</dt><dd>${indicou.map(x=>`<button class="lnk" data-o1open="${x.id}">${esc(curto(x.nome))}</button>`).join(", ")}</dd>`:""}
+   <dt>Correspondência impressa</dt><dd>${a.corresp?"Sim, pelo correio":"Não"}</dd>`}
+function o1FichaContatos(a){const c=a.contatos||[];if(!c.length)return"";
+  return `<div class="panel"><h3>Contatos de emergência (${c.length})</h3><div class="list">${c.map(x=>`<div class="tile"><span>${esc(x.nome||"—")}<br><span class="rank">${esc(x.rel||"")}${x.rel&&x.tel?" · ":""}${x.tel?`<a href="tel:${esc(String(x.tel).replace(/\D/g,""))}">${esc(x.tel)}</a>`:""}</span></span></div>`).join("")}</div></div>`}
+
+/* ---- associados: filtros novos e buscas salvas ---- */
+function o1Filtros(){return `<select id="fc" aria-label="Vínculo"><option value="">Todos os vínculos</option>${CATEG.map(c=>`<option value="${c.k}">${c.n}</option>`).join("")}</select>
+  <select id="fp" aria-label="Posto"><option value="">Todos os postos</option>${POSTOS.map(p=>`<option>${p}</option>`).join("")}</select>
+  ${gestores.length?`<select id="fg" aria-label="Responsável"><option value="">Todos os responsáveis</option>${gestAtivos().map(g=>`<option value="${g.id}">${esc(g.nome)}</option>`).join("")}<option value="sem">Sem responsável</option></select>`:""}
+  <select id="fr" aria-label="Recadastramento"><option value="">Recadastro: todos</option><option value="venc">Recadastro vencido</option><option value="ok">Recadastro em dia</option></select>
+  <button type="button" class="btn ghost sm" data-o1salvarbusca>Salvar esta busca</button>`}
+const o1Passa=a=>{const v=id=>$("#"+id)?.value||"",fc=v("fc"),fp=v("fp"),fg=v("fg"),fr=v("fr");
+  return(!fc||catDe(a)===fc)&&(!fp||a.posto===fp)&&(!fg||(fg==="sem"?!temGestor(a):a.gestor===fg))&&(!fr||(fr==="venc"?recadVencido(a):a.sit==="Ativo"&&!recadVencido(a)))};
+const BUSCA_IDS=["q","fs","ff","fd","fv","fo","fc","fp","fg","fr"];
+const lerBuscas=()=>{try{return JSON.parse(localStorage.getItem("buscas_ass")||"[]")}catch{return[]}};
+const gravarBuscas=l=>{try{localStorage.setItem("buscas_ass",JSON.stringify(l))}catch{}};
+function renderBuscas(){const el=$("#buscas");if(!el)return;const l=lerBuscas();el.hidden=!l.length;
+  el.innerHTML=l.length?`<span class="rank">Buscas salvas</span>${l.map((b,i)=>`<span class="bchip"><button type="button" data-o1busca="${i}">${esc(b.n)}</button><button type="button" class="bchip-x" data-o1buscarm="${i}" aria-label="Apagar a busca ${esc(b.n)}">×</button></span>`).join("")}`:""}
+function aplicarBusca(f){BUSCA_IDS.forEach(id=>{const el=$("#"+id);if(!el)return;el.value=f[id]??(id==="fo"?"nome":"");const row=document.querySelector(`.secs[data-para="${id}"]`);if(row)row.querySelectorAll("button").forEach(b=>b.setAttribute("aria-pressed",String(b.dataset.secv===el.value)))});renderRows()}
+function salvarBusca(){const f={},nomes=[];
+  BUSCA_IDS.forEach(id=>{const el=$("#"+id);if(!el||!el.value||(id==="fo"&&el.value==="nome"))return;f[id]=el.value;nomes.push(id==="q"?`“${el.value}”`:el.tagName==="SELECT"?el.options[el.selectedIndex].text:el.value)});
+  if(!Object.keys(f).length)return toast("Escolha uma busca ou um filtro antes de salvar.");
+  const n=nomes.join(" · ").slice(0,60),l=lerBuscas().filter(b=>b.n!==n);l.unshift({n,f});gravarBuscas(l.slice(0,8));renderBuscas();$("#fbox")&&($("#fbox").open=false);toast("Busca salva: "+n)}
+
+/* ---- exportar: Excel (.xlsx), PDF e CSV ---- */
+async function carregarAutoTable(){const J=await carregarPDF();if(!(J.API&&J.API.autoTable))await new Promise((ok,no)=>{const s=document.createElement("script");s.src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js";s.onload=ok;s.onerror=()=>no({msg:"Sem internet para carregar o gerador de PDF."});document.head.append(s)});return J}
+async function exportarTabela({nome,titulo,sub,cols,rows,formato,log}){
+  if(!downloads)return;
+  try{
+    if(formato==="csv"){const q=v=>{v=String(v??"");return /[;"\n]/.test(v)?`"${v.replace(/"/g,'""')}"`:v};
+      await downloads.save({filename:nome+".csv",data:"﻿"+[cols,...rows].map(l=>l.map(v=>typeof v==="number"?String(v).replace(".",","):v).map(q).join(";")).join("\r\n")})}
+    else if(formato==="xlsx"){const X=await carregarXLSX(),ws=X.utils.aoa_to_sheet([cols,...rows]);
+      ws["!cols"]=cols.map((c,i)=>({wch:Math.min(45,Math.max(String(c).length,...rows.slice(0,200).map(r=>String(r[i]??"").length))+2)}));
+      ws["!autofilter"]={ref:ws["!ref"]};
+      const wb=X.utils.book_new();X.utils.book_append_sheet(wb,ws,String(titulo).replace(/[\\/?*[\]:]/g,"").slice(0,31)||"Planilha");
+      await downloads.save({filename:nome+".xlsx",data:new Blob([X.write(wb,{bookType:"xlsx",type:"array"})],{type:"application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"})})}
+    else{const J=await carregarAutoTable(),pdf=new J({orientation:cols.length>5?"landscape":"portrait",unit:"mm",format:"a4"}),W=pdf.internal.pageSize.getWidth(),H=pdf.internal.pageSize.getHeight();
+      pdf.setFont("helvetica","bold");pdf.setFontSize(9);pdf.setTextColor(110);pdf.text(String(MARCA.nome).toUpperCase(),14,13);
+      pdf.setFontSize(15);pdf.setTextColor(20);pdf.text(titulo,14,21);
+      pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(100);pdf.text(sub||"",14,27);
+      pdf.autoTable({head:[cols],body:rows.map(r=>r.map(v=>typeof v==="number"?brl(v):String(v??""))),startY:32,margin:{left:14,right:14,bottom:16},styles:{fontSize:cols.length>7?7:8,cellPadding:1.6,overflow:"linebreak"},headStyles:{fillColor:[26,48,105],textColor:255,fontStyle:"bold"},alternateRowStyles:{fillColor:[244,246,250]},
+        didDrawPage:()=>{pdf.setFontSize(8);pdf.setTextColor(130);pdf.text(`Gerado em ${new Date().toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}`,14,H-8);pdf.text(`Página ${pdf.internal.getNumberOfPages()}`,W-14,H-8,{align:"right"})}});
+      await downloads.save({filename:nome+".pdf",data:pdf.output("blob")})}
+    toast(formato==="pdf"?"PDF salvo":"Planilha exportada");if(log)registrar(...log);
+  }catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast(e&&e.msg||"Não foi possível exportar.")}
+}
+function linhasAss(comCpf,curto){const dc=dadosCompletos(),l=filtrados(),srv=a=>SERVICOS.map(s=>{const x=a.servicos&&a.servicos[s.k];return !x?"Não contratado":x.status==="Ativo"?`Ativo desde ${fmtData(x.desde)}${x.valor?" · "+brl(x.valor):""}`:"Cancelado"});
+  if(curto)return{cols:["Matrícula","Nome","Posto","Força / OM","Vínculo","Telefone","Responsável","Situação"],rows:l.map(a=>[a.mat,a.nome,ehNaoSocio(a)?a.nsTipo||"—":POSTO_AB[a.posto]||a.posto,[FORCA_AB[a.forca]||a.forca,a.om].filter(Boolean).join(" · "),catInfo(a).curto,a.tel||"",temGestor(a)?gestNome(a.gestor):"—",a.sit])};
+  const cols=["Matrícula","Nome","CPF","RG","Nascimento","Sexo","Estado civil","Naturalidade","Pai","Mãe","Vínculo","Usa como","Posto/graduação","Força","Situação militar","OM/lotação","Telefone","Outro telefone","E-mail","Outro e-mail","Endereço","Cidade","CEP","Contatos de emergência","Situação","Associado desde","Último recadastro","Recadastro","Responsável na equipe","Indicado por","Correspondência impressa","Mensalidade (R$)","Forma de pagamento","Dependentes","Documentos entregues","Documentos pendentes",...SERVICOS.map(s=>s.n)];
+  const rows=l.map(a=>{const ind=a.indicadoPor&&lista.find(x=>x.id===a.indicadoPor);return[a.mat,a.nome,comCpf?a.cpf:cpfMask(a.cpf),comCpf?a.rg:(a.rg?"***":""),fmtData(a.nasc),a.sexo||"",a.estCivil||"",a.natural||"",dc?a.pai||"":"",dc?a.mae||"":"",catInfo(a).curto,ehNaoSocio(a)?a.nsTipo||"":"",a.posto,a.forca,a.sitMil,a.om,a.tel,a.tel2||"",a.email,a.email2||"",dc?a.end:"",a.cidade,dc?a.cep:"",(a.contatos||[]).map(c=>[c.nome,c.rel,c.tel].filter(Boolean).join(" · ")).join(" | "),a.sit,fmtData(a.ing),a.recadEm?fmtData(a.recadEm):"",a.sit==="Ativo"?(recadVencido(a)?"Vencido":"Em dia"):"",temGestor(a)?gestNome(a.gestor):"",ind?ind.nome:"",a.corresp?"Sim":"Não",+a.mens||0,a.formaPag||"",(a.deps||[]).map(d=>`${d.nome} (${d.par})`).join(", "),docsOk(a)+"/"+DOCS.length,faltam(a).map(d=>d.n).join(", "),...srv(a)]});
+  return{cols,rows}}
+async function exportarAss(formato,comCpf){comCpf=comCpf===true&&dadosCompletos();const pdf=formato==="pdf",{cols,rows}=linhasAss(comCpf,pdf);
+  const f=[...document.querySelectorAll("#fbox select")].filter(s=>s.value&&s.id!=="fo").map(s=>s.options[s.selectedIndex].text),q=$("#q")?.value.trim();
+  await exportarTabela({nome:`associados-${hoje()}${comCpf?"-cpf-completo":""}`,titulo:"Associados",sub:`${rows.length} de ${lista.length} associados${q?` · busca “${q}”`:""}${f.length?" · "+f.join(" · "):""}`,cols,rows,formato,log:["Exportou associados",null,`${rows.length} associados · ${formato.toUpperCase()} · CPF ${comCpf?"completo":"mascarado"}`]})}
+const btnExportar=(extra="")=>downloads?`<details class="mais exp"><summary class="btn ghost">Exportar</summary><div class="mais-m"><button class="btn ghost" data-exp="xlsx">Planilha Excel (.xlsx)</button><button class="btn ghost" data-exp="pdf">PDF para imprimir</button><button class="btn ghost" data-exp="csv">CSV</button>${extra}</div></details>`:"";
+
+/* ---- carteiras de gestão ---- */
+views.carteiras=function(){
+  const ed=editavel()&&dadosCompletos(),sem=naCarteira(null),at=gestAtivos(),fora=gestores.filter(g=>g.ativo===false);
+  const card=(x,i)=>{const l=naCarteira(x.id),a1=l.filter(a=>a.sit==="Ativo"),pe=l.length-a1.length,atr=a1.filter(emAtraso).length,rv=a1.filter(recadVencido).length;
+    return `<div class="panel cw" style="--i:${i}"><div class="cw-h">${avatar({nome:x.nome})}<div><h3>${esc(x.nome)}</h3><small>${l.length} ${l.length===1?"associado":"associados"} na carteira</small></div></div>
+     <div class="cw-n"><span><b>${a1.length}</b>ativos</span><span><b>${pe}</b>pendentes</span><span class="${atr?"n-bad":""}"><b>${atr}</b>em atraso</span><span class="${rv?"n-warn":""}"><b>${rv}</b>recadastro vencido</span></div>
+     ${o1UI.ren===x.id?`<div class="o1-row"><input id="o1-renome" value="${esc(x.nome)}" aria-label="Novo nome"><button class="btn sm" data-o1renok="${x.id}">Salvar</button><button class="btn ghost sm" data-o1cancel>Cancelar</button></div>`:
+      o1UI.off===x.id?`<div class="inline bad"><span>${l.length} ${l.length===1?"associado fica":"associados ficam"} sem responsável. Remaneje antes, ou confirme.</span><button class="btn danger sm" data-o1offok="${x.id}">Tirar da equipe</button><button class="btn ghost sm" data-o1cancel>Voltar</button></div>`:
+      `<div class="actions">${l.length?`<button class="btn ghost sm" data-o1cartver="${x.id}">Ver associados</button>`:""}${ed?`<button class="btn ghost sm" data-o1ren="${x.id}">Renomear</button><button class="btn ghost sm" data-o1off="${x.id}">Tirar da equipe</button>`:""}</div>`}</div>`};
+  return cabecalho("Cadastro","Associados","Cadastro, busca e ficha completa de cada associado.")+aviso()+abasAss("carteiras")+
+   `<p class="o1-lead">Cada associado tem uma pessoa da equipe responsável por ele. Essa pessoa acompanha cadastro, documentos, recadastramento e cobrança da sua carteira.</p>`+
+   (at.length?`<div class="grid cws">${at.map(card).join("")}<div class="panel cw sem" style="--i:${at.length}"><div class="cw-h"><span class="av avx"><i>?</i></span><div><h3>Sem responsável</h3><small>${sem.length?`${sem.length} ${sem.length===1?"associado":"associados"} sem ninguém da equipe`:"Todos têm responsável"}</small></div></div>
+     <div class="actions">${sem.length?`<button class="btn ghost sm" data-o1cartver="sem">Ver associados</button>`:""}${ed&&sem.length?`<button class="btn sm" data-o1dist ${o1UI.lote?"disabled":""}>Distribuir entre a equipe</button>`:""}</div>${ed&&sem.length?`<p class="rank" style="margin:8px 0 0">Distribui equilibrando o tamanho das carteiras.</p>`:""}</div></div>`:
+    `<div class="panel empty"><b>Ninguém da equipe cadastrado ainda.</b><span>${ed?"Adicione abaixo quem atende os associados. Depois distribua as carteiras com um clique.":"A secretaria cadastra a equipe aqui."}</span></div>`)+
+   (ed?`<div class="grid o1-2">${at.length?`<div class="panel"><h3>Remanejar carteira</h3><div class="form"><label for="o1-de">De<select id="o1-de"><option value="sem">Sem responsável (${sem.length})</option>${gestores.map(x=>`<option value="${x.id}">${esc(x.nome)}${x.ativo===false?" (fora da equipe)":""} (${naCarteira(x.id).length})</option>`).join("")}</select></label><label for="o1-para">Para<select id="o1-para">${at.map(x=>`<option value="${x.id}">${esc(x.nome)}</option>`).join("")}</select></label><div class="full actions"><button class="btn" data-o1reman ${o1UI.lote?"disabled":""}>Remanejar carteira</button></div></div><p class="rank" style="margin:10px 0 0">Leva todos os associados ativos e pendentes de uma carteira para outra. Fica no histórico de cada ficha. Para mudar só um, use a ficha.</p></div>`:""}
+     <div class="panel"><h3>Adicionar pessoa da equipe</h3><div class="o1-row"><input id="o1-gnome" placeholder="Nome de quem atende os associados" aria-label="Nome"><button class="btn" data-o1gadd>Adicionar</button></div>
+     ${fora.length?`<p class="rank" style="margin:12px 0 6px">Fora da equipe</p><div class="chips">${fora.map(x=>`<span class="pill neutral">${esc(x.nome)} <button class="lnk" data-o1volta="${x.id}" style="font-size:12px;padding:0 0 0 6px">voltar</button></span>`).join("")}</div>`:""}</div></div>`:"");
+};
+async function emLote(l,fn,msg){o1UI.lote=true;rerender();let ok=0;for(const a of l){if(await escrever(a.id,r=>fn(r,a),null))ok++}o1UI.lote=false;toast(msg(ok));rerender();return ok}
+async function o1Distribuir(){const at=gestAtivos(),sem=naCarteira(null).sort(porNome);if(!at.length||!sem.length)return;
+  const n={};at.forEach(g=>n[g.id]=naCarteira(g.id).length);const plano=sem.map(a=>{const g=at.slice().sort((x,y)=>n[x.id]-n[y.id])[0];n[g.id]++;return[a,g]}),m=new Map(plano.map(([a,g])=>[a.id,g]));
+  const ok=await emLote(sem,(r,a)=>r.update({gestor:m.get(a.id).id,hist:hist(a,"Carteira: "+m.get(a.id).nome)}),k=>`${k} ${k===1?"associado distribuído":"associados distribuídos"} entre a equipe`);registrar("Distribuiu carteiras",null,ok+" associados")}
+function o1Click(e){const b=s=>e.target.closest(s);let x;
+  if(x=b("[data-o1open]")){fichaUI={inativar:false,excluir:false,enviando:null,aba:"dados"};renderFicha(x.dataset.o1open,true);return true}
+  if(b("[data-o1recad]")){const a=lista.find(y=>aberto&&y.id===aberto.id);if(!a)return true;const ant=a.recadEm||"";
+    comDesfazer(a.id,r=>r.update({recadEm:hoje(),hist:hist(a,"Recadastramento conferido")}),"Recadastramento registrado",r=>r.update({recadEm:ant}));registrar("Registrou recadastramento",a);return true}
+  if(x=b("[data-exp]")){x.closest("details").open=false;const f=x.dataset.exp;if(viewAtual==="relatorios")exportarRelComo(f);else exportarAss(f.replace("-cpf",""),f.endsWith("-cpf"));return true}
+  if(viewAtual==="associados"){
+    if(b("[data-o1salvarbusca]")){salvarBusca();return true}
+    if(x=b("[data-o1busca]")){const s=lerBuscas()[+x.dataset.o1busca];if(s)aplicarBusca(s.f);return true}
+    if(x=b("[data-o1buscarm]")){const l=lerBuscas();l.splice(+x.dataset.o1buscarm,1);gravarBuscas(l);renderBuscas();return true}}
+  if(viewAtual!=="carteiras"||!$("#view").contains(e.target))return false;
+  if(x=b("[data-o1cartver]")){o1UI.aplicar={fg:x.dataset.o1cartver};location.hash="#associados";return true}
+  if(b("[data-o1cancel]")){o1UI.ren=o1UI.off=null;rerender();return true}
+  if(x=b("[data-o1ren]")){o1UI.ren=x.dataset.o1ren;o1UI.off=null;rerender();$("#o1-renome")?.select();return true}
+  if(x=b("[data-o1renok]")){const n=$("#o1-renome").value.trim().replace(/\s+/g," ");if(n.length<2)return toast("Escreva o nome."),true;
+    salvarGestores(gestores.map(g=>g.id===x.dataset.o1renok?{...g,nome:n}:g),"Nome atualizado");o1UI.ren=null;return true}
+  if(x=b("[data-o1off]")){const id=x.dataset.o1off;if(naCarteira(id).length){o1UI.off=id;o1UI.ren=null;rerender()}else salvarGestores(gestores.map(g=>g.id===id?{...g,ativo:false}:g),"Tirado da equipe");return true}
+  if(x=b("[data-o1offok]")){const id=x.dataset.o1offok;o1UI.off=null;salvarGestores(gestores.map(g=>g.id===id?{...g,ativo:false}:g),"Tirado da equipe. A carteira ficou sem responsável.");registrar("Tirou pessoa da equipe de carteiras",null,gestNome(id));return true}
+  if(x=b("[data-o1volta]")){salvarGestores(gestores.map(g=>g.id===x.dataset.o1volta?{...g,ativo:true}:g),"De volta à equipe");return true}
+  if(b("[data-o1gadd]")){const n=($("#o1-gnome").value||"").trim().replace(/\s+/g," ");if(n.length<2)return toast("Escreva o nome."),true;
+    if(gestores.some(g=>g.nome.toLowerCase()===n.toLowerCase()))return toast("Essa pessoa já está na lista."),true;
+    salvarGestores([...gestores,{id:"g"+Date.now().toString(36),nome:n,ativo:true}],n.split(" ")[0]+" adicionado(a) à equipe");registrar("Adicionou pessoa à equipe de carteiras",null,n);return true}
+  if(b("[data-o1dist]")){o1Distribuir();return true}
+  if(b("[data-o1reman]")){const de=$("#o1-de").value,para=$("#o1-para").value;if(de===para)return toast("Escolha carteiras diferentes."),true;
+    const l=naCarteira(de==="sem"?null:de);if(!l.length)return toast("Essa carteira está vazia."),true;const nm=gestNome(para);
+    emLote(l,(r,a)=>r.update({gestor:para,hist:hist(a,"Carteira remanejada para "+nm)}),k=>`${k} ${k===1?"associado remanejado":"associados remanejados"} para ${nm}`).then(k=>registrar("Remanejou carteira",null,`${k} associados → ${nm}`));return true}
+  return false;
+}
+function o1Change(e){const s=e.target.closest("[data-o1gestor]");if(!s)return false;const a=lista.find(y=>aberto&&y.id===aberto.id);if(!a)return true;
+  const ant=a.gestor||"",nm=gestNome(s.value)||"sem responsável";
+  comDesfazer(a.id,r=>r.update({gestor:s.value,hist:hist(a,"Carteira: "+nm)}),"Responsável: "+nm,r=>r.update({gestor:ant}));return true}
+
+/* ---- tabela de mensalidades (Financeiro › Resumo) ---- */
+function tabelaMensHTML(){const t=tabMens(),v=p=>t[p]!=null?t[p]:MENS_PADRAO(p),i0=POSTOS.indexOf("Aspirante"),dif=o1DifTabela();
+  const inp=(k,n,val)=>`<label>${esc(n)}<input data-tm="${esc(k)}" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(val)}"></label>`;
+  return `<div class="panel" style="margin-top:14px" id="tabmens"><h3>Tabela de mensalidades</h3><p class="rank" style="margin:0 0 12px">Valor por posto/graduação. Quem está com "valor da tabela" segue estes valores nas próximas mensalidades geradas. Sócio remido não paga.</p>
+   <form class="tm" id="ftm"><fieldset><legend>Praças</legend>${POSTOS.slice(0,i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Oficiais</legend>${POSTOS.slice(i0).map(p=>inp(p,p,v(p))).join("")}</fieldset><fieldset><legend>Outros</legend>${inp("_naoSocio","Não sócio (usa serviços)",t._naoSocio??50)}</fieldset><div class="actions"><button class="btn ghost" type="submit">Salvar tabela</button></div></form>
+   ${dif.length?`<div class="callout" style="margin-top:12px"><span>${dif.length} ${dif.length===1?"associado está":"associados estão"} com valor diferente da tabela. O total mensal passa de ${brl(dif.reduce((s,a)=>s+(+a.mens||0),0))} para ${brl(dif.reduce((s,a)=>s+valorTabela(a.posto,catDe(a)),0))}.</span><button class="btn sm" data-o1aplicartab ${o1UI.lote?"disabled":""}>Atualizar ${dif.length===1?"esse associado":"esses associados"}</button></div>`:""}</div>`}
+function o1ClickFin(e){if(viewAtual!=="financeiro"||!e.target.closest("[data-o1aplicartab]"))return false;const l=o1DifTabela();
+  emLote(l,(r,a)=>{const v=valorTabela(a.posto,catDe(a));return r.update({mens:v,mensModo:"tabela",hist:hist(a,`Mensalidade ajustada à tabela: ${brl(v)}`)})},k=>`${k} ${k===1?"mensalidade atualizada":"mensalidades atualizadas"} pela tabela`).then(k=>registrar("Aplicou a tabela de mensalidades",null,k+" associados"));return true}
+
+/* relatórios em Excel/PDF */
+function exportarRelComo(f){const r=REL.find(x=>x.id===rUI.id);if(!r)return;const o=r.g(rUI.mes);
+  exportarTabela({nome:`relatorio-${r.id}${r.mes?"-"+rUI.mes:""}`,titulo:r.t,sub:(r.mes?nomeMes(rUI.mes)+" · ":"")+o.res.map(([k,v])=>`${k}: ${v}`).join(" · "),cols:o.cols,rows:o.rows,formato:f,log:["Exportou relatório",null,`${r.t} · ${f.toUpperCase()}`]})}
+
+/* liga o que é desta onda depois de cada troca de tela */
+function ligarOnda1(){
+  if(viewAtual==="associados"){renderBuscas();if(o1UI.aplicar){const f=o1UI.aplicar;o1UI.aplicar=null;aplicarBusca(f)}}
+  if(viewAtual==="financeiro")$("#ftm")?.addEventListener("submit",async e=>{e.preventDefault();const tabela={};let ruim=false;
+    e.target.querySelectorAll("[data-tm]").forEach(i=>{const v=parseFloat(i.value);if(!(v>=0))ruim=true;else tabela[i.dataset.tm]=Math.round(v*100)/100});
+    if(ruim)return toast("Confira os valores: use números iguais ou maiores que zero.");
+    if(await escrever("geral",r=>r.set(Object.assign({},fin.cfg,{tabela})),"Tabela de mensalidades salva","fin_config"))registrar("Alterou a tabela de mensalidades")});
 }
 /* ---------- navegação ---------- */
 const SEC_FECHADAS=["Privacidade","Dependentes","Acesso ao app"];
@@ -3490,7 +3759,7 @@ function route(){
   rotular($("#view"));
   $("#meu-papel").innerHTML=`Seu papel: <b>${PAPEIS[papel()].n}</b>${lUI.papelSim?` <a href="#privacidade" data-sairsim style="color:inherit">(simulação · voltar)</a>`:""}`;
   if(!podeVer(viewAtual))return;
-  if(viewAtual==="associados"){["q","fs","ff","fd","fv","fo"].forEach(id=>$("#"+id).addEventListener("input",renderRows));renderRows();$("#csv")?.addEventListener("click",()=>exportarCSV(false))}
+  if(viewAtual==="associados"){["q","fs","ff","fd","fv","fo","fc","fp","fg","fr"].forEach(id=>$("#"+id)?.addEventListener("input",renderRows));renderRows();$("#csv")?.addEventListener("click",()=>exportarCSV(false))}
   if(viewAtual==="documentos")$("#fdoc").addEventListener("input",e=>{const v=e.target.value;document.querySelectorAll("#drows tr[data-k]").forEach(r=>r.hidden=!!v&&r.dataset.k!==v)});
   if(viewAtual==="financeiro")ligarFin();
   if(viewAtual==="portal")ligarPortal();
@@ -3501,6 +3770,7 @@ function route(){
   if(viewAtual==="privacidade")ligarPriv();
   if(viewAtual==="app"){ligarApp();ligarPortal()}
   if(viewAtual==="associados")$("#csv2")?.addEventListener("click",()=>exportarCSV(true));
+  ligarOnda1();
 }
 function refresh(){
   if(viewAtual==="associados"&&$("#rows")){const t=$(".top");const tmp=document.createElement("div");tmp.innerHTML=views.associados();const nt=tmp.querySelector(".top");if(t&&nt){t.replaceWith(nt);$("#csv")?.addEventListener("click",()=>exportarCSV(false));$("#csv2")?.addEventListener("click",()=>exportarCSV(true))}const na=$(".notice");if(na)na.remove();const av=aviso();if(av)$(".top").insertAdjacentHTML("afterend",av);{const tb=$("#view nav.tabs"),t2=document.createElement("div");t2.innerHTML=abasAss("associados");if(tb&&t2.firstElementChild)tb.replaceWith(t2.firstElementChild)}renderRows()}
@@ -3693,6 +3963,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-gbusca]")){abrirBusca();return}
   if(secClick(e))return;
   if(v29Click(e))return;
+  if(o1Click(e)||o1ClickFin(e))return;
   {const bx=$("#bx");if(bx&&bx.contains(e.target)){const r=e.target.closest("[data-bx]");if(r)bxAbrir(+r.dataset.bx);else if(e.target===bx)fecharBusca();return}}
   if(e.target.closest("[data-vfechar]")||e.target.id==="viewer"){fecharViewer();return}
   const tb=e.target.closest("[data-tema]");if(tb){escolherTema(tb.dataset.tema);return}
@@ -3707,7 +3978,7 @@ document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]");if(o){fichaUI={inativar:false,excluir:false,enviando:null,aba:o.dataset.k?"documentos":"dados"};renderFicha(o.dataset.open,true);return}
   const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
 });
-document.addEventListener("change",e=>{if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
+document.addEventListener("change",e=>{if(o1Change(e))return;if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
 document.addEventListener("keydown",e=>{
   if(bxTecla(e))return;
   if(e.key==="Escape"&&document.body.classList.contains("menu-on")){menuMais(false);$("[data-menu]")?.focus();return}

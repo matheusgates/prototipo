@@ -86,7 +86,21 @@
    },
    "sit": "Ativo",
    "sitMil": "Ativa",
-   "tel": "(86) 9 9812-4410"
+   "tel": "(86) 9 9812-4410",
+   "gestor": "g-ana",
+   "recadEm": "2025-03-10",
+   "sexo": "Masculino",
+   "estCivil": "Casado(a)",
+   "natural": "Aracaju/SE",
+   "tel2": "(79) 3211-4455",
+   "contatos": [
+    {
+     "nome": "Márcia Ramos",
+     "rel": "esposa",
+     "tel": "(79) 9 9811-2030"
+    }
+   ],
+   "corresp": true
   },
   "a0002": {
    "cep": "",
@@ -185,7 +199,12 @@
    },
    "sit": "Ativo",
    "sitMil": "Ativa",
-   "tel": "(86) 9 9433-1288"
+   "tel": "(86) 9 9433-1288",
+   "gestor": "g-bruno",
+   "recadEm": "2023-06-02",
+   "sexo": "Feminino",
+   "estCivil": "Solteiro(a)",
+   "indicadoPor": "a0001"
   },
   "a0003": {
    "cep": "",
@@ -230,7 +249,8 @@
    "rg": "",
    "sit": "Pendente",
    "sitMil": "Ativa",
-   "tel": "(86) 9 8820-7731"
+   "tel": "(86) 9 8820-7731",
+   "gestor": "g-bruno"
   },
   "a0004": {
    "cep": "",
@@ -297,7 +317,7 @@
    "idMil": "",
    "ing": "2014-01-20",
    "mat": "0004-14",
-   "mens": 120,
+   "mens": 0,
    "motivo": null,
    "nasc": "1960-08-09",
    "nome": "Antônio Carlos Moura",
@@ -323,7 +343,13 @@
    },
    "sit": "Ativo",
    "sitMil": "Reserva remunerada",
-   "tel": "(86) 9 9901-3302"
+   "tel": "(86) 9 9901-3302",
+   "gestor": "g-ana",
+   "cat": "remido",
+   "mensModo": "isento",
+   "recadEm": "2024-01-15",
+   "sexo": "Masculino",
+   "estCivil": "Casado(a)"
   },
   "a0005": {
    "cep": "",
@@ -395,7 +421,22 @@
    },
    "sit": "Ativo",
    "sitMil": "Ativa",
-   "tel": "(86) 9 9455-6610"
+   "tel": "(86) 9 9455-6610",
+   "gestor": "g-cida",
+   "recadEm": "2026-05-15",
+   "indicadoPor": "a0001",
+   "contatos": [
+    {
+     "nome": "Rosa Gomes",
+     "rel": "mãe",
+     "tel": "(79) 9 9654-3321"
+    },
+    {
+     "nome": "Paulo Alencar",
+     "rel": "irmão",
+     "tel": "(79) 9 9120-7788"
+    }
+   ]
   },
   "a0006": {
    "cep": "",
@@ -544,7 +585,9 @@
    },
    "sit": "Ativo",
    "sitMil": "Ativa",
-   "tel": "(86) 9 9300-2257"
+   "tel": "(86) 9 9300-2257",
+   "recadEm": "2026-02-01",
+   "sexo": "Feminino"
   },
   "a0008": {
    "cep": "",
@@ -2371,6 +2414,27 @@
    "respostaEm": "2026-11-03",
    "status": "aprovada",
    "tipo": "salao"
+  }
+ },
+ "app_config": {
+  "gestores": {
+   "lista": [
+    {
+     "id": "g-ana",
+     "nome": "Ana Paula Menezes",
+     "ativo": true
+    },
+    {
+     "id": "g-bruno",
+     "nome": "Bruno Teles",
+     "ativo": true
+    },
+    {
+     "id": "g-cida",
+     "nome": "Aparecida Santos",
+     "ativo": true
+    }
+   ]
   }
  }
 }
