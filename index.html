@@ -1174,6 +1174,7 @@ async function iniciar(){
   sub("reservas",s=>{portal.res=s.docs.map(d=>Object.assign({id:d.id},d.data()))});
   db.doc("fin_config/geral").onSnapshot(d=>{fin.cfg=d.exists?d.data():{};refresh()},()=>{});
   iniciarLgpd();iniciarApp();iniciarOnda1();iniciarOnda2();
+  iniciarOnda34();
 }
 
 /* ---------- interface ---------- */
@@ -1506,7 +1507,7 @@ const somaMes=(c,n)=>{let[y,m]=c.split("-").map(Number);m+=n;while(m>12){m-=12;y
 const pad2=n=>String(n).padStart(2,"0");
 const diaVenc=()=>Math.min(28,Math.max(1,+(fin.cfg.diaVenc||10)));
 const itensMes=c=>{const d=fin.mens[c];if(!d)return null;return Object.entries(d.itens||{}).filter(([,i])=>i).map(([id,i])=>Object.assign({id,venc:d.venc},i))};
-const stItem=i=>i.status==="pago"?"Paga":i.status==="informado"?"Em conferência":i.venc<hoje()?"Em atraso":"Aberta";
+const stItem=i=>i.status==="pago"?"Paga":i.status==="acordo"?"Em acordo":i.status==="informado"?"Em conferência":i.venc<hoje()?"Em atraso":"Aberta";
 const stLanc=l=>l.status==="pago"?(l.tipo==="entrada"?"Recebida":"Paga"):l.venc<hoje()?"Vencida":"Em aberto";
 const stCls={Paga:"ok",Recebida:"ok","Em conferência":"warn","Em atraso":"bad",Vencida:"bad",Aberta:"neutral","Em aberto":"neutral"};
 const soma=(arr,f=x=>x.valor)=>arr.reduce((s,x)=>s+(+f(x)||0),0);
@@ -3541,6 +3542,478 @@ function sinaisFicha(a){
   if(a.sit!=="Inativo"){const[t,k]=stConta(contas[a.id]);s.push([k,t==="Ativo"?"Usa o app":t==="Sem acesso ao app"?t:"App: "+t.charAt(0).toLowerCase()+t.slice(1)])}
   return `<div class="sinais">${s.map(([k,t,aba])=>aba?`<button class="sinal ${k}" data-aba="${aba}">${t}</button>`:`<span class="sinal ${k}">${t}</span>`).join("")}</div>`;
 }
+/* ---------- v32 · ondas 3 e 4: cobrança (inadimplentes, acordos, agenda de negociação, carta, cobrança em lote, sino da equipe) e benefícios (planos de saúde, cartão da associação, vales, informe de IRPF) ---------- */
+/* Coleções: fin_acordos, fin_negoc, planos, planos_adesoes, cartao_mov, beneficios. Ganchos: iniciarOnda34 (iniciar), o34Click (clique), o34Change (change), ligarOnda34 (fim de route). */
+let o3={acordos:[],negoc:[]},o4={planos:[],ades:[],mov:[],ben:[]};
+let o3UI={aba:"inad",sub:null,sel:{},min:1,gest:"",forma:"",acordo:null,agendar:null,fila:null,feito:null,quebrar:null,sino:false,novos:{}};
+let o4UI={aba:"planos",plano:null,mes:hoje().slice(0,7),fmes:hoje().slice(0,7),movNovo:false,lote:false,fAderir:null,fCop:false,fLim:false,fMov:false,fCanc:false,ano:String(new Date().getFullYear()-1)};
+const TIPOS_BEN=[{k:"gas",n:"Vale gás",v:110},{k:"combustivel",n:"Vale combustível",v:150}];
+const CANAIS=["WhatsApp","Telefone","Presencial","E-mail"];
+const RESULTADOS=["Prometeu pagar","Fez acordo","Pagou","Não atendeu","Pediu para retornar","Recusou"];
+const FAIXAS_ANS=[[0,18],[19,23],[24,28],[29,33],[34,38],[39,43],[44,48],[49,53],[54,58],[59,120]];
+const TIPOS_PLANO=["Enfermaria","Apartamento","Odontológico","Ambulatorial"];
+const o34Id=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
+const o34Pl=(n,s,p)=>n===1?s:p;
+ACESSO.secretaria.push("inadimplencia","beneficios");ACESSO.tesouraria.push("inadimplencia","beneficios");
+VERBO.inadimplencia="Ver";VERBO.beneficios="Ver";stCls["Em acordo"]="neutral";
+REL.push({id:"o3acordos",t:"Acordos de cobrança",d:"Acordos de dívida feitos, valores negociados, parcelas pagas e em aberto.",mes:false,g(){const l=o3.acordos.slice().sort((x,y)=>String(y.criadoEm).localeCompare(String(x.criadoEm)));
+  const pg=ac=>(ac.parcelas||[]).filter(p=>p.status==="pago");
+  return{res:[["Acordos",l.length],["Ativos",l.filter(x=>x.status==="ativo").length],["Negociado",brl(soma(l,x=>x.total))],["Recebido",brl(soma(l,x=>soma(pg(x))))]],cols:["Associado","Matrícula","Feito em","Meses","Total","Parcelas pagas","Situação"],
+    rows:l.map(x=>[x.nome,x.mat,fmtData(x.criadoEm),(x.meses||[]).length,brl(x.total),`${pg(x).length}/${(x.parcelas||[]).length}`,O3_ST[x.status]||x.status])}}});
+REL.push({id:"o4planos",t:"Planos de saúde",d:"Vidas por plano, valor mensal por faixa etária e coparticipações do mês.",mes:true,g(m){const at=o4.ades.filter(x=>x.status==="ativo");
+  const rows=at.map(x=>{const p=o4Plano(x.planoId)||{},cp=soma((x.copart||[]).filter(c=>c.mes===m));return[x.nome,x.mat,p.nome||"—",(x.vidas||[]).length,brl(x.total),brl(cp),brl((+x.total||0)+cp)]});
+  return{res:[["Adesões ativas",at.length],["Vidas",soma(at,x=>(x.vidas||[]).length)],["Mensal dos planos",brl(soma(at,x=>x.total))]],cols:["Associado","Matrícula","Plano","Vidas","Mensal","Coparticipação","Total do mês"],rows}}});
+REL.push({id:"o4beneficios",t:"Vales e cartão do mês",d:"Vales gás e combustível lançados e compras no cartão da associação com fatura no mês.",mes:true,g(m){const b=o4.ben.filter(x=>x.mes===m&&x.status!=="cancelado"),c=o4.mov.filter(x=>x.mes===m);
+  const rows=[...b.map(x=>[x.nome,x.mat,(TIPOS_BEN.find(t=>t.k===x.tipo)||{}).n||x.tipo,brl(x.valor),x.status==="entregue"?"Entregue":"Lançado"]),...c.map(x=>[o4Nome(x.associadoId),o4Mat(x.associadoId),"Cartão · "+(x.estab||""),brl(x.valor),x.conferido?"Conferido":"A conferir"])];
+  return{res:[["Vales",b.length],["Total em vales",brl(soma(b))],["Compras no cartão",c.length],["Fatura do cartão",brl(soma(c))]],cols:["Associado","Matrícula","Benefício","Valor","Situação"],rows}}});
+const O3_ST={ativo:"Em dia",quitado:"Quitado",quebrado:"Quebrado"};
+const o4Nome=id=>(lista.find(a=>a.id===id)||{}).nome||"—",o4Mat=id=>(lista.find(a=>a.id===id)||{}).mat||"";
+
+function iniciarOnda34(){
+  const sub=(c,fn)=>db.collection(c).onSnapshot(s=>{fn(s.docs.map(d=>Object.assign({id:d.id},d.data())));refresh()},()=>{});
+  sub("fin_acordos",l=>o3.acordos=l);sub("fin_negoc",l=>o3.negoc=l);
+  sub("planos",l=>o4.planos=l);sub("planos_adesoes",l=>o4.ades=l);sub("cartao_mov",l=>o4.mov=l);sub("beneficios",l=>o4.ben=l);
+}
+/* menu e sino: entram pelo código para não mexer no HTML da barra lateral */
+(function(){
+  const ic=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
+  const fin=document.querySelector('.nav[href="#financeiro"]'),cv=document.querySelector('.nav[href="#convenios"]');
+  if(fin)fin.insertAdjacentHTML("afterend",`<a class="nav" href="#inadimplencia">${ic('<path d="M4 7h16v10H4z"/><path d="M4 11h16M8 15h3"/><path d="M17 3v4M7 3v4"/>')}<span>Inadimplência</span><span class="badge" id="nav-o3" hidden></span></a>`);
+  if(cv)cv.insertAdjacentHTML("afterend",`<a class="nav" href="#beneficios">${ic('<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9.5 12h5M12 9.5v5"/>')}<span>Planos e benefícios</span></a>`);
+  const gb=document.querySelector(".side .gbusca");
+  if(gb)gb.insertAdjacentHTML("afterend",`<button class="o3-sino" type="button" data-o3sino aria-label="Avisos da equipe" aria-expanded="false">${ic('<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>')}<span>Avisos da equipe</span><i class="o3-n" id="o3-n" hidden></i></button>`);
+  const st=document.createElement("style");st.textContent=`
+.o3-sino{display:flex;align-items:center;gap:10px;width:100%;background:rgba(255,255,255,.06);border:0;border-radius:9px;color:inherit;padding:8px 12px;cursor:pointer;font-size:14px;opacity:.9;margin-top:-12px}
+.o3-sino:hover{background:rgba(255,255,255,.11);opacity:1}.o3-sino svg{width:18px;height:18px;flex:none}.o3-sino span{flex:1;text-align:left}
+.o3-n{font-style:normal;background:#e5484d;color:#fff;border-radius:999px;font-size:11.5px;font-weight:700;line-height:19px;padding:0 7px}
+.o3-pop{position:fixed;z-index:45;left:270px;top:70px;width:min(380px,calc(100vw - 32px));max-height:min(70vh,560px);overflow:auto;background:var(--surface);color:var(--fg);border:1px solid var(--line);border-radius:16px;box-shadow:var(--pop);padding:14px}
+.o3-pop h3{margin:0 0 4px;font-family:var(--f-display);font-size:21px;font-weight:600}.o3-pop .tk{padding:10px 12px}.o3-pop .tk-ic{width:36px;height:36px}
+.o3-novo{font-size:11px;font-weight:700;color:#fff;background:#e5484d;border-radius:999px;padding:0 6px;margin-left:6px;vertical-align:1px}
+.o3-lst{display:flex;flex-direction:column;gap:8px}
+.o3-it{display:flex;gap:12px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:14px;padding:12px 14px;flex-wrap:wrap}
+.o3-it .t{flex:1;min-width:200px;display:flex;flex-direction:column;line-height:1.35}.o3-it .t b{font-weight:600}.o3-it .t small{color:var(--muted);font-size:13px}
+.o3-it .v{font-family:var(--f-display);font-size:22px;font-weight:600;font-variant-numeric:tabular-nums;white-space:nowrap}
+.o3-it input[type=checkbox]{width:18px;height:18px;accent-color:var(--accent);flex:none}
+.o3-it.sel{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}
+.o3-bar{position:sticky;bottom:12px;z-index:4;display:flex;gap:8px;align-items:center;flex-wrap:wrap;background:var(--brand-2);color:var(--brand-fg);border-radius:14px;padding:10px 14px;margin-top:12px;box-shadow:var(--pop)}
+.o3-bar b{flex:1;min-width:160px}.o3-bar .btn.ghost{background:transparent;color:inherit;border-color:rgba(255,255,255,.4)}
+.o3-tb{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:12px}.o3-tb select,.o3-f input,.o3-f select,.o3-f textarea{background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:8px 11px;min-height:38px;min-width:0;color:var(--fg)}
+.o3-f{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}.o3-f label{display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:500;color:var(--muted)}.o3-f .full{grid-column:1/-1}
+.o3-meses{display:flex;gap:6px;flex-wrap:wrap}.o3-meses label{flex-direction:row;align-items:center;gap:6px;border:1px solid var(--line);border-radius:10px;padding:6px 10px;color:var(--fg);background:var(--bg);cursor:pointer}
+.o3-meses label:has(input:checked){border-color:var(--accent);background:var(--accent-soft)}
+.o3-parc{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:6px;margin-top:10px}.o3-parc span{border:1px solid var(--line);border-radius:10px;padding:7px 10px;font-size:12.5px;display:flex;flex-direction:column;align-items:flex-start;gap:1px;background:var(--bg)}.o3-parc span b{font-size:15px;font-variant-numeric:tabular-nums}.o3-parc small{font-size:11.5px;opacity:.85}
+.o3-parc span.pg{background:var(--ok-soft);color:var(--ok);border-color:transparent}.o3-parc span.vc{background:var(--bad-soft);color:var(--bad);border-color:transparent}
+.o3-parc button{background:none;border:0;color:var(--accent);font-weight:600;cursor:pointer;padding:0;font-size:12.5px}
+.o3-fila{display:flex;gap:14px;align-items:center;flex-wrap:wrap;border:2px solid var(--accent);background:var(--accent-soft);border-radius:16px;padding:14px 16px;margin-bottom:14px}
+.o3-fila .t{flex:1;min-width:200px}.o3-fila small{color:var(--muted)}
+.o3-dt{flex:none;width:58px;text-align:center;border-radius:10px;padding:5px 0 6px;background:var(--surface-2)}.o3-dt b{display:block;font-family:var(--f-display);font-size:21px;line-height:1}.o3-dt small{font-size:11px;color:var(--muted)}
+.o3-dt.hj{background:var(--brand-2);color:var(--brand-fg)}.o3-dt.hj small{color:inherit;opacity:.8}.o3-dt.at{background:var(--bad-soft);color:var(--bad)}
+.o3-h{font-family:var(--f-display);font-size:20px;font-weight:600;margin:18px 0 8px}
+.o4-cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:12px}
+.o4-fx{display:grid;grid-template-columns:repeat(auto-fill,minmax(92px,1fr));gap:4px;margin:8px 0}.o4-fx span{background:var(--bg);border:1px solid var(--line);border-radius:8px;padding:4px 7px;font-size:12px;display:flex;flex-direction:column}.o4-fx b{font-variant-numeric:tabular-nums;font-size:13px}
+.o4-fxrow{display:grid;grid-template-columns:1fr 1fr 1.3fr auto;gap:6px;align-items:center}.o4-fxrow input{min-width:0}
+.o4-tot{display:flex;justify-content:space-between;align-items:baseline;gap:10px;border-top:1px solid var(--line);padding-top:10px;margin-top:10px}.o4-tot b{font-family:var(--f-display);font-size:26px;font-weight:600;font-variant-numeric:tabular-nums}
+.o4-res{display:flex;flex-direction:column;gap:0}.o4-res div{display:flex;justify-content:space-between;gap:10px;padding:7px 0;border-bottom:1px solid var(--line)}.o4-res div:last-child{border:0;font-weight:700}
+.o4-bar{height:8px;border-radius:99px;background:var(--surface-2);overflow:hidden;margin:6px 0}.o4-bar i{display:block;height:100%;background:var(--accent)}.o4-bar i.over{background:var(--bad)}
+@media (max-width:760px){.o3-pop{left:16px;right:16px;top:auto;bottom:calc(76px + env(safe-area-inset-bottom,0px));width:auto}.o3-sino{margin-top:0}.o3-it .v{font-size:19px}.o4-fxrow{grid-template-columns:1fr 1fr}}
+`;document.head.append(st);
+})();
+
+/* ---------- onda 3 · inadimplentes ---------- */
+const o3Div=a=>minhasMens(a).filter(i=>!["pago","informado","acordo"].includes(i.status)&&i.venc<hoje()).sort((x,y)=>x.comp.localeCompare(y.comp));
+const o3Abertas=a=>minhasMens(a).filter(i=>!["pago","informado","acordo"].includes(i.status)).sort((x,y)=>x.comp.localeCompare(y.comp));
+const o3Inad=()=>lista.filter(a=>!a.anonimizadoEm).map(a=>({a,d:o3Div(a)})).filter(x=>x.d.length).sort((x,y)=>y.d.length-x.d.length||soma(y.d)-soma(x.d));
+const o3Filtrados=()=>o3Inad().filter(({a,d})=>d.length>=o3UI.min&&(!o3UI.gest||(o3UI.gest==="sem"?!temGestor(a):a.gestor===o3UI.gest))&&(!o3UI.forma||(a.formaPag||"Desconto em folha")===o3UI.forma));
+const o3ParcVenc=()=>o3.acordos.filter(ac=>ac.status==="ativo").flatMap(ac=>(ac.parcelas||[]).map((p,n)=>({ac,p,n})).filter(x=>x.p.status!=="pago"&&x.p.venc<hoje()));
+const o3NegHoje=()=>o3.negoc.filter(n=>!n.feito&&n.data<=hoje());
+function o3Msg(a,d){const t=soma(d),ch=fin.cfg.chavePix;
+  return `Olá, ${String(a.nome).split(" ")[0]}! Aqui é da secretaria da ${MARCA.nome}. Consta em aberto ${d.length===1?`a mensalidade de ${nomeMes(d[0].comp)}`:`${d.length} mensalidades (${d.map(i=>curtoMes(i.comp)).join(", ")})`}, total de ${brl(t)}.${ch?` Você pode pagar por PIX pela chave ${ch} ou pelo app da associação.`:" Você pode pagar pelo app da associação."} Se preferir, fazemos um acordo de parcelamento. Se já pagou, pode desconsiderar. Obrigado!`}
+const o3Ab=()=>`<nav class="tabs" role="tablist" style="margin-bottom:16px">${[["inad",`Inadimplentes (${o3Inad().length})`],["acordos",`Acordos (${o3.acordos.filter(x=>x.status==="ativo").length})`],["agenda",`Agenda de negociação${o3NegHoje().length?` (${o3NegHoje().length})`:""}`]].map(([k,n])=>`<button class="tab" role="tab" aria-selected="${o3UI.aba===k}" data-o3aba="${k}">${n}</button>`).join("")}</nav>`;
+views.inadimplencia=function(){
+  const sub=location.hash.split("/")[1];if(sub&&sub!==o3UI.sub&&["inad","acordos","agenda"].includes(sub))o3UI.aba=sub;o3UI.sub=sub||null;
+  const ed=editavel(),inad=o3Inad(),tot=soma(inad.flatMap(x=>x.d)),pv=o3ParcVenc();
+  const res=`<p class="resumo-l"><b>${inad.length}</b> ${o34Pl(inad.length,"associado em atraso","associados em atraso")} · <b>${brl(tot)}</b> em aberto · <b>${o3.acordos.filter(x=>x.status==="ativo").length}</b> ${o34Pl(o3.acordos.filter(x=>x.status==="ativo").length,"acordo em andamento","acordos em andamento")}${pv.length?` · <b class="neg">${pv.length}</b> ${o34Pl(pv.length,"parcela vencida","parcelas vencidas")}`:""}</p>`;
+  let corpo="";
+  if(o3UI.aba==="inad")corpo=o3InadHTML(ed);
+  if(o3UI.aba==="acordos")corpo=o3AcordosHTML(ed);
+  if(o3UI.aba==="agenda")corpo=o3AgendaHTML(ed);
+  return cabecalho("Gestão","Inadimplência","Quem está em atraso, acordos de parcelamento, agenda de negociação e cobrança em lote.")+aviso()+res+o3Ab()+(o3UI.acordo?o3FormAcordo():"")+(o3UI.agendar!=null?o3FormAgendar():"")+corpo;
+};
+function o3InadHTML(ed){
+  const l=o3Filtrados(),sel=l.filter(x=>o3UI.sel[x.a.id]),fila=o3UI.fila;
+  const cur=fila&&lista.find(a=>a.id===fila.ids[fila.i]);
+  const filaH=fila?(cur?`<div class="o3-fila" role="status"><div class="t"><small>Fila do WhatsApp · ${fila.i+1} de ${fila.ids.length}${fila.ok?` · ${fila.ok} ${o34Pl(fila.ok,"enviada","enviadas")}`:""}</small><br><b>${esc(cur.nome)}</b> · ${brl(soma(o3Div(cur)))}${zapNum(cur.tel)?"":` <span class="pill warn">sem celular</span>`}</div><button class="btn" data-o3zap ${zapNum(cur.tel)?"":"disabled"}>Abrir WhatsApp</button><button class="btn ghost" data-o3pular>Pular</button><button class="btn ghost" data-o3filafim>Encerrar fila</button></div>`:
+    `<div class="o3-fila"><div class="t"><b>Fila concluída.</b> ${fila.ok} ${o34Pl(fila.ok,"mensagem aberta","mensagens abertas")} no WhatsApp, ${fila.ids.length-fila.ok} ${o34Pl(fila.ids.length-fila.ok,"pulada","puladas")}.</div><button class="btn ghost" data-o3filafim>Fechar</button></div>`):"";
+  const formas=[...new Set(lista.map(a=>a.formaPag||"Desconto em folha"))].sort();
+  const tb=`<div class="o3-tb"><select id="o3-min" aria-label="Meses em atraso"><option value="1" ${o3UI.min===1?"selected":""}>1 mês ou mais</option><option value="2" ${o3UI.min===2?"selected":""}>2 meses ou mais</option><option value="3" ${o3UI.min===3?"selected":""}>3 meses ou mais</option></select>
+    ${gestores.length?`<select id="o3-gest" aria-label="Responsável"><option value="">Todos os responsáveis</option>${gestAtivos().map(g=>`<option value="${g.id}" ${o3UI.gest===g.id?"selected":""}>${esc(g.nome)}</option>`).join("")}<option value="sem" ${o3UI.gest==="sem"?"selected":""}>Sem responsável</option></select>`:""}
+    <select id="o3-forma" aria-label="Forma de pagamento"><option value="">Todas as formas</option>${formas.map(f=>`<option ${o3UI.forma===f?"selected":""}>${esc(f)}</option>`).join("")}</select>
+    ${l.length?`<button class="btn ghost sm" data-o3todos>${sel.length===l.length?"Desmarcar todos":"Marcar todos"}</button>`:""}</div>`;
+  if(!l.length)return filaH+tb+`<div class="panel empty"><b>${o3Inad().length?"Ninguém com esse filtro.":"Ninguém em atraso."}</b><span>${o3Inad().length?"Mude os filtros acima.":"Quando uma mensalidade vencer sem pagamento, o associado aparece aqui."}</span></div>`;
+  const it=({a,d},i)=>{const ac=o3.acordos.filter(x=>x.associadoId===a.id&&x.status==="quebrado").length,ng=o3.negoc.find(n=>n.associadoId===a.id&&!n.feito);
+    return `<div class="o3-it${o3UI.sel[a.id]?" sel":""}" style="--i:${i}"><input type="checkbox" data-o3sel="${a.id}" ${o3UI.sel[a.id]?"checked":""} aria-label="Selecionar ${esc(a.nome)}">${avatar(a)}
+     <span class="t"><b><button class="lnk" data-o1open="${a.id}" style="padding:0;color:var(--fg);font-size:15px">${esc(a.nome)}</button></b><small>${d.length} ${o34Pl(d.length,"mês","meses")}: ${d.map(x=>curtoMes(x.comp)).join(", ")} · ${esc(a.formaPag||"Desconto em folha")}${temGestor(a)?" · "+esc(gestNome(a.gestor)):""}${ac?` · <span class="neg">${ac} ${o34Pl(ac,"acordo quebrado","acordos quebrados")}</span>`:""}${ng?` · contato marcado ${fmtData(ng.data)}`:""}</small></span>
+     <span class="v">${brl(soma(d))}</span>
+     <span class="actions">${ed?`<button class="btn sm" data-o3acordo="${a.id}">Acordo</button><button class="btn ghost sm" data-o3agendar="${a.id}">Agendar contato</button>`:""}<button class="btn ghost sm" data-o3carta="${a.id}">Carta (PDF)</button></span></div>`};
+  const emails=sel.filter(x=>x.a.email).length,zaps=sel.filter(x=>zapNum(x.a.tel)).length;
+  return filaH+tb+`<div class="o3-lst">${l.map(it).join("")}</div>`+(sel.length?`<div class="o3-bar"><b>${sel.length} ${o34Pl(sel.length,"selecionado","selecionados")} · ${brl(soma(sel.flatMap(x=>x.d)))}</b><button class="btn sm" data-o3fila ${zaps?"":"disabled"}>Cobrar no WhatsApp (${zaps})</button><button class="btn ghost sm" data-o3email ${emails?"":"disabled"}>E-mail em lote (${emails})</button><button class="btn ghost sm" data-o3cartas>Cartas em PDF</button></div>`:`<p class="sample">Marque os associados para cobrar em lote. O WhatsApp abre um por vez, com a mensagem pronta; cada envio fica no registro de acessos (LGPD).</p>`);
+}
+function o3FormAcordo(){const a=lista.find(x=>x.id===o3UI.acordo);if(!a)return"";const ab=o3Abertas(a),dv=new Set(o3Div(a).map(i=>i.comp));
+  const pv=addDias(hoje(),7);
+  return `<div class="panel" id="o3-facordo" style="margin-bottom:14px"><h3>Acordo de dívida · ${esc(a.nome)}</h3>
+   <form class="o3-f" id="o3-fa"><div class="full"><span class="rank">Mensalidades incluídas</span><div class="o3-meses">${ab.map(i=>`<label><input type="checkbox" data-o3mes="${i.comp}" data-v="${+i.valor||0}" ${dv.has(i.comp)?"checked":""}> ${curtoMes(i.comp)} · ${brl(i.valor)}${i.venc<hoje()?"":` <span class="rank">a vencer</span>`}</label>`).join("")||`<span class="rank">Nenhuma mensalidade em aberto.</span>`}</div></div>
+   <label>Desconto (R$)<input id="o3-desc" type="number" min="0" step="0.01" inputmode="decimal" value="0"></label>
+   <label>Parcelas<select id="o3-np">${[1,2,3,4,5,6,8,10,12].map(n=>`<option value="${n}" ${n===3?"selected":""}>${n}x</option>`).join("")}</select></label>
+   <label>1º vencimento<input id="o3-pv" type="date" value="${pv}"></label>
+   <label class="full">Observação<input id="o3-obs" placeholder="Opcional: como foi combinado"></label>
+   <div class="full" id="o3-prev"></div>
+   <div class="full actions"><button class="btn" type="submit">Fechar acordo</button><button class="btn ghost" type="button" data-o3fechar>Cancelar</button></div></form>
+   <p class="sample">As mensalidades incluídas ficam "Em acordo" e saem da inadimplência. Cada parcela paga entra no caixa como entrada. Se o acordo quebrar, as mensalidades voltam a ficar em aberto.</p></div>`}
+function o3Plano(){const f=$("#o3-fa");if(!f)return null;const ms=[...f.querySelectorAll("[data-o3mes]:checked")].map(c=>({comp:c.dataset.o3mes,valor:+c.dataset.v}));
+  const bruto=soma(ms),desc=Math.min(bruto,Math.max(0,parseFloat($("#o3-desc").value)||0)),total=Math.round((bruto-desc)*100)/100,np=+$("#o3-np").value||1,pv=$("#o3-pv").value||hoje();
+  const base=Math.floor(total/np*100)/100,parcelas=Array.from({length:np},(_,k)=>({n:k+1,venc:somaMes(pv.slice(0,7),k)+"-"+pv.slice(8,10),valor:k===np-1?Math.round((total-base*(np-1))*100)/100:base,status:"aberto",pagoEm:null}));
+  parcelas.forEach(p=>{const[y,m,d]=p.venc.split("-").map(Number),ult=new Date(y,m,0).getDate();if(d>ult)p.venc=`${y}-${pad2(m)}-${pad2(ult)}`});
+  return{ms,bruto,desc,total,np,parcelas}}
+function o3Prev(){const el=$("#o3-prev"),p=o3Plano();if(!el||!p)return;
+  el.innerHTML=p.ms.length?`<div class="o4-tot"><span>${p.ms.length} ${o34Pl(p.ms.length,"mês","meses")} · ${brl(p.bruto)}${p.desc?` − desconto ${brl(p.desc)}`:""}</span><b>${brl(p.total)}</b></div><div class="o3-parc">${p.parcelas.map(x=>`<span>${x.n}ª · ${fmtData(x.venc)}<b>${brl(x.valor)}</b></span>`).join("")}</div>`:`<span class="rank">Marque ao menos uma mensalidade.</span>`}
+async function o3SalvarAcordo(){const a=lista.find(x=>x.id===o3UI.acordo),p=o3Plano();if(!a||!p)return;if(!p.ms.length)return toast("Marque ao menos uma mensalidade.");if(!(p.total>0))return toast("O total do acordo precisa ser maior que zero.");
+  const id=o34Id("ac"),obs=($("#o3-obs").value||"").trim();
+  const ok=await escrever(id,r=>r.set({associadoId:a.id,nome:a.nome,mat:a.mat,meses:p.ms,bruto:p.bruto,desconto:p.desc,total:p.total,parcelas:p.parcelas,status:"ativo",criadoEm:new Date().toISOString(),obs}),null,"fin_acordos");if(!ok)return;
+  for(const m of p.ms)await escrever(m.comp,r=>r.update({itens:{[a.id]:{status:"acordo",acordoId:id}}}),null,"fin_mens");
+  await escrever(a.id,r=>r.update({hist:hist(a,`Acordo de dívida: ${p.ms.length} ${o34Pl(p.ms.length,"mês","meses")}, ${p.np}x de ${brl(p.parcelas[0].valor)}`)}));
+  registrar("Fez acordo de dívida",a,`${p.ms.map(m=>m.comp).join(", ")} · ${brl(p.total)} em ${p.np}x`);
+  o3UI.acordo=null;o3UI.aba="acordos";toast(`Acordo fechado: ${p.np}x de ${brl(p.parcelas[0].valor)}`);rerender()}
+function o3AcordosHTML(ed){const l=o3.acordos.slice().sort((x,y)=>(x.status==="ativo"?0:1)-(y.status==="ativo"?0:1)||String(y.criadoEm).localeCompare(String(x.criadoEm)));
+  if(!l.length)return `<div class="panel empty"><b>Nenhum acordo ainda.</b><span>Na aba Inadimplentes, toque em "Acordo" para parcelar as mensalidades em atraso de um associado.</span></div>`;
+  return `<div class="o3-lst">${l.map((ac,i)=>{const ps=ac.parcelas||[],pg=ps.filter(p=>p.status==="pago"),vc=ps.filter(p=>p.status!=="pago"&&p.venc<hoje()),cls=ac.status==="quitado"?"ok":ac.status==="quebrado"?"neutral":vc.length?"bad":"ok";
+    return `<div class="panel" style="--i:${i}"><div class="serv-h"><div><h3 style="margin:0"><button class="lnk" data-o1open="${ac.associadoId}" style="padding:0;color:var(--fg);font:inherit">${esc(ac.nome)}</button></h3><p class="rank" style="margin:2px 0 0">Feito em ${fmtData(ac.criadoEm)} · ${(ac.meses||[]).map(m=>curtoMes(m.comp)).join(", ")}${ac.desconto?` · desconto ${brl(ac.desconto)}`:""}${ac.obs?` · ${esc(ac.obs)}`:""}</p></div><span class="pill ${cls}">${ac.status==="ativo"&&vc.length?`${vc.length} ${o34Pl(vc.length,"parcela vencida","parcelas vencidas")}`:O3_ST[ac.status]||ac.status}</span></div>
+     <div class="o3-parc">${ps.map((p,n)=>`<span class="${p.status==="pago"?"pg":p.venc<hoje()&&ac.status==="ativo"?"vc":""}">${p.n||n+1}ª · ${fmtData(p.venc)}<b>${brl(p.valor)}</b>${p.status==="pago"?`<small>pago ${fmtData(p.pagoEm)}</small>`:ed&&ac.status==="ativo"?`<button data-o3pagar="${ac.id}:${n}">Paga</button>`:""}</span>`).join("")}</div>
+     <div class="o4-tot"><span>${pg.length} de ${ps.length} pagas · recebido ${brl(soma(pg))}</span><b>${brl(ac.total)}</b></div>
+     ${ed&&ac.status==="ativo"?(o3UI.quebrar===ac.id?`<div class="inline bad" style="margin-top:10px"><span>Quebrar o acordo? As mensalidades voltam a ficar em aberto. O que já foi pago continua no caixa.</span><button class="btn danger sm" data-o3quebrarok="${ac.id}">Quebrar acordo</button><button class="btn ghost sm" data-o3fechar>Voltar</button></div>`:`<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-o3carta="${ac.associadoId}">Carta (PDF)</button><button class="btn ghost sm" data-o3quebrar="${ac.id}">Quebrar acordo</button></div>`):""}</div>`}).join("")}</div>`}
+async function o3Pagar(acId,n){const ac=o3.acordos.find(x=>x.id===acId);if(!ac)return;const p=(ac.parcelas||[]).map((x,k)=>k===n?{...x,status:"pago",pagoEm:hoje()}:x),x=p[n],quit=p.every(y=>y.status==="pago");
+  if(!await escrever(acId,r=>r.update(Object.assign({parcelas:p,status:quit?"quitado":"ativo"},quit?{quitadoEm:hoje()}:{})),null,"fin_acordos"))return;
+  await escrever(`ac-${acId}-p${n+1}`,r=>r.set({tipo:"entrada",desc:`Acordo · ${ac.nome} · parcela ${n+1}/${p.length}`,cat:"Acordos de mensalidade",valor:x.valor,venc:x.venc,comp:hoje().slice(0,7),status:"pago",pagoEm:hoje(),forma:"",obs:"",origem:"acordo",associadoId:ac.associadoId,criadoEm:new Date().toISOString()}),null,"fin_lanc");
+  const a=lista.find(y=>y.id===ac.associadoId);if(a)registrar("Baixou parcela de acordo",a,`${n+1}/${p.length} · ${brl(x.valor)}`);
+  toast(quit?"Última parcela paga: acordo quitado":`Parcela ${n+1} paga · entrou no caixa`)}
+async function o3Quebrar(acId){const ac=o3.acordos.find(x=>x.id===acId);if(!ac)return;o3UI.quebrar=null;
+  if(!await escrever(acId,r=>r.update({status:"quebrado",quebradoEm:hoje()}),null,"fin_acordos"))return;
+  for(const m of ac.meses||[])await escrever(m.comp,r=>r.update({itens:{[ac.associadoId]:{status:"aberto",acordoId:null}}}),null,"fin_mens");
+  const a=lista.find(y=>y.id===ac.associadoId);if(a){await escrever(a.id,r=>r.update({hist:hist(a,"Acordo de dívida quebrado")}));registrar("Quebrou acordo de dívida",a)}
+  toast("Acordo quebrado. As mensalidades voltaram para em aberto.")}
+
+/* ---- agenda de negociação ---- */
+function o3FormAgendar(){const a=o3UI.agendar?lista.find(x=>x.id===o3UI.agendar):null;
+  return `<div class="panel" style="margin-bottom:14px"><h3>Agendar contato de negociação</h3><form class="o3-f" id="o3-fg">
+   <label class="full">Associado<input id="o3-ga" list="o3-dla" value="${a?esc(a.nome+" · "+a.mat):""}" placeholder="Comece a digitar o nome" autocomplete="off"><datalist id="o3-dla">${lista.filter(x=>!x.anonimizadoEm).sort(porNome).map(x=>`<option value="${esc(x.nome+" · "+x.mat)}">`).join("")}</datalist></label>
+   <label>Data<input id="o3-gd" type="date" value="${addDias(hoje(),1)}"></label><label>Hora<input id="o3-gh" type="time" value="10:00"></label>
+   <label>Canal<select id="o3-gc">${CANAIS.map(c=>`<option>${c}</option>`).join("")}</select></label>
+   <label class="full">O que tratar<input id="o3-go" placeholder="Ex.: propor acordo em 3x"></label>
+   <div class="full actions"><button class="btn" type="submit">Agendar</button><button class="btn ghost" type="button" data-o3fechar>Cancelar</button></div></form></div>`}
+async function o3SalvarAgenda(){const v=($("#o3-ga").value||"").trim(),a=lista.find(x=>x.nome+" · "+x.mat===v);if(!a)return toast("Escolha o associado na lista.");
+  const d=$("#o3-gd").value;if(!d)return toast("Escolha a data.");
+  if(await escrever(o34Id("ng"),r=>r.set({associadoId:a.id,nome:a.nome,data:d,hora:$("#o3-gh").value||"",canal:$("#o3-gc").value,obs:($("#o3-go").value||"").trim(),feito:false,criadoEm:new Date().toISOString()}),`Contato agendado para ${fmtData(d)}`,"fin_negoc")){o3UI.agendar=null;o3UI.aba="agenda";rerender()}}
+function o3AgendaHTML(ed){const h=hoje(),nl=o3.negoc;
+  const at=nl.filter(n=>!n.feito&&n.data<h),hj=nl.filter(n=>!n.feito&&n.data===h),pr=nl.filter(n=>!n.feito&&n.data>h),ft=nl.filter(n=>n.feito).sort((x,y)=>String(y.feitoEm).localeCompare(String(x.feitoEm))).slice(0,10);
+  const ord=l=>l.slice().sort((x,y)=>(x.data+x.hora).localeCompare(y.data+y.hora));
+  const it=(n,i)=>{const a=lista.find(x=>x.id===n.associadoId),d=a?o3Div(a):[],cls=n.feito?"":n.data<h?"at":n.data===h?"hj":"";
+    return `<div class="o3-it" style="--i:${i}"><span class="o3-dt ${cls}"><b>${n.data.slice(8,10)}</b><small>${MESES[+n.data.slice(5,7)-1].slice(0,3)}${n.hora?" · "+esc(n.hora):""}</small></span>
+     <span class="t"><b>${a?`<button class="lnk" data-o1open="${a.id}" style="padding:0;color:var(--fg);font-size:15px">${esc(a.nome)}</button>`:esc(n.nome||"—")}</b><small>${esc(n.canal)}${n.obs?" · "+esc(n.obs):""}${d.length?` · deve ${brl(soma(d))}`:" · sem atraso agora"}${n.feito?` · <b>${esc(n.resultado||"Feito")}</b>${n.nota?" · "+esc(n.nota):""}`:""}</small></span>
+     ${!n.feito&&ed?(o3UI.feito===n.id?`<span class="actions"><select id="o3-res" aria-label="Resultado">${RESULTADOS.map(r=>`<option>${r}</option>`).join("")}</select><input id="o3-nota" placeholder="Anotação" style="min-width:140px"><button class="btn sm" data-o3feitook="${n.id}">Salvar</button><button class="btn ghost sm" data-o3fechar>Voltar</button></span>`:
+      `<span class="actions">${a&&n.canal==="WhatsApp"&&zapNum(a.tel)&&d.length?`<button class="btn ghost sm" data-o3zap1="${a.id}">WhatsApp</button>`:""}${a&&n.canal==="Telefone"&&a.tel?`<a class="btn ghost sm" href="tel:${esc(String(a.tel).replace(/\D/g,""))}">Ligar</a>`:""}<button class="btn sm" data-o3feito="${n.id}">Feito</button></span>`):""}</div>`};
+  const bloco=(t,l)=>l.length?`<h3 class="o3-h">${t} (${l.length})</h3><div class="o3-lst">${l.map(it).join("")}</div>`:"";
+  return (ed?`<div class="actions" style="margin-bottom:6px"><button class="btn" data-o3agendar="">Agendar contato</button></div>`:"")+
+   (at.length||hj.length||pr.length?bloco("Atrasados",ord(at))+bloco("Hoje",ord(hj))+bloco("Próximos",ord(pr)):`<div class="panel empty"><b>Nenhum contato marcado.</b><span>Agende ligações, mensagens ou atendimentos para negociar com quem está em atraso. Os de hoje aparecem na Ordem do dia.</span></div>`)+bloco("Feitos recentemente",ft)}
+
+/* ---- carta de cobrança em PDF ---- */
+async function o3Cartas(ids){if(!downloads)return toast("Baixar arquivos não está disponível nesta visualização.");
+  try{const J=await carregarAutoTable(),pdf=new J({unit:"mm",format:"a4"}),W=pdf.internal.pageSize.getWidth();let pg=0;
+    for(const id of ids){const a=lista.find(x=>x.id===id);if(!a)continue;const d=o3Div(a);if(!d.length)continue;if(pg++)pdf.addPage();
+      pdf.setFont("helvetica","bold");pdf.setFontSize(13);pdf.setTextColor(20);pdf.text(String(MARCA.longo||MARCA.nome),14,18);
+      pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(110);pdf.text("Secretaria · Tesouraria",14,23);
+      pdf.setDrawColor(26,48,105);pdf.setLineWidth(.6);pdf.line(14,26,W-14,26);
+      pdf.setTextColor(30);pdf.setFontSize(10);pdf.text(`${(a.cidade||"").split("/")[0]||""}${a.cidade?", ":""}${new Date().toLocaleDateString("pt-BR",{day:"numeric",month:"long",year:"numeric"})}`,W-14,34,{align:"right"});
+      let y=44;pdf.text(`Ao(À) Sr(a). ${a.posto?a.posto+" ":""}${a.nome}`,14,y);y+=5;pdf.text(`Matrícula ${a.mat}`,14,y);y+=5;
+      if(dadosCompletos()&&a.end){pdf.text(String(a.end),14,y);y+=5;if(a.cidade||a.cep){pdf.text([a.cidade,a.cep].filter(Boolean).join(" · CEP "),14,y);y+=5}}
+      y+=6;pdf.setFont("helvetica","bold");pdf.setFontSize(12);pdf.text("Assunto: mensalidades em aberto",14,y);y+=8;pdf.setFont("helvetica","normal");pdf.setFontSize(10.5);
+      const txt=`Prezado(a) associado(a), em nossos registros constam ${d.length} ${d.length===1?"mensalidade":"mensalidades"} em aberto, conforme o quadro abaixo. Pedimos a gentileza de regularizar a situação ou procurar a secretaria para combinarmos um acordo de parcelamento. Caso o pagamento já tenha sido feito, por favor desconsidere esta carta e nos envie o comprovante.`;
+      const ln=pdf.splitTextToSize(txt,W-28);pdf.text(ln,14,y);y+=ln.length*5+4;
+      pdf.autoTable({head:[["Mês de referência","Vencimento","Valor"]],body:[...d.map(i=>[nomeMes(i.comp),fmtData(i.venc),brl(i.valor)]),[{content:"Total",styles:{fontStyle:"bold"}},"",{content:brl(soma(d)),styles:{fontStyle:"bold"}}]],startY:y,margin:{left:14,right:14},styles:{fontSize:10},headStyles:{fillColor:[26,48,105],textColor:255},columnStyles:{2:{halign:"right"}}});
+      y=pdf.lastAutoTable.finalY+10;const ch=fin.cfg.chavePix;
+      const ln2=pdf.splitTextToSize(`${ch?`Pagamento por PIX: chave ${ch}${fin.cfg.recebedor?" ("+fin.cfg.recebedor+")":""}. `:""}O pagamento também pode ser feito pelo app da associação ou na secretaria.`,W-28);pdf.text(ln2,14,y);y+=ln2.length*5+22;
+      pdf.line(W/2-40,y,W/2+40,y);pdf.setFontSize(9.5);pdf.text("Tesouraria",W/2,y+5,{align:"center"});
+      registrar("Gerou carta de cobrança",a,brl(soma(d)))}
+    if(!pg)return toast("Nenhuma mensalidade em atraso para essa carta.");
+    await downloads.save({filename:ids.length===1?`carta-inadimplencia-${(lista.find(x=>x.id===ids[0])||{}).mat||"associado"}.pdf`:`cartas-inadimplencia-${hoje()}.pdf`,data:pdf.output("blob")});toast(pg===1?"Carta salva":`${pg} cartas salvas em um PDF`);
+  }catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast(e&&e.msg||"Não foi possível gerar a carta.")}}
+
+/* ---- sino da equipe: pendências novas desde a última olhada (por aparelho) ---- */
+const o3SinoKey=x=>x.v+"|"+x.txt;
+const o3Lidos=()=>{try{return JSON.parse(localStorage.getItem("sino_equipe")||"{}")}catch{return{}}};
+const o3NovasPend=()=>{const l=o3Lidos();return pendencias().filter(x=>x.n!=="!"&&(!(o3SinoKey(x) in l)||+x.n>+l[o3SinoKey(x)]))};
+function o3Sino(){const b=$("#o3-n");if(!b)return;const n=viewAtual==="app"?0:o3NovasPend().length;b.hidden=!n;b.textContent=n;
+  const nb=$("#nav-o3");if(nb){const k=o3NegHoje().length+o3ParcVenc().length;nb.hidden=!k||!podeVer("inadimplencia");nb.textContent=k}}
+function o3AbrirSino(){o3UI.sino=true;const l=pendencias(),novas=new Set(o3NovasPend().map(o3SinoKey)),m={};l.forEach(x=>m[o3SinoKey(x)]=x.n);try{localStorage.setItem("sino_equipe",JSON.stringify(m))}catch{}
+  $("#o3-pop")?.remove();document.body.insertAdjacentHTML("beforeend",`<div class="o3-pop" id="o3-pop" role="dialog" aria-label="Avisos da equipe"><div class="serv-h"><div><h3>Avisos da equipe</h3><p class="rank" style="margin:0 0 10px">${novas.size?`${novas.size} ${o34Pl(novas.size,"novo desde a última vez","novos desde a última vez")}`:"Nada novo desde a última vez."}</p></div><button class="btn ghost sm" data-o3sinofim aria-label="Fechar">✕</button></div>
+   ${l.length?`<div class="tk-list">${l.map(x=>{const mi=navInfo(x.v);return `<a class="tk" href="${x.href}" data-o3sinofim><span class="tk-ic ${x.cls}">${mi.ic}</span><span class="tk-t"><b>${x.n==="!"?"":x.n+" "}${esc(x.txt)}${novas.has(o3SinoKey(x))?`<span class="o3-novo">novo</span>`:""}</b><small>${esc(mi.n)}</small></span></a>`}).join("")}</div>`:`<div class="tk-vazio"><b>Tudo em dia.</b><br>Nenhuma pendência para a equipe agora.</div>`}</div>`);
+  document.querySelector("[data-o3sino]")?.setAttribute("aria-expanded","true");o3Sino()}
+function o3FecharSino(){o3UI.sino=false;$("#o3-pop")?.remove();document.querySelector("[data-o3sino]")?.setAttribute("aria-expanded","false")}
+const o3PendBase=pendencias;
+pendencias=function(){const it=o3PendBase();if(!podeVer("inadimplencia"))return it;
+  const ng=o3NegHoje().length;if(ng)it.push({v:"inadimplencia",n:ng,txt:o34Pl(ng,"contato de negociação marcado para hoje ou atrasado","contatos de negociação marcados para hoje ou atrasados"),href:"#inadimplencia/agenda",cls:"warn"});
+  const pv=o3ParcVenc().length;if(pv)it.push({v:"inadimplencia",n:pv,txt:o34Pl(pv,"parcela de acordo vencida","parcelas de acordo vencidas"),href:"#inadimplencia/acordos",cls:"bad"});
+  return it};
+
+/* ---------- onda 4 · planos de saúde ---------- */
+const o4Plano=id=>o4.planos.find(p=>p.id===id);
+const o4ValorIdade=(p,idd)=>{const f=(p&&p.faixas||[]).find(x=>idd>=+x.de&&idd<=+x.ate);return f?+f.valor||0:0};
+const o4Vidas=(a,p,depsIdx)=>[{nome:a.nome,par:"Titular",nasc:a.nasc||"",titular:true},...(a.deps||[]).filter((d,i)=>depsIdx.includes(i)).map(d=>({nome:d.nome,par:d.par,nasc:d.nasc||"",titular:false}))].map(v=>({...v,valor:o4ValorIdade(p,idadeAnos(v.nasc))}));
+const o4Adesao=a=>o4.ades.find(x=>x.associadoId===a.id&&x.status==="ativo");
+const o4Recalc=x=>{const p=o4Plano(x.planoId);return soma((x.vidas||[]).map(v=>({valor:o4ValorIdade(p,idadeAnos(v.nasc))})))};
+const o4Ab=()=>`<nav class="tabs" role="tablist" style="margin-bottom:16px">${[["planos","Planos de saúde"],["adesoes",`Adesões (${o4.ades.filter(x=>x.status==="ativo").length})`],["cartao","Cartão da associação"],["vales","Vales gás e combustível"]].map(([k,n])=>`<button class="tab" role="tab" aria-selected="${o4UI.aba===k}" data-o4aba="${k}">${n}</button>`).join("")}</nav>`;
+const o4MesNav=k=>`<div class="mesnav"><button class="btn ghost sm" data-o4mes="-1" data-k="${k}" aria-label="Mês anterior">‹</button><b>${nomeMes(o4UI[k])}</b><button class="btn ghost sm" data-o4mes="1" data-k="${k}" aria-label="Próximo mês">›</button></div>`;
+views.beneficios=function(){const ed=editavel();let c="";
+  if(o4UI.aba==="planos")c=o4PlanosHTML(ed);if(o4UI.aba==="adesoes")c=o4AdesoesHTML();if(o4UI.aba==="cartao")c=o4CartaoHTML(ed);if(o4UI.aba==="vales")c=o4ValesHTML(ed);
+  return cabecalho("Atendimento","Planos e benefícios","Planos de saúde com valor por faixa etária, cartão da associação, vales e informe para o Imposto de Renda.")+aviso()+o4Ab()+c};
+function o4PlanosHTML(ed){
+  if(o4UI.plano)return o4FormPlano();
+  const card=(p,i)=>{const at=o4.ades.filter(x=>x.planoId===p.id&&x.status==="ativo");
+    return `<div class="panel" style="--i:${i}"><div class="serv-h"><div><h3 style="margin:0">${esc(p.nome)}</h3><p class="rank" style="margin:2px 0 0">${esc(p.operadora||"")} · ${esc(p.tipo||"")}${+p.copart?` · coparticipação ${+p.copart}%`:" · sem coparticipação"}</p></div><span class="pill ${p.ativo!==false?"ok":"neutral"}">${p.ativo!==false?"Aceita adesões":"Pausado"}</span></div>
+     <div class="o4-fx">${(p.faixas||[]).map(f=>`<span>${+f.ate>=100?(+f.de?`${f.de}+ anos`:"Todas as idades"):`${f.de} a ${f.ate} anos`}<b>${brl(f.valor)}</b></span>`).join("")}</div>
+     <div class="o4-tot"><span>${at.length} ${o34Pl(at.length,"adesão","adesões")} · ${soma(at,x=>(x.vidas||[]).length)} vidas</span><b>${brl(soma(at,x=>x.total))}<small class="rank" style="font-size:13px;font-family:var(--f-body)">/mês</small></b></div>
+     ${ed?`<div class="actions" style="margin-top:10px"><button class="btn ghost sm" data-o4plano="${p.id}">Editar</button><button class="btn ghost sm" data-o4pausa="${p.id}">${p.ativo!==false?"Pausar adesões":"Voltar a aceitar"}</button></div>`:""}</div>`};
+  return (ed?`<div class="actions" style="margin-bottom:12px"><button class="btn" data-o4plano="novo">Novo plano</button></div>`:"")+
+   (o4.planos.length?`<div class="o4-cards">${o4.planos.slice().sort(porNome).map(card).join("")}</div>`:`<div class="panel empty"><b>Nenhum plano cadastrado.</b><span>Cadastre os planos que a associação oferece, com o valor de cada faixa etária. Depois faça a adesão pela ficha do associado.</span></div>`)+
+   `<p class="sample">O valor de cada pessoa sai da faixa etária dela no plano. Coparticipações são lançadas na ficha do associado, na aba Benefícios.</p>`}
+function o4FormPlano(){const p=o4UI.plano==="novo"?{faixas:FAIXAS_ANS.map(([de,ate])=>({de,ate,valor:""})),copart:0,tipo:"Enfermaria"}:o4Plano(o4UI.plano)||{};
+  return `<div class="panel"><h3>${o4UI.plano==="novo"?"Novo plano de saúde":"Editar plano"}</h3><form class="o3-f" id="o4-fp">
+   <label>Nome do plano<input id="o4-pn" value="${esc(p.nome||"")}" placeholder="Ex.: Saúde Essencial"></label><label>Operadora<input id="o4-po" value="${esc(p.operadora||"")}"></label>
+   <label>Tipo<select id="o4-pt">${opts(TIPOS_PLANO,p.tipo)}</select></label><label>Coparticipação (%)<input id="o4-pc" type="number" min="0" max="100" step="1" value="${esc(p.copart??0)}"></label>
+   <div class="full"><span class="rank">Faixas etárias (idade de, até e valor mensal por pessoa)</span><div class="list" id="o4-fxs" style="margin-top:6px">${(p.faixas||[]).map(o4FxRow).join("")}</div><button type="button" class="btn ghost sm" data-o4fxadd style="margin-top:8px">+ Faixa</button></div>
+   <div class="full actions"><button class="btn" type="submit">Salvar plano</button><button class="btn ghost" type="button" data-o4fechar>Cancelar</button></div></form></div>`}
+const o4FxRow=(f={})=>`<div class="o4-fxrow"><input type="number" min="0" data-fde value="${esc(f.de??"")}" aria-label="Idade inicial" placeholder="De"><input type="number" min="0" data-fate value="${esc(f.ate??"")}" aria-label="Idade final" placeholder="Até"><input type="number" min="0" step="0.01" data-fval value="${esc(f.valor??"")}" aria-label="Valor" placeholder="R$"><button type="button" class="btn ghost sm" data-o4fxrm aria-label="Remover faixa">✕</button></div>`;
+async function o4SalvarPlano(){const nome=$("#o4-pn").value.trim();if(nome.length<2)return toast("Escreva o nome do plano.");
+  const faixas=[...document.querySelectorAll("#o4-fxs .o4-fxrow")].map(r=>({de:+r.querySelector("[data-fde]").value,ate:+r.querySelector("[data-fate]").value,valor:Math.round((parseFloat(r.querySelector("[data-fval]").value)||0)*100)/100})).filter(f=>f.valor>0).sort((x,y)=>x.de-y.de);
+  if(!faixas.length)return toast("Informe o valor de ao menos uma faixa.");if(faixas.some(f=>f.ate<f.de))return toast("Confira as faixas: a idade final não pode ser menor que a inicial.");
+  const id=o4UI.plano==="novo"?o34Id("pl"):o4UI.plano,ant=o4Plano(id)||{};
+  if(await escrever(id,r=>r.set(Object.assign({},ant,{nome,operadora:$("#o4-po").value.trim(),tipo:$("#o4-pt").value,copart:Math.max(0,Math.min(100,+$("#o4-pc").value||0)),faixas,ativo:ant.ativo!==false,editadoEm:new Date().toISOString()},ant.criadoEm?{}:{criadoEm:new Date().toISOString()})),"Plano salvo","planos")){registrar("Salvou plano de saúde",null,nome);o4UI.plano=null;rerender()}}
+function o4AdesoesHTML(){const l=o4.ades.slice().sort((x,y)=>(x.status==="ativo"?0:1)-(y.status==="ativo"?0:1)||String(x.nome).localeCompare(String(y.nome),"pt-BR"));
+  const leg=lista.filter(a=>servAtivo(a,"seguro")&&!o4Adesao(a));
+  return (l.length?`<div class="o3-lst">${l.map((x,i)=>{const p=o4Plano(x.planoId)||{},rc=o4Recalc(x),cm=soma((x.copart||[]).filter(c=>c.mes===hoje().slice(0,7)));
+    return `<div class="o3-it" style="--i:${i}">${avatar({nome:x.nome})}<span class="t"><b><button class="lnk" data-o4ficha="${x.associadoId}" style="padding:0;color:var(--fg);font-size:15px">${esc(x.nome)}</button></b><small>${esc(p.nome||"Plano removido")} · ${(x.vidas||[]).length} ${o34Pl((x.vidas||[]).length,"vida","vidas")} · desde ${fmtData(x.desde)}${cm?` · coparticipação do mês ${brl(cm)}`:""}${x.status==="ativo"&&Math.abs(rc-(+x.total||0))>.005?` · <span class="neg">mudou de faixa: ${brl(rc)}</span>`:""}</small></span><span class="v">${brl(x.total)}</span><span class="pill ${x.status==="ativo"?"ok":"neutral"}">${x.status==="ativo"?"Ativa":"Cancelada"}</span></div>`}).join("")}</div>`:`<div class="panel empty"><b>Nenhuma adesão ainda.</b><span>Abra a ficha do associado, aba Benefícios, para incluir titular e dependentes num plano.</span></div>`)+
+   (leg.length?`<div class="callout" style="margin-top:14px"><span>${leg.length} ${o34Pl(leg.length,"associado tem","associados têm")} plano de saúde registrado só como serviço (formato antigo): ${leg.map(a=>esc(a.nome.split(" ")[0])).join(", ")}. Faça a adesão pela ficha para calcular por faixa etária.</span></div>`:"")}
+
+/* ---- cartão da associação ---- */
+const o4Limite=a=>+((a.servicos&&a.servicos.cartao&&a.servicos.cartao.limite)||0);
+const o4MovMes=(m,aid)=>o4.mov.filter(x=>x.mes===m&&(!aid||x.associadoId===aid)).sort((x,y)=>String(x.data).localeCompare(String(y.data)));
+function o4FormMov(aid){const ce=lista.filter(a=>servAtivo(a,"cartao")).sort(porNome);
+  return `<form class="o3-f" id="o4-fm" style="margin:10px 0 14px">${aid?`<input type="hidden" id="o4-ma" value="${aid}">`:`<label class="full">Associado<select id="o4-ma">${ce.map(a=>`<option value="${a.id}">${esc(a.nome)} · ${esc(a.mat)}</option>`).join("")}</select></label>`}
+   <label>Data<input id="o4-md" type="date" value="${hoje()}"></label><label>Estabelecimento<input id="o4-me" list="o4-dlc" placeholder="Convênio ou loja"><datalist id="o4-dlc">${convs.filter(c=>c.ativo!==false).map(c=>`<option value="${esc(c.nome)}">`).join("")}</datalist></label>
+   <label>Valor total (R$)<input id="o4-mv" type="number" min="0" step="0.01" inputmode="decimal"></label><label>Parcelas<select id="o4-mp">${[1,2,3,4,5,6].map(n=>`<option value="${n}">${n}x</option>`).join("")}</select></label>
+   <div class="full actions"><button class="btn" type="submit">Lançar compra</button><button class="btn ghost" type="button" data-o4fechar>Cancelar</button></div></form>`}
+async function o4SalvarMov(){const aid=$("#o4-ma")?.value,a=lista.find(x=>x.id===aid);if(!a)return toast("Escolha o associado.");
+  const v=Math.round((parseFloat($("#o4-mv").value)||0)*100)/100,np=+$("#o4-mp").value||1,d=$("#o4-md").value||hoje(),est=$("#o4-me").value.trim();if(!(v>0))return toast("Informe o valor.");if(!est)return toast("Informe o estabelecimento.");
+  const m0=d.slice(8,10)>String(o4FechaDia()).padStart(2,"0")?somaMes(d.slice(0,7),1):d.slice(0,7),base=Math.floor(v/np*100)/100,g=o34Id("cm");let ok=0;
+  for(let k=0;k<np;k++)if(await escrever(`${g}-${k+1}`,r=>r.set({associadoId:a.id,data:d,estab:est,valor:k===np-1?Math.round((v-base*(np-1))*100)/100:base,parcela:np>1?`${k+1}/${np}`:"",mes:somaMes(m0,k),conferido:false,criadoEm:new Date().toISOString()}),null,"cartao_mov"))ok++;
+  if(ok){registrar("Lançou compra no cartão da associação",a,`${est} · ${brl(v)}${np>1?` em ${np}x`:""}`);toast(np>1?`Compra lançada em ${np} faturas`:"Compra lançada");o4UI.movNovo=o4UI.fMov=false;rerender()}}
+const o4FechaDia=()=>Math.min(28,Math.max(1,+(fin.cfg.cartaoFecha||25)));
+function o4CartaoHTML(ed){const m=o4UI.mes,mv=o4MovMes(m),por={};mv.forEach(x=>(por[x.associadoId]=por[x.associadoId]||[]).push(x));
+  const ce=lista.filter(a=>servAtivo(a,"cartao")).length,conf=mv.filter(x=>x.conferido).length;
+  return `<div class="o3-tb" style="justify-content:space-between">${o4MesNav("mes")}${ed&&ce?`<button class="btn" data-o4movnovo>Lançar compra</button>`:""}</div>
+   ${o4UI.movNovo?`<div class="panel">${o4FormMov()}</div>`:""}
+   <p class="resumo-l"><b>${ce}</b> ${o34Pl(ce,"associado com cartão","associados com cartão")} · fatura de ${mesSo(m)}: <b>${brl(soma(mv))}</b> em ${mv.length} ${o34Pl(mv.length,"lançamento","lançamentos")} · <b>${conf}/${mv.length}</b> conferidos · fecha dia ${o4FechaDia()}</p>
+   ${Object.keys(por).length?`<div class="o3-lst">${Object.entries(por).map(([aid,l],i)=>{const a=lista.find(x=>x.id===aid)||{nome:"—"},t=soma(l),lim=o4Limite(a),ok=l.every(x=>x.conferido);
+     return `<div class="panel" style="--i:${i}"><div class="serv-h"><div><h3 style="margin:0"><button class="lnk" data-o4ficha="${aid}" style="padding:0;color:var(--fg);font:inherit">${esc(a.nome)}</button></h3><p class="rank" style="margin:2px 0 0">${l.length} ${o34Pl(l.length,"compra","compras")}${lim?` · limite ${brl(lim)}`:" · sem limite definido"}</p></div><span class="pill ${ok?"ok":"warn"}">${ok?"Conferida":"A conferir"}</span></div>
+      ${lim?`<div class="o4-bar"><i class="${t>lim?"over":""}" style="width:${Math.min(100,t/lim*100)}%"></i></div>`:""}
+      <div class="list" style="margin-top:8px">${l.map(x=>`<div class="tile"><span>${esc(x.estab)}${x.parcela?` <span class="rank">· ${esc(x.parcela)}</span>`:""}<br><span class="rank">${fmtData(x.data)}${x.conferido?" · conferido":""}</span></span><span class="r2"><b class="mono">${brl(x.valor)}</b>${ed?`<button class="btn ghost sm" data-o4movrm="${x.id}" aria-label="Apagar lançamento">✕</button>`:""}</span></div>`).join("")}</div>
+      <div class="o4-tot"><span>${t>lim&&lim?`<span class="neg">Passou do limite em ${brl(t-lim)}</span>`:"Total da fatura"}</span><b>${brl(t)}</b></div>
+      ${ed&&!ok?`<div class="actions" style="margin-top:8px"><button class="btn sm" data-o4conf="${aid}">Marcar como conferida</button></div>`:""}</div>`}).join("")}</div>`:`<div class="panel empty"><b>Nenhuma compra na fatura de ${mesSo(m)}.</b><span>${ce?"Lance as compras feitas com o cartão nos convênios. A conferência mensal mostra quem passou do limite.":"Nenhum associado tem o cartão. Contrate pela ficha, aba Serviços."}</span></div>`}`}
+
+/* ---- vales gás e combustível ---- */
+function o4ValesHTML(ed){const m=o4UI.mes,l=o4.ben.filter(x=>x.mes===m).sort(porNome);
+  const pub=[["efetivos","Sócios efetivos ativos"],["ativos","Todos os ativos"],["anterior","Quem recebeu no mês anterior"]];
+  return `<div class="o3-tb">${o4MesNav("mes")}</div>
+   ${ed?`<div class="panel" style="margin-bottom:14px"><h3>Lançamento do mês</h3><form class="o3-f" id="o4-fv"><label>Benefício<select id="o4-vt">${TIPOS_BEN.map(t=>`<option value="${t.k}">${t.n}</option>`).join("")}</select></label><label>Valor por pessoa (R$)<input id="o4-vv" type="number" min="0" step="0.01" inputmode="decimal" value="${TIPOS_BEN[0].v}"></label><label>Para quem<select id="o4-vp">${pub.map(([k,n])=>`<option value="${k}">${n}</option>`).join("")}</select></label><div class="full actions"><button class="btn" type="submit" ${o4UI.lote?"disabled":""}>Lançar para ${mesSo(m)}</button></div></form><p class="sample">Quem já tem o mesmo benefício no mês não recebe de novo.</p></div>`:""}
+   ${TIPOS_BEN.map(t=>{const x=l.filter(b=>b.tipo===t.k);if(!x.length)return"";const at=x.filter(b=>b.status!=="cancelado");
+     return `<h3 class="o3-h">${t.n} · ${at.length} ${o34Pl(at.length,"pessoa","pessoas")} · ${brl(soma(at))}</h3><div class="o3-lst">${x.map((b,i)=>`<div class="o3-it" style="--i:${i}"><span class="t"><b>${esc(b.nome)}</b><small>Matrícula ${esc(b.mat||"")}${b.entregueEm?" · entregue "+fmtData(b.entregueEm):""}</small></span><span class="v">${brl(b.valor)}</span><span class="pill ${b.status==="entregue"?"ok":b.status==="cancelado"?"neutral":"warn"}">${b.status==="entregue"?"Entregue":b.status==="cancelado"?"Cancelado":"Lançado"}</span>${ed&&b.status==="lancado"?`<span class="actions"><button class="btn sm" data-o4ent="${b.id}">Entregue</button><button class="btn ghost sm" data-o4bcanc="${b.id}">Cancelar</button></span>`:""}</div>`).join("")}</div>`}).join("")||`<div class="panel empty"><b>Nenhum vale lançado em ${mesSo(m)}.</b><span>Use o lançamento do mês para gerar os vales de todo o público de uma vez.</span></div>`}`}
+async function o4LancarVales(){const m=o4UI.mes,t=$("#o4-vt").value,v=Math.round((parseFloat($("#o4-vv").value)||0)*100)/100,p=$("#o4-vp").value;if(!(v>0))return toast("Informe o valor.");
+  const ant=new Set(o4.ben.filter(b=>b.tipo===t&&b.mes===somaMes(m,-1)&&b.status!=="cancelado").map(b=>b.associadoId)),ja=new Set(o4.ben.filter(b=>b.tipo===t&&b.mes===m).map(b=>b.associadoId));
+  const alvo=lista.filter(a=>a.sit==="Ativo"&&!a.anonimizadoEm&&(p==="ativos"||(p==="efetivos"?catDe(a)!=="contribuinte":ant.has(a.id)))&&!ja.has(a.id));
+  if(!alvo.length)return toast(ja.size?"Todos desse público já têm o benefício no mês.":"Ninguém nesse público.");
+  o4UI.lote=true;rerender();let ok=0;for(const a of alvo)if(await escrever(`bn-${t}-${m}-${a.id}`,r=>r.set({tipo:t,associadoId:a.id,nome:a.nome,mat:a.mat,mes:m,valor:v,status:"lancado",criadoEm:new Date().toISOString()}),null,"beneficios"))ok++;
+  o4UI.lote=false;registrar("Lançou vales em lote",null,`${(TIPOS_BEN.find(x=>x.k===t)||{}).n} · ${m} · ${ok} pessoas`);toast(`${ok} ${o34Pl(ok,"vale lançado","vales lançados")} em ${mesSo(m)}`);rerender()}
+
+/* ---- ficha: aba Benefícios ---- */
+const o34RenderFicha=renderFicha;
+renderFicha=function(id,anim){o34RenderFicha(id,anim);try{o4Ficha(id)}catch(e){console.error(e)}};
+function o4Ficha(id){const a=lista.find(x=>x.id===id),tabs=$(".sheet .tabs");if(!a||!tabs||!(podeVer("beneficios")||dadosCompletos()))return;
+  const sel=(fichaUI.aba||"dados")==="beneficios",h=tabs.querySelector('[data-aba="historico"]');
+  const b=document.createElement("button");b.className="tab";b.setAttribute("role","tab");b.dataset.aba="beneficios";b.setAttribute("aria-selected",String(sel));b.textContent="Benefícios";tabs.insertBefore(b,h);
+  if(!sel)return;tabs.insertAdjacentHTML("afterend",o4FichaHTML(a,editavel()));secoesFicha();o4LigarFicha()}
+function o4FichaHTML(a,ed){const ad=o4Adesao(a),p=ad&&o4Plano(ad.planoId),m=hoje().slice(0,7);
+  /* plano */
+  let pl;
+  if(ad){const cp=(ad.copart||[]).slice().sort((x,y)=>y.mes.localeCompare(x.mes)),rc=o4Recalc(ad);
+    pl=`<div class="panel"><h3>Plano de saúde</h3><p style="margin:0 0 8px"><b>${esc(p?p.nome:"Plano removido")}</b> <span class="rank">· ${esc(p?p.operadora:"")}${p&&+p.copart?` · coparticipação ${+p.copart}%`:""} · desde ${fmtData(ad.desde)}</span></p>
+     <div class="list">${(ad.vidas||[]).map(v=>`<div class="tile"><span>${esc(v.nome)}<br><span class="rank">${esc(v.par)}${v.nasc?" · "+idadeAnos(v.nasc)+" anos":""}</span></span><b class="mono">${brl(v.valor)}</b></div>`).join("")}</div>
+     <div class="o4-tot"><span>Mensal do plano</span><b>${brl(ad.total)}</b></div>
+     ${Math.abs(rc-(+ad.total||0))>.005?`<div class="callout" style="margin-top:10px"><span>Alguém mudou de faixa etária: pela tabela atual o plano fica ${brl(rc)}.</span>${ed?`<button class="btn sm" data-o4recalc="${ad.id}">Atualizar valores</button>`:""}</div>`:""}
+     ${cp.length?`<p class="rank" style="margin:12px 0 4px">Coparticipações</p><div class="list">${cp.slice(0,6).map((c,k)=>`<div class="tile"><span>${esc(c.desc||"Coparticipação")}<br><span class="rank">${nomeMes(c.mes)}</span></span><span class="r2"><b class="mono">${brl(c.valor)}</b>${ed?`<button class="btn ghost sm" data-o4coprm="${ad.id}:${(ad.copart||[]).indexOf(c)}" aria-label="Apagar coparticipação">✕</button>`:""}</span></div>`).join("")}</div>`:""}
+     ${ed?(o4UI.fCop?`<form class="o3-f" id="o4-fc" style="margin-top:12px"><label>Mês<input id="o4-cm" type="month" value="${m}"></label><label>Valor (R$)<input id="o4-cv" type="number" min="0" step="0.01" inputmode="decimal"></label><label class="full">Descrição<input id="o4-cd" placeholder="Ex.: consulta, exame"></label><div class="full actions"><button class="btn sm" type="submit">Lançar</button><button class="btn ghost sm" type="button" data-o4fechar>Cancelar</button></div></form>`:
+      o4UI.fCanc?`<div class="inline bad" style="margin-top:12px"><span>Cancelar o plano de ${esc(a.nome.split(" ")[0])} e dependentes?</span><button class="btn danger sm" data-o4cancok="${ad.id}">Cancelar plano</button><button class="btn ghost sm" data-o4fechar>Voltar</button></div>`:
+      `<div class="actions" style="margin-top:12px">${p&&+p.copart?`<button class="btn ghost sm" data-o4cop>Lançar coparticipação</button>`:""}<button class="btn ghost sm" data-o4canc>Cancelar plano</button></div>`):""}</div>`}
+  else{const at=o4.planos.filter(x=>x.ativo!==false),leg=servAtivo(a,"seguro")?a.servicos.seguro:null,fp=o4UI.fAderir&&o4Plano(o4UI.fAderir.plano);
+    pl=`<div class="panel"><h3>Plano de saúde</h3>${leg?`<div class="callout" style="margin-bottom:10px"><span>Plano registrado só como serviço${leg.ref?` (${esc(leg.ref)})`:""}${leg.valor?`, ${brl(leg.valor)} por mês`:""}. Faça a adesão abaixo para calcular por faixa etária.</span></div>`:`<p class="rank" style="margin:0 0 8px">Sem plano de saúde pela associação.</p>`}
+     ${ed&&a.sit!=="Inativo"?(o4UI.fAderir?`<form class="o3-f" id="o4-fa"><label class="full">Plano<select id="o4-ap" data-o4ap>${at.map(x=>`<option value="${x.id}" ${x.id===o4UI.fAderir.plano?"selected":""}>${esc(x.nome)} · ${esc(x.operadora||"")}</option>`).join("")}</select></label>
+       <div class="full"><span class="rank">Quem entra no plano</span><div class="list" style="margin-top:6px"><label class="chkline"><input type="checkbox" checked disabled> ${esc(a.nome)} (titular${a.nasc?", "+idadeAnos(a.nasc)+" anos":""}) · <b>${brl(o4ValorIdade(fp,idadeAnos(a.nasc)))}</b></label>${(a.deps||[]).map((d,i)=>`<label class="chkline"><input type="checkbox" data-o4dep="${i}" ${o4UI.fAderir.deps.includes(i)?"checked":""}> ${esc(d.nome)} (${esc(d.par)}${d.nasc?", "+idadeAnos(d.nasc)+" anos":""}) · <b>${brl(o4ValorIdade(fp,idadeAnos(d.nasc)))}</b></label>`).join("")}</div></div>
+       <label>Início<input id="o4-ad" type="date" value="${hoje()}"></label><div class="full o4-tot"><span>Mensal do plano</span><b>${brl(soma(o4Vidas(a,fp,o4UI.fAderir.deps)))}</b></div>
+       <div class="full actions"><button class="btn" type="submit">Confirmar adesão</button><button class="btn ghost" type="button" data-o4fechar>Cancelar</button></div></form>`:
+      at.length?`<button class="btn sm" data-o4aderir>Incluir em um plano</button>`:`<span class="rank">Cadastre os planos em Atendimento › Planos e benefícios.</span>`):""}</div>`}
+  /* resumo do mês */
+  const cpM=ad?soma((ad.copart||[]).filter(c=>c.mes===m)):0,cart=soma(o4MovMes(m,a.id)),vl=soma(o4.ben.filter(b=>b.associadoId===a.id&&b.mes===m&&b.status!=="cancelado"));
+  const linhas=[["Mensalidade",+a.mens||0],ad?["Plano de saúde",+ad.total||0]:(servAtivo(a,"seguro")&&a.servicos.seguro.valor?["Plano de saúde (serviço)",+a.servicos.seguro.valor]:null),cpM?["Coparticipações",cpM]:null,cart?["Cartão da associação",cart]:null].filter(Boolean);
+  const res=`<div class="panel"><h3>Resumo de ${mesSo(m)}</h3><div class="o4-res">${linhas.map(([k,v])=>`<div><span>${k}</span><span class="mono">${brl(v)}</span></div>`).join("")}<div><span>Total do mês</span><span class="mono">${brl(soma(linhas,x=>x[1]))}</span></div></div>${vl?`<p class="rank" style="margin:8px 0 0">Recebe ${brl(vl)} em vales neste mês.</p>`:""}</div>`;
+  /* cartão */
+  let ct;
+  if(servAtivo(a,"cartao")){const fm=o4UI.fmes,mv=o4MovMes(fm,a.id),t=soma(mv),lim=o4Limite(a);
+    ct=`<div class="panel"><h3>Cartão da associação</h3><p style="margin:0 0 6px">Cartão <span class="mono">${esc(a.servicos.cartao.ref||"—")}</span> · desde ${fmtData(a.servicos.cartao.desde)} · limite <b>${lim?brl(lim):"não definido"}</b>${ed&&!o4UI.fLim?` <button class="lnk" data-o4lim>alterar</button>`:""}</p>
+     ${ed&&o4UI.fLim?`<form class="o3-f" id="o4-fl" style="margin:8px 0"><label>Limite mensal (R$)<input id="o4-lv" type="number" min="0" step="0.01" value="${esc(lim||"")}"></label><div class="actions" style="align-self:end"><button class="btn sm" type="submit">Salvar</button><button class="btn ghost sm" type="button" data-o4fechar>Cancelar</button></div></form>`:""}
+     <div class="o3-tb" style="justify-content:space-between;margin:10px 0 4px">${o4MesNav("fmes")}${ed&&!o4UI.fMov?`<button class="btn ghost sm" data-o4fmov>Lançar compra</button>`:""}</div>
+     ${ed&&o4UI.fMov?o4FormMov(a.id):""}
+     ${lim?`<div class="o4-bar"><i class="${t>lim?"over":""}" style="width:${Math.min(100,t/lim*100)}%"></i></div>`:""}
+     ${mv.length?`<div class="list">${mv.map(x=>`<div class="tile"><span>${esc(x.estab)}${x.parcela?` <span class="rank">· ${esc(x.parcela)}</span>`:""}<br><span class="rank">${fmtData(x.data)}</span></span><b class="mono">${brl(x.valor)}</b></div>`).join("")}</div>`:`<p class="rank" style="margin:4px 0 0">Nenhuma compra na fatura de ${mesSo(fm)}.</p>`}
+     <div class="o4-tot"><span>Fatura de ${mesSo(fm)}${lim?` · disponível ${brl(Math.max(0,lim-t))}`:""}</span><b>${brl(t)}</b></div></div>`}
+  else ct=`<div class="panel"><h3>Cartão da associação</h3><p class="rank" style="margin:0">Sem cartão. Para contratar, use a aba Serviços.</p></div>`;
+  /* vales */
+  const bl=o4.ben.filter(b=>b.associadoId===a.id).sort((x,y)=>y.mes.localeCompare(x.mes)).slice(0,6);
+  const vs=`<div class="panel"><h3>Vales (${bl.length})</h3>${bl.length?`<div class="list">${bl.map(b=>`<div class="tile"><span>${(TIPOS_BEN.find(t=>t.k===b.tipo)||{}).n||b.tipo}<br><span class="rank">${nomeMes(b.mes)}</span></span><span class="r2"><b class="mono">${brl(b.valor)}</b><span class="pill ${b.status==="entregue"?"ok":b.status==="cancelado"?"neutral":"warn"}">${b.status==="entregue"?"Entregue":b.status==="cancelado"?"Cancelado":"Lançado"}</span></span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum vale recebido.</p>`}</div>`;
+  /* IRPF */
+  const ano=new Date().getFullYear(),ir=`<div class="panel"><h3>Informe para o Imposto de Renda</h3><p class="rank" style="margin:0 0 10px">PDF com o que foi pago no ano: mensalidades, parcelas de acordo e plano de saúde por beneficiário (este pode ser deduzido).</p><div class="o3-tb"><select id="o4-irano" aria-label="Ano">${[ano,ano-1,ano-2].map(y=>`<option ${String(y)===o4UI.ano?"selected":""}>${y}</option>`).join("")}</select><button class="btn ghost" data-o4ir="${a.id}">Gerar PDF</button></div></div>`;
+  return pl+res+ct+vs+ir}
+function o4LigarFicha(){
+  $("#o4-fa")?.addEventListener("submit",e=>{e.preventDefault();o4Aderir()});
+  $("#o4-fc")?.addEventListener("submit",e=>{e.preventDefault();o4Copart()});
+  $("#o4-fl")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarLimite()});
+  $("#o4-fm")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarMov()});
+}
+const o4Aberto=()=>aberto&&aberto.tipo==="ficha"&&lista.find(x=>x.id===aberto.id);
+async function o4Aderir(){const a=o4Aberto(),p=o4Plano($("#o4-ap").value);if(!a||!p)return toast("Escolha o plano.");
+  const vidas=o4Vidas(a,p,o4UI.fAderir.deps),total=Math.round(soma(vidas)*100)/100,desde=$("#o4-ad").value||hoje();
+  if(vidas.some(v=>!v.valor))return toast("Alguém está fora das faixas etárias do plano (ou sem data de nascimento). Confira o plano.");
+  if(!await escrever("pa-"+a.id,r=>r.set({associadoId:a.id,nome:a.nome,mat:a.mat,planoId:p.id,vidas,total,desde,status:"ativo",copart:[],criadoEm:new Date().toISOString()}),null,"planos_adesoes"))return;
+  await escrever(a.id,r=>r.update({servicos:{seguro:{status:"Ativo",desde,ref:p.nome+(p.tipo?" · "+p.tipo:""),valor:total,canceladoEm:null}},hist:hist(a,`Adesão ao plano ${p.nome}: ${vidas.length} ${o34Pl(vidas.length,"vida","vidas")}, ${brl(total)}/mês`)}));
+  registrar("Fez adesão a plano de saúde",a,`${p.nome} · ${vidas.length} vidas`);o4UI.fAderir=null;toast(`Adesão feita: ${brl(total)} por mês`);renderFicha(a.id)}
+async function o4Copart(){const a=o4Aberto(),ad=a&&o4Adesao(a);if(!ad)return;const v=Math.round((parseFloat($("#o4-cv").value)||0)*100)/100,mes=$("#o4-cm").value;if(!(v>0)||!mes)return toast("Informe mês e valor.");
+  if(await escrever(ad.id,r=>r.update({copart:[...(ad.copart||[]),{mes,valor:v,desc:$("#o4-cd").value.trim(),em:new Date().toISOString()}]}),"Coparticipação lançada","planos_adesoes")){registrar("Lançou coparticipação",a,`${mes} · ${brl(v)}`);o4UI.fCop=false;renderFicha(a.id)}}
+async function o4SalvarLimite(){const a=o4Aberto();if(!a)return;const v=Math.round((parseFloat($("#o4-lv").value)||0)*100)/100;
+  if(await escrever(a.id,r=>r.update({servicos:{cartao:{limite:v}},hist:hist(a,`Limite do cartão: ${brl(v)}`)}),"Limite salvo")){o4UI.fLim=false;renderFicha(a.id)}}
+
+/* ---- informe para o IRPF ---- */
+function o4DadosIR(a,ano){const y=String(ano);
+  const mens=minhasMens(a).filter(i=>i.status==="pago"&&String(i.pagoEm||i.comp).slice(0,4)===y).sort((x,z)=>x.comp.localeCompare(z.comp));
+  const parc=fin.lanc.filter(l=>l.origem==="acordo"&&l.associadoId===a.id&&l.status==="pago"&&String(l.pagoEm).slice(0,4)===y);
+  const pl={};o4.ades.filter(x=>x.associadoId===a.id).forEach(x=>{for(let k=1;k<=12;k++){const c=`${y}-${pad2(k)}`;if(c<String(x.desde).slice(0,7)||c>hoje().slice(0,7)||(x.canceladoEm&&c>String(x.canceladoEm).slice(0,7)))continue;(x.vidas||[]).forEach(v=>{const key=v.nome+"|"+v.par;pl[key]=pl[key]||{nome:v.nome,par:v.par,nasc:v.nasc,valor:0};pl[key].valor+=+v.valor||0})}
+    (x.copart||[]).filter(c=>c.mes.slice(0,4)===y).forEach(c=>{const t=(x.vidas||[])[0];if(!t)return;const key=t.nome+"|"+t.par;pl[key]=pl[key]||{nome:t.nome,par:t.par,nasc:t.nasc,valor:0};pl[key].valor+=+c.valor||0})});
+  return{mens,parc,plano:Object.values(pl)}}
+async function o4Informe(ids,ano){if(!downloads)return toast("Baixar arquivos não está disponível nesta visualização.");
+  try{const J=await carregarAutoTable(),pdf=new J({unit:"mm",format:"a4"}),W=pdf.internal.pageSize.getWidth();let pg=0;
+    for(const id of ids){const a=lista.find(x=>x.id===id);if(!a)continue;const d=o4DadosIR(a,ano);if(ids.length>1&&!d.mens.length&&!d.parc.length&&!d.plano.length)continue;if(pg++)pdf.addPage();
+      pdf.setFont("helvetica","bold");pdf.setFontSize(13);pdf.setTextColor(20);pdf.text(String(MARCA.longo||MARCA.nome),14,18);
+      pdf.setFont("helvetica","normal");pdf.setFontSize(9);pdf.setTextColor(110);pdf.text(fin.cfg.cnpj?"CNPJ "+fin.cfg.cnpj:"Tesouraria",14,23);pdf.setDrawColor(26,48,105);pdf.setLineWidth(.6);pdf.line(14,26,W-14,26);
+      pdf.setTextColor(20);pdf.setFont("helvetica","bold");pdf.setFontSize(14);pdf.text(`Informe de pagamentos · ano-calendário ${ano}`,14,36);
+      pdf.setFont("helvetica","normal");pdf.setFontSize(10);pdf.text(`Associado(a): ${a.nome}`,14,44);pdf.text(`CPF: ${a.cpf||"não informado"} · Matrícula: ${a.mat}`,14,49);
+      let y=56;const tab=(t,head,body,tot)=>{pdf.setFont("helvetica","bold");pdf.setFontSize(11);pdf.text(t,14,y);
+        pdf.autoTable({head:[head],body:body.length?[...body,[{content:"Total",styles:{fontStyle:"bold"}},...Array(head.length-2).fill(""),{content:brl(tot),styles:{fontStyle:"bold"}}]]:[[{content:"Nada pago no ano.",colSpan:head.length}]],startY:y+2,margin:{left:14,right:14},styles:{fontSize:9},headStyles:{fillColor:[26,48,105],textColor:255},columnStyles:{[head.length-1]:{halign:"right"}}});y=pdf.lastAutoTable.finalY+9};
+      tab("Plano de saúde (despesa médica, pode ser deduzida)",["Beneficiário","Relação","Valor no ano"],d.plano.map(v=>[v.nome,v.par,brl(v.valor)]),soma(d.plano));
+      tab("Mensalidades associativas (não dedutíveis)",["Mês","Pago em","Valor"],d.mens.map(i=>[nomeMes(i.comp),fmtData(i.pagoEm),brl(i.valor)]),soma(d.mens));
+      if(d.parc.length)tab("Parcelas de acordo (não dedutíveis)",["Descrição","Pago em","Valor"],d.parc.map(l=>[l.desc,fmtData(l.pagoEm),brl(l.valor)]),soma(d.parc));
+      pdf.setFont("helvetica","normal");pdf.setFontSize(8.5);pdf.setTextColor(90);
+      const nota=pdf.splitTextToSize("Valores conforme os registros da associação. Os valores do plano de saúde são os cobrados no período em que o plano esteve ativo, mais coparticipações. Confira com o informe da operadora antes de declarar; as regras de dedução são as da Receita Federal.",W-28);pdf.text(nota,14,y);y+=nota.length*4+20;
+      pdf.setTextColor(20);pdf.line(W/2-40,y,W/2+40,y);pdf.setFontSize(9.5);pdf.text("Tesouraria",W/2,y+5,{align:"center"});pdf.setFontSize(8);pdf.setTextColor(130);pdf.text(`Emitido em ${new Date().toLocaleDateString("pt-BR")}`,W/2,y+10,{align:"center"});
+      registrar("Gerou informe de IRPF",a,String(ano))}
+    if(!pg)return toast(`Nenhum pagamento registrado em ${ano}.`);
+    await downloads.save({filename:ids.length===1?`informe-irpf-${ano}-${(lista.find(x=>x.id===ids[0])||{}).mat||""}.pdf`:`informes-irpf-${ano}.pdf`,data:pdf.output("blob")});toast(pg===1?"Informe salvo":`${pg} informes salvos em um PDF`);
+  }catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast(e&&e.msg||"Não foi possível gerar o informe.")}}
+const o4IRRel=()=>{const ano=new Date().getFullYear();return `<section class="panel prest" id="o4-irrel" style="margin-top:14px"><div><h3>Informe para o Imposto de Renda</h3><p>PDF por associado com mensalidades pagas e plano de saúde por beneficiário no ano. Escolha um associado ou gere de todos num PDF só.</p></div><div class="prest-a o3-tb"><input id="o4-ira" list="o4-dlir" placeholder="Associado (vazio = todos)" autocomplete="off" style="min-width:220px;background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:8px 11px;min-height:38px;color:var(--fg)"><datalist id="o4-dlir">${lista.filter(x=>!x.anonimizadoEm).sort(porNome).map(x=>`<option value="${esc(x.nome+" · "+x.mat)}">`).join("")}</datalist><select id="o4-irano2" aria-label="Ano" style="background:var(--surface);border:1px solid var(--line-2);border-radius:10px;padding:8px 11px;min-height:38px;color:var(--fg)">${[ano-1,ano,ano-2].map(y=>`<option>${y}</option>`).join("")}</select><button class="btn" data-o4irrel>Gerar PDF</button></div></section>`};
+
+/* ---------- ganchos ---------- */
+function o34Click(e){const b=s=>e.target.closest(s);let x;
+  if(b("[data-o3sino]")){menuMais(false);if(o3UI.sino)o3FecharSino();else o3AbrirSino();return true}
+  if(o3UI.sino){if(b("[data-o3sinofim]")){o3FecharSino();if(!b("a"))return true}else if(b("#o3-pop"))return true;else o3FecharSino()}
+  /* ficha */
+  if($("#layer").contains(e.target)){
+    const a=o4Aberto();if(!a)return false;const R=()=>{renderFicha(a.id);return true};
+    if(x=b("[data-o4mes]")){o4UI[x.dataset.k]=somaMes(o4UI[x.dataset.k],+x.dataset.o4mes);return R()}
+    if(b("[data-o4aderir]")){const p=o4.planos.find(y=>y.ativo!==false);o4UI.fAderir={plano:p&&p.id,deps:[]};return R()}
+    if(x=b("[data-o4dep]")){const i=+x.dataset.o4dep,d=o4UI.fAderir.deps;o4UI.fAderir.deps=x.checked?[...d,i]:d.filter(k=>k!==i);return R()}
+    if(b("[data-o4cop]")){o4UI.fCop=true;return R()}
+    if(b("[data-o4canc]")){o4UI.fCanc=true;return R()}
+    if(b("[data-o4lim]")){o4UI.fLim=true;return R()}
+    if(b("[data-o4fmov]")){o4UI.fMov=true;return R()}
+    if(b("[data-o4fechar]")){o4UI.fAderir=null;o4UI.fCop=o4UI.fCanc=o4UI.fLim=o4UI.fMov=false;return R()}
+    if(x=b("[data-o4cancok]")){const ad=o4.ades.find(y=>y.id===x.dataset.o4cancok);o4UI.fCanc=false;
+      escrever(ad.id,r=>r.update({status:"cancelado",canceladoEm:hoje()}),null,"planos_adesoes").then(ok=>{if(!ok)return;escrever(a.id,r=>r.update({servicos:{seguro:{status:"Cancelado",canceladoEm:hoje()}},hist:hist(a,"Plano de saúde cancelado")}),"Plano cancelado");registrar("Cancelou plano de saúde",a)});return true}
+    if(x=b("[data-o4recalc]")){const ad=o4.ades.find(y=>y.id===x.dataset.o4recalc),p=o4Plano(ad.planoId),vidas=(ad.vidas||[]).map(v=>({...v,valor:o4ValorIdade(p,idadeAnos(v.nasc))})),total=Math.round(soma(vidas)*100)/100;
+      escrever(ad.id,r=>r.update({vidas,total}),`Plano atualizado: ${brl(total)}`,"planos_adesoes").then(ok=>{if(ok)escrever(a.id,r=>r.update({servicos:{seguro:{valor:total}},hist:hist(a,`Plano atualizado por faixa etária: ${brl(total)}`)}))});return true}
+    if(x=b("[data-o4coprm]")){const[id,k]=x.dataset.o4coprm.split(":"),ad=o4.ades.find(y=>y.id===id);escrever(id,r=>r.update({copart:(ad.copart||[]).filter((_,i)=>i!==+k)}),"Coparticipação apagada","planos_adesoes");return true}
+    if(x=b("[data-o4ir]")){o4UI.ano=$("#o4-irano").value;o4Informe([x.dataset.o4ir],+o4UI.ano);return true}
+    return false}
+  if(x=b("[data-o4ficha]")){fichaUI={inativar:false,excluir:false,enviando:null,aba:"beneficios"};renderFicha(x.dataset.o4ficha,true);return true}
+  if(viewAtual==="relatorios"&&b("[data-o4irrel]")){const v=($("#o4-ira").value||"").trim(),ano=+$("#o4-irano2").value;
+    if(!v)return o4Informe(lista.filter(a=>!a.anonimizadoEm).sort(porNome).map(a=>a.id),ano),true;const a=lista.find(y=>y.nome+" · "+y.mat===v);if(!a)return toast("Escolha o associado na lista."),true;o4Informe([a.id],ano);return true}
+  if(!$("#view").contains(e.target))return false;
+  if(viewAtual==="inadimplencia"){
+    if(x=b("[data-o3aba]")){o3UI.aba=x.dataset.o3aba;o3UI.acordo=o3UI.agendar=null;if(location.hash!=="#inadimplencia")history.replaceState(null,"","#inadimplencia");o3UI.sub=null;route();return true}
+    if(x=b("[data-o3sel]")){o3UI.sel[x.dataset.o3sel]=x.checked;rerender();return true}
+    if(b("[data-o3todos]")){const l=o3Filtrados(),all=l.every(y=>o3UI.sel[y.a.id]);l.forEach(y=>o3UI.sel[y.a.id]=!all);rerender();return true}
+    if(x=b("[data-o3acordo]")){o3UI.acordo=x.dataset.o3acordo;o3UI.agendar=null;rerender();window.scrollTo({top:0,behavior:"smooth"});return true}
+    if(x=b("[data-o3agendar]")){o3UI.agendar=x.dataset.o3agendar;o3UI.acordo=null;rerender();window.scrollTo({top:0,behavior:"smooth"});return true}
+    if(b("[data-o3fechar]")){o3UI.acordo=o3UI.agendar=o3UI.feito=o3UI.quebrar=null;rerender();return true}
+    if(x=b("[data-o3carta]")){o3Cartas([x.dataset.o3carta]);return true}
+    if(b("[data-o3cartas]")){o3Cartas(o3Filtrados().filter(y=>o3UI.sel[y.a.id]).map(y=>y.a.id));return true}
+    if(b("[data-o3fila]")){const ids=o3Filtrados().filter(y=>o3UI.sel[y.a.id]&&zapNum(y.a.tel)).map(y=>y.a.id);o3UI.fila={ids,i:0,ok:0};rerender();window.scrollTo({top:0,behavior:"smooth"});return true}
+    if(b("[data-o3zap]")){const f=o3UI.fila,a=f&&lista.find(y=>y.id===f.ids[f.i]);if(!a)return true;const d=o3Div(a);abrirZap(zapNum(a.tel),o3Msg(a,d));registrar("Cobrou mensalidade pelo WhatsApp (lote)",a,d.map(i=>i.comp).join(", "));f.ok++;f.i++;rerender();return true}
+    if(b("[data-o3pular]")){if(o3UI.fila)o3UI.fila.i++;rerender();return true}
+    if(b("[data-o3filafim]")){o3UI.fila=null;rerender();return true}
+    if(x=b("[data-o3zap1]")){const a=lista.find(y=>y.id===x.dataset.o3zap1);if(a){const d=o3Div(a);abrirZap(zapNum(a.tel),o3Msg(a,d));registrar("Cobrou mensalidade pelo WhatsApp",a,d.map(i=>i.comp).join(", "))}return true}
+    if(b("[data-o3email]")){const l=o3Filtrados().filter(y=>o3UI.sel[y.a.id]&&y.a.email);if(!l.length)return true;
+      const corpo=`Prezado(a) associado(a),\n\nEm nossos registros constam mensalidades em aberto em seu nome. Pedimos a gentileza de regularizar pelo app da associação${fin.cfg.chavePix?` ou por PIX (chave ${fin.cfg.chavePix})`:""}, ou procurar a secretaria para combinarmos um acordo de parcelamento. Se já pagou, desconsidere esta mensagem.\n\nSecretaria da ${MARCA.nome}`;
+      copiarTexto(l.map(y=>y.a.email).join("; "));l.forEach(y=>registrar("Cobrou mensalidade por e-mail (lote)",y.a,y.d.map(i=>i.comp).join(", ")));
+      try{location.href=`mailto:?bcc=${encodeURIComponent(l.map(y=>y.a.email).join(","))}&subject=${encodeURIComponent("Mensalidades em aberto · "+MARCA.nome)}&body=${encodeURIComponent(corpo)}`}catch{}toast(`E-mails de ${l.length} ${o34Pl(l.length,"associado copiados","associados copiados")}. O programa de e-mail abre com eles em cópia oculta.`);return true}
+    if(x=b("[data-o3pagar]")){const[id,n]=x.dataset.o3pagar.split(":");o3Pagar(id,+n);return true}
+    if(x=b("[data-o3quebrar]")){o3UI.quebrar=x.dataset.o3quebrar;rerender();return true}
+    if(x=b("[data-o3quebrarok]")){o3Quebrar(x.dataset.o3quebrarok);return true}
+    if(x=b("[data-o3feito]")){o3UI.feito=x.dataset.o3feito;rerender();return true}
+    if(x=b("[data-o3feitook]")){const id=x.dataset.o3feitook,res=$("#o3-res").value,nota=($("#o3-nota").value||"").trim(),n=o3.negoc.find(y=>y.id===id);o3UI.feito=null;
+      escrever(id,r=>r.update({feito:true,feitoEm:new Date().toISOString(),resultado:res,nota}),"Contato registrado","fin_negoc").then(ok=>{const a=n&&lista.find(y=>y.id===n.associadoId);if(ok&&a)escrever(a.id,r=>r.update({hist:hist(a,`Negociação (${n.canal}): ${res}${nota?" · "+nota:""}`)}))});return true}
+    return false}
+  if(viewAtual==="beneficios"){
+    if(x=b("[data-o4aba]")){o4UI.aba=x.dataset.o4aba;o4UI.plano=null;o4UI.movNovo=false;route();return true}
+    if(x=b("[data-o4mes]")){o4UI[x.dataset.k]=somaMes(o4UI[x.dataset.k],+x.dataset.o4mes);rerender();return true}
+    if(x=b("[data-o4plano]")){o4UI.plano=x.dataset.o4plano;rerender();window.scrollTo(0,0);return true}
+    if(b("[data-o4fechar]")){o4UI.plano=null;o4UI.movNovo=false;rerender();return true}
+    if(b("[data-o4fxadd]")){$("#o4-fxs").insertAdjacentHTML("beforeend",o4FxRow());return true}
+    if(x=b("[data-o4fxrm]")){x.closest(".o4-fxrow").remove();return true}
+    if(x=b("[data-o4pausa]")){const p=o4Plano(x.dataset.o4pausa);escrever(p.id,r=>r.update({ativo:p.ativo===false}),p.ativo===false?"Plano aceitando adesões":"Adesões pausadas","planos");return true}
+    if(b("[data-o4movnovo]")){o4UI.movNovo=true;rerender();return true}
+    if(x=b("[data-o4movrm]")){escrever(x.dataset.o4movrm,r=>r.delete(),"Lançamento apagado","cartao_mov");return true}
+    if(x=b("[data-o4conf]")){const l=o4MovMes(o4UI.mes,x.dataset.o4conf).filter(y=>!y.conferido);Promise.all(l.map(y=>escrever(y.id,r=>r.update({conferido:true}),null,"cartao_mov"))).then(()=>{toast("Fatura conferida");registrar("Conferiu fatura do cartão",lista.find(y=>y.id===x.dataset.o4conf),o4UI.mes)});return true}
+    if(x=b("[data-o4ent]")){escrever(x.dataset.o4ent,r=>r.update({status:"entregue",entregueEm:hoje()}),"Vale entregue","beneficios");return true}
+    if(x=b("[data-o4bcanc]")){escrever(x.dataset.o4bcanc,r=>r.update({status:"cancelado"}),"Vale cancelado","beneficios");return true}
+    return false}
+  return false}
+function o34Change(e){const t=e.target;
+  if(t.matches("[data-o4ap]")&&o4UI.fAderir){o4UI.fAderir.plano=t.value;const a=o4Aberto();if(a)renderFicha(a.id);return true}
+  if(viewAtual==="inadimplencia"){if(t.id==="o3-min"){o3UI.min=+t.value;rerender();return true}if(t.id==="o3-gest"){o3UI.gest=t.value;rerender();return true}if(t.id==="o3-forma"){o3UI.forma=t.value;rerender();return true}}
+  if(viewAtual==="beneficios"&&t.id==="o4-vt"){const tb=TIPOS_BEN.find(x=>x.k===t.value);if(tb&&$("#o4-vv"))$("#o4-vv").value=tb.v;return true}
+  return false}
+function ligarOnda34(){
+  o3Sino();if(o3UI.sino&&viewAtual==="app")o3FecharSino();
+  $(".o3-sino")&&($(".o3-sino").hidden=viewAtual==="app");
+  if(viewAtual==="inadimplencia"){const f=$("#o3-fa");if(f){f.addEventListener("input",o3Prev);f.addEventListener("change",o3Prev);f.addEventListener("submit",e=>{e.preventDefault();o3SalvarAcordo()});o3Prev()}
+    $("#o3-fg")?.addEventListener("submit",e=>{e.preventDefault();o3SalvarAgenda()})}
+  if(viewAtual==="beneficios"){$("#o4-fp")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarPlano()});$("#o4-fv")?.addEventListener("submit",e=>{e.preventDefault();o4LancarVales()});$("#o4-fm")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarMov()})}
+  if(viewAtual==="relatorios"&&!rUI.id&&!$("#o4-irrel")){const p=$("#view .prest");if(p)p.insertAdjacentHTML("afterend",o4IRRel())}
+}
 /* ---------- v31 · onda 1: ficha completa, vínculo do sócio, tabela de mensalidades, carteiras de gestão, exportar Excel/PDF, buscas salvas, recadastramento ---------- */
 /* Vínculo fica separado do posto (no sistema antigo "Academia", "Natação", "Funcionário" e "Falecido" eram patentes). Desligado = Inativo com motivo. */
 const CATEG=[{k:"efetivo",n:"Sócio efetivo",curto:"Efetivo"},{k:"remido",n:"Sócio remido (isento)",curto:"Remido"},{k:"contribuinte",n:"Não sócio (usa serviços)",curto:"Não sócio"}];
@@ -3823,9 +4296,9 @@ function o2Linha(it,c){return{registro:it.registro,cpf:it.cpf,matFunc:it.matFunc
 /* ---- o que entra na remessa do mês ---- */
 function o2Coletar(tipo,c){
   const forma=tipo==="folha"?FORMA_FOLHA:FORMA_DEB,flag=tipo==="folha"?"cobrarFolha":"cobrarBanco",out=[];
-  (itensMes(c)||[]).forEach(i=>{if(i.status==="pago"||i.status==="informado")return;
+  (itensMes(c)||[]).forEach(i=>{if(i.status==="pago"||i.status==="informado"||i.status==="acordo")return;
     if((i.forma===forma&&!i[tipo==="folha"?"cobrarBanco":"cobrarFolha"])||i[flag])out.push({k:"m-"+i.id,assocId:i.id,origem:"mens",comp:c,valor:+i.valor||0,rub:"mens",desc:"Mensalidade de "+mesSo(c)})});
-  Object.keys(fin.mens).filter(m=>m<c).forEach(m=>(itensMes(m)||[]).forEach(i=>{if(i.status!=="pago"&&i[flag])out.push({k:`x-${m}-${i.id}`,assocId:i.id,origem:"mens",comp:m,valor:+i.valor||0,rub:"mens",desc:`Mensalidade de ${curtoMes(m)} (reenvio)`})}));
+  Object.keys(fin.mens).filter(m=>m<c).forEach(m=>(itensMes(m)||[]).forEach(i=>{if(i.status!=="pago"&&i.status!=="acordo"&&i[flag])out.push({k:`x-${m}-${i.id}`,assocId:i.id,origem:"mens",comp:m,valor:+i.valor||0,rub:"mens",desc:`Mensalidade de ${curtoMes(m)} (reenvio)`})}));
   o2Fats.filter(f=>!f.cancelada&&f.forma===forma).forEach(f=>(f.parcelas||[]).forEach(p=>{if(p.status!=="pago"&&String(p.venc).slice(0,7)===c)out.push({k:`p-${f.id}-${p.n}`,assocId:f.assocId,origem:"parc",fat:f.id,n:p.n,comp:c,valor:+p.valor||0,rub:"benef",desc:`${f.desc} · parcela ${p.n}/${f.parcelas.length}`})}));
   return out.map(it=>{const a=lista.find(x=>x.id===it.assocId)||{},b=o2Banco(a);return Object.assign(it,{nome:a.nome||"",mat:a.mat||"",cpf:a.cpf||"",orgao:a.orgao||"",matFunc:a.matFunc||"",ag:b.ag||"",conta:b.conta||"",autor:!!b.autorizadoEm})});
 }
@@ -3843,10 +4316,10 @@ function o2Analisar(tipo,c){
 }
 const OPN={I:"Inclusão",A:"Alteração",N:"Sem mudança",E:"Exclusão"};
 function o2Resolvido(it){
-  if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur)return"removido";if(cur.status==="pago")return"pago";if(cur.cobrarBanco)return"banco";if(cur.cobrarFolha)return"folha";return""}
+  if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur)return"removido";if(cur.status==="pago")return"pago";if(cur.status==="acordo")return"acordo";if(cur.cobrarBanco)return"banco";if(cur.cobrarFolha)return"folha";return""}
   const f=o2Fats.find(x=>x.id===it.fat);if(!f)return"removido";if(f.cancelada)return"cancelada";const p=(f.parcelas||[]).find(x=>x.n===it.n);return p&&p.status==="pago"?"pago":""}
 const o2RejPend=()=>o2Rem.flatMap(r=>Object.entries(r.itens||{}).filter(([,i])=>i.ret&&i.ret.st==="rej").map(([k,i])=>Object.assign({k,rem:r.id,tipo:r.tipo},i))).filter(i=>!o2Resolvido(i));
-const RESOLV={pago:"Recebido",banco:"Vai para o débito em conta",folha:"Vai para a folha",cancelada:"Fatura cancelada",removido:"Mensalidade removida"};
+const RESOLV={acordo:"Entrou em acordo",pago:"Recebido",banco:"Vai para o débito em conta",folha:"Vai para a folha",cancelada:"Fatura cancelada",removido:"Mensalidade removida"};
 
 /* ---- tela Cobrança ---- */
 views.cobranca=function(){
@@ -3900,7 +4373,8 @@ async function o2Baixar(id){const rem=o2Rem.find(r=>r.id===id);if(!rem)return;if
   try{await downloads.save({filename:`remessa-${folha?"folha":"banese"}-${rem.comp}${L.tipo==="csv"?".csv":".txt"}`,data:txt});toast("Arquivo da remessa salvo");registrar("Baixou arquivo de remessa",null,`${rem.tipo} · ${rem.comp}`)}
   catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast("Não foi possível salvar o arquivo.")}}
 function o2SimularTexto(rem){const folha=rem.tipo==="folha",L=o2Lay(folha?"folhaRet":"banRet"),cods=Object.keys(L.motivos||{}),h=s=>[...s].reduce((x,ch)=>(x*31+ch.charCodeAt(0))>>>0,7);
-  const rows=Object.entries(rem.itens||{}).filter(([,i])=>i.op!=="E").map(([k,i])=>{const ruim=h(k+rem.comp)%7===0,cod=ruim?cods[h(k)%cods.length]:(L.ok||[])[0];
+  const ent=Object.entries(rem.itens||{}).filter(([,i])=>i.op!=="E"),forca=ent.length>1&&!ent.some(([k])=>h(k+rem.comp)%5===0)?ent[ent.length-1][0]:null;
+  const rows=ent.map(([k,i])=>{const ruim=h(k+rem.comp)%5===0||k===forca,cod=ruim?cods[h(k)%cods.length]:(L.ok||[])[0];
     return Object.assign(o2Linha(Object.assign({k},i),rem.comp),folha?{situacao:cod,motivo:ruim?(L.motivos[cod]||""):""}:{retorno:cod})});
   return o2GerarTexto(L,rows)}
 async function o2LerRetorno(id,txt,arq,simulado){
@@ -3909,7 +4383,7 @@ async function o2LerRetorno(id,txt,arq,simulado){
   const itens=Object.entries(rem.itens||{}).map(([k,i])=>Object.assign({k},i)).filter(i=>i.op!=="E"),usados=new Set(),res={};let naoAchados=0;
   rows.forEach(r=>{let it;
     if(folha){const cpf=cpfDig(r.cpf),cand=itens.filter(i=>!usados.has(i.k)&&cpfDig(i.cpf)===cpf&&(!r.rubrica||String(i.rubrica)===String(r.rubrica)));it=cand.find(i=>Math.abs(i.valor-(+r.valor||0))<0.01)||cand[0]}
-    else it=itens.find(i=>!usados.has(i.k)&&i.k===String(r.uso||"").trim())||itens.find(i=>!usados.has(i.k)&&cpfDig(i.mat)===cpfDig(r.idCliente)&&Math.abs(i.valor-(+r.valor||0))<0.01);
+    else it=itens.find(i=>!usados.has(i.k)&&i.k.toUpperCase()===String(r.uso||"").trim().toUpperCase())||itens.find(i=>!usados.has(i.k)&&cpfDig(i.mat)===cpfDig(r.idCliente)&&Math.abs(i.valor-(+r.valor||0))<0.01);
     if(!it){naoAchados++;return}usados.add(it.k);
     const cod=String(folha?r.situacao:r.retorno).trim().toUpperCase(),ok=(L.ok||[]).map(x=>String(x).toUpperCase()).includes(cod);
     res[it.k]={st:ok?"ok":"rej",cod,motivo:ok?"":((L.motivos||{})[cod]||r.motivo||"Código "+cod),em:hoje()}});
@@ -4141,6 +4615,7 @@ function route(){
   if(viewAtual==="app"){ligarApp();ligarPortal()}
   if(viewAtual==="associados")$("#csv2")?.addEventListener("click",()=>exportarCSV(true));
   ligarOnda1();ligarOnda2();
+  ligarOnda34();
 }
 function refresh(){
   if(viewAtual==="associados"&&$("#rows")){const t=$(".top");const tmp=document.createElement("div");tmp.innerHTML=views.associados();const nt=tmp.querySelector(".top");if(t&&nt){t.replaceWith(nt);$("#csv")?.addEventListener("click",()=>exportarCSV(false));$("#csv2")?.addEventListener("click",()=>exportarCSV(true))}const na=$(".notice");if(na)na.remove();const av=aviso();if(av)$(".top").insertAdjacentHTML("afterend",av);{const tb=$("#view nav.tabs"),t2=document.createElement("div");t2.innerHTML=abasAss("associados");if(tb&&t2.firstElementChild)tb.replaceWith(t2.firstElementChild)}renderRows()}
@@ -4334,6 +4809,7 @@ document.addEventListener("click",e=>{
   if(secClick(e))return;
   if(v29Click(e))return;
   if(o1Click(e)||o1ClickFin(e)||o2Click(e))return;
+  if(o34Click(e))return;
   {const bx=$("#bx");if(bx&&bx.contains(e.target)){const r=e.target.closest("[data-bx]");if(r)bxAbrir(+r.dataset.bx);else if(e.target===bx)fecharBusca();return}}
   if(e.target.closest("[data-vfechar]")||e.target.id==="viewer"){fecharViewer();return}
   const tb=e.target.closest("[data-tema]");if(tb){escolherTema(tb.dataset.tema);return}
@@ -4349,6 +4825,7 @@ document.addEventListener("click",e=>{
   const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
 });
 document.addEventListener("change",e=>{if(o1Change(e))return;if(e.target.matches("input[data-o2ret],input[data-o2marg]")){o2Change(e);return}if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
+document.addEventListener("change",e=>{o34Change(e)});
 document.addEventListener("keydown",e=>{
   if(bxTecla(e))return;
   if(e.key==="Escape"&&document.body.classList.contains("menu-on")){menuMais(false);$("[data-menu]")?.focus();return}

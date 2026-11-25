@@ -74,14 +74,15 @@
      "desde": "2019-04-01",
      "ref": "5021 0001",
      "status": "Ativo",
-     "valor": null
+     "valor": null,
+     "limite": 600
     },
     "seguro": {
      "canceladoEm": null,
      "desde": "2020-01-15",
-     "ref": "Enfermaria · regional",
+     "ref": "Saúde Essencial · Enfermaria",
      "status": "Ativo",
-     "valor": 32.9
+     "valor": 951.4
     }
    },
    "sit": "Ativo",
@@ -100,7 +101,11 @@
      "tel": "(79) 9 9811-2030"
     }
    ],
-   "corresp": true
+   "corresp": true,
+   "orgao": "21000",
+   "matFunc": "3201457",
+   "margem": 480,
+   "margemEm": "2026-11-05"
   },
   "a0002": {
    "cep": "",
@@ -146,7 +151,7 @@
    "email": "",
    "end": "",
    "forca": "Polícia Militar",
-   "formaPag": "PIX",
+   "formaPag": "Débito em conta",
    "hist": [
     {
      "em": "2026-11-12T01:39:17.411Z",
@@ -194,7 +199,8 @@
      "desde": "2020-08-01",
      "ref": "5021 0002",
      "status": "Ativo",
-     "valor": null
+     "valor": null,
+     "limite": 400
     }
    },
    "sit": "Ativo",
@@ -204,7 +210,12 @@
    "recadEm": "2023-06-02",
    "sexo": "Feminino",
    "estCivil": "Solteiro(a)",
-   "indicadoPor": "a0001"
+   "indicadoPor": "a0001",
+   "banco": {
+    "ag": "0021",
+    "conta": "0003456789",
+    "autorizadoEm": "2026-03-10"
+   }
   },
   "a0003": {
    "cep": "",
@@ -250,7 +261,9 @@
    "sit": "Pendente",
    "sitMil": "Ativa",
    "tel": "(86) 9 8820-7731",
-   "gestor": "g-bruno"
+   "gestor": "g-bruno",
+   "orgao": "21000",
+   "matFunc": ""
   },
   "a0004": {
    "cep": "",
@@ -331,7 +344,8 @@
      "desde": "2014-02-01",
      "ref": "5021 0004",
      "status": "Ativo",
-     "valor": null
+     "valor": null,
+     "limite": 800
     },
     "seguro": {
      "canceladoEm": null,
@@ -349,7 +363,11 @@
    "mensModo": "isento",
    "recadEm": "2024-01-15",
    "sexo": "Masculino",
-   "estCivil": "Casado(a)"
+   "estCivil": "Casado(a)",
+   "orgao": "21340",
+   "matFunc": "1188290",
+   "margem": 310,
+   "margemEm": "2026-11-05"
   },
   "a0005": {
    "cep": "",
@@ -573,21 +591,26 @@
      "desde": "2018-12-10",
      "ref": "5021 0007",
      "status": "Ativo",
-     "valor": null
+     "valor": null,
+     "limite": 500
     },
     "seguro": {
      "canceladoEm": null,
-     "desde": "2019-03-01",
-     "ref": "Apartamento · nacional",
+     "desde": "2024-03-01",
+     "ref": "Saúde Essencial · Enfermaria",
      "status": "Ativo",
-     "valor": 54.5
+     "valor": 538.8
     }
    },
    "sit": "Ativo",
    "sitMil": "Ativa",
    "tel": "(86) 9 9300-2257",
    "recadEm": "2026-02-01",
-   "sexo": "Feminino"
+   "sexo": "Feminino",
+   "orgao": "21000",
+   "matFunc": "4410023",
+   "margem": 90,
+   "margemEm": "2026-11-05"
   },
   "a0008": {
    "cep": "",
@@ -1956,6 +1979,21 @@
    "tipo": "saida",
    "valor": 480,
    "venc": "2026-11-05"
+  },
+  "ac-ac-exemplo-a0007-p1": {
+   "tipo": "entrada",
+   "desc": "Acordo · Fernanda Rocha Batista · parcela 1/3",
+   "cat": "Acordos de mensalidade",
+   "valor": 80.0,
+   "venc": "2026-10-20",
+   "comp": "2026-10",
+   "status": "pago",
+   "pagoEm": "2026-10-19",
+   "forma": "PIX",
+   "obs": "",
+   "origem": "acordo",
+   "associadoId": "a0007",
+   "criadoEm": "2026-10-19T12:00:00.000Z"
   }
  },
  "fin_mens": {
@@ -2093,9 +2131,10 @@
      "forma": "Desconto em folha",
      "mat": "0007-18",
      "nome": "Fernanda Rocha Batista",
-     "pagoEm": "2026-08-08",
-     "status": "pago",
-     "valor": 120
+     "pagoEm": null,
+     "status": "acordo",
+     "valor": 120,
+     "acordoId": "ac-exemplo-a0007"
     }
    },
    "venc": "2026-08-10"
@@ -2132,17 +2171,18 @@
      "forma": "Boleto",
      "mat": "0005-22",
      "nome": "Patrícia Gomes Alencar",
-     "pagoEm": "2026-09-09",
-     "status": "pago",
+     "pagoEm": null,
+     "status": "aberto",
      "valor": 85
     },
     "a0007": {
      "forma": "Desconto em folha",
      "mat": "0007-18",
      "nome": "Fernanda Rocha Batista",
-     "pagoEm": "2026-09-08",
-     "status": "pago",
-     "valor": 120
+     "pagoEm": null,
+     "status": "acordo",
+     "valor": 120,
+     "acordoId": "ac-exemplo-a0007"
     }
    },
    "venc": "2026-09-10"
@@ -2179,8 +2219,8 @@
      "forma": "Boleto",
      "mat": "0005-22",
      "nome": "Patrícia Gomes Alencar",
-     "pagoEm": "2026-10-09",
-     "status": "pago",
+     "pagoEm": null,
+     "status": "aberto",
      "valor": 85
     },
     "a0007": {
@@ -2202,27 +2242,27 @@
      "forma": "Desconto em folha",
      "mat": "0001-19",
      "nome": "Carlos Eduardo Ramos",
-     "pagoEm": "2026-11-08",
-     "status": "pago",
+     "pagoEm": null,
+     "status": "aberto",
      "valor": 85
     },
     "a0002": {
-     "forma": "PIX",
+     "forma": "Débito em conta",
      "informadoEm": null,
      "mat": "0002-20",
      "nome": "Juliana Ferreira Lima",
      "pagForma": null,
-     "pagoEm": "2026-11-12",
+     "pagoEm": null,
      "recusa": null,
-     "status": "pago",
+     "status": "aberto",
      "valor": 85
     },
     "a0004": {
      "forma": "Desconto em folha",
      "mat": "0004-14",
      "nome": "Antônio Carlos Moura",
-     "pagoEm": "2026-11-08",
-     "status": "pago",
+     "pagoEm": null,
+     "status": "aberto",
      "valor": 120
     },
     "a0005": {
@@ -2237,8 +2277,8 @@
      "forma": "Desconto em folha",
      "mat": "0007-18",
      "nome": "Fernanda Rocha Batista",
-     "pagoEm": "2026-11-08",
-     "status": "pago",
+     "pagoEm": null,
+     "status": "aberto",
      "valor": 120
     }
    },
@@ -2435,6 +2475,559 @@
      "ativo": true
     }
    ]
+  },
+  "cobranca": {
+   "orgaos": [
+    {
+     "cod": "00001",
+     "nome": "Civil"
+    },
+    {
+     "cod": "00003",
+     "nome": "Inativo"
+    },
+    {
+     "cod": "00004",
+     "nome": "Previdência"
+    },
+    {
+     "cod": "00010",
+     "nome": "Boleto bancário Banese"
+    },
+    {
+     "cod": "13000",
+     "nome": "Sec. de Estado da Administração"
+    },
+    {
+     "cod": "13110",
+     "nome": "Instituto de Previdência do Estado de Sergipe"
+    },
+    {
+     "cod": "13250",
+     "nome": "Instituto de Previdência do Estado de Sergipe - inativos"
+    },
+    {
+     "cod": "21000",
+     "nome": "Sec. de Estado da Segurança Pública"
+    },
+    {
+     "cod": "21150",
+     "nome": "Sec. de Estado da Segurança Pública - inativos/FUNASERP"
+    },
+    {
+     "cod": "21300",
+     "nome": "Corpo de Bombeiros Militar do Estado de Sergipe"
+    },
+    {
+     "cod": "21340",
+     "nome": "Polícia Militar do Estado de Sergipe - reformados"
+    },
+    {
+     "cod": "21350",
+     "nome": "Polícia Militar do Estado de Sergipe - reformados/FUNASERP"
+    },
+    {
+     "cod": "21440",
+     "nome": "Corpo de Bombeiros Militar - reformados"
+    },
+    {
+     "cod": "21450",
+     "nome": "Corpo de Bombeiros Militar - reformados/FUNASERP"
+    },
+    {
+     "cod": "28000",
+     "nome": "Tribunal de Justiça do Estado de Sergipe"
+    }
+   ],
+   "rubricas": {
+    "mens": {
+     "cod": "1200123001",
+     "n": "Mensalidade"
+    },
+    "benef": {
+     "cod": "1200124012",
+     "n": "Benefícios"
+    }
+   },
+   "regSeq": 1000
+  }
+ },
+ "fin_acordos": {
+  "ac-exemplo-a0007": {
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "meses": [
+    {
+     "comp": "2026-08",
+     "valor": 120
+    },
+    {
+     "comp": "2026-09",
+     "valor": 120
+    }
+   ],
+   "bruto": 240,
+   "desconto": 0,
+   "total": 240,
+   "parcelas": [
+    {
+     "n": 1,
+     "venc": "2026-10-20",
+     "valor": 80.0,
+     "status": "pago",
+     "pagoEm": "2026-10-19"
+    },
+    {
+     "n": 2,
+     "venc": "2026-11-20",
+     "valor": 80.0,
+     "status": "aberto",
+     "pagoEm": null
+    },
+    {
+     "n": 3,
+     "venc": "2026-12-20",
+     "valor": 80.0,
+     "status": "aberto",
+     "pagoEm": null
+    }
+   ],
+   "status": "ativo",
+   "criadoEm": "2026-10-12T14:00:00.000Z",
+   "obs": "Combinado na secretaria (dados de exemplo)"
+  }
+ },
+ "fin_negoc": {
+  "ng-exemplo-1": {
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "data": "2026-11-25",
+   "hora": "10:00",
+   "canal": "WhatsApp",
+   "obs": "Propor acordo das 3 mensalidades",
+   "feito": false,
+   "criadoEm": "2026-11-20T12:00:00.000Z"
+  },
+  "ng-exemplo-2": {
+   "associadoId": "a0002",
+   "nome": "Juliana Ferreira Lima",
+   "data": "2026-11-27",
+   "hora": "15:30",
+   "canal": "Telefone",
+   "obs": "Lembrar da mensalidade de outubro",
+   "feito": false,
+   "criadoEm": "2026-11-20T12:00:00.000Z"
+  },
+  "ng-exemplo-3": {
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "data": "2026-10-12",
+   "hora": "09:00",
+   "canal": "Presencial",
+   "obs": "Negociar agosto e setembro",
+   "feito": true,
+   "feitoEm": "2026-10-12T13:00:00.000Z",
+   "resultado": "Fez acordo",
+   "nota": "3x a partir de 20/10",
+   "criadoEm": "2026-10-08T12:00:00.000Z"
+  }
+ },
+ "planos": {
+  "pl-essencial": {
+   "nome": "Saúde Essencial",
+   "operadora": "Operadora Exemplo Saúde",
+   "tipo": "Enfermaria",
+   "copart": 30,
+   "faixas": [
+    {
+     "de": 0,
+     "ate": 18,
+     "valor": 189.9
+    },
+    {
+     "de": 19,
+     "ate": 23,
+     "valor": 224.5
+    },
+    {
+     "de": 24,
+     "ate": 28,
+     "valor": 262.3
+    },
+    {
+     "de": 29,
+     "ate": 33,
+     "valor": 288.1
+    },
+    {
+     "de": 34,
+     "ate": 38,
+     "valor": 312.7
+    },
+    {
+     "de": 39,
+     "ate": 43,
+     "valor": 348.9
+    },
+    {
+     "de": 44,
+     "ate": 48,
+     "valor": 412.6
+    },
+    {
+     "de": 49,
+     "ate": 53,
+     "valor": 489.2
+    },
+    {
+     "de": 54,
+     "ate": 58,
+     "valor": 598.4
+    },
+    {
+     "de": 59,
+     "ate": 120,
+     "valor": 812.3
+    }
+   ],
+   "ativo": true,
+   "criadoEm": "2026-01-10T12:00:00.000Z"
+  },
+  "pl-odonto": {
+   "nome": "Odonto Família",
+   "operadora": "Odonto Exemplo",
+   "tipo": "Odontológico",
+   "copart": 0,
+   "faixas": [
+    {
+     "de": 0,
+     "ate": 120,
+     "valor": 29.9
+    }
+   ],
+   "ativo": true,
+   "criadoEm": "2026-01-10T12:00:00.000Z"
+  }
+ },
+ "planos_adesoes": {
+  "pa-a0001": {
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "planoId": "pl-essencial",
+   "vidas": [
+    {
+     "nome": "Carlos Eduardo Ramos",
+     "par": "Titular",
+     "nasc": "1979-04-21",
+     "titular": true,
+     "valor": 412.6
+    },
+    {
+     "nome": "Luciana Ramos",
+     "par": "Cônjuge",
+     "nasc": "1984-06-02",
+     "titular": false,
+     "valor": 348.9
+    },
+    {
+     "nome": "Pedro Ramos",
+     "par": "Filho(a)",
+     "nasc": "2012-09-18",
+     "titular": false,
+     "valor": 189.9
+    }
+   ],
+   "total": 951.4,
+   "desde": "2020-01-15",
+   "status": "ativo",
+   "copart": [
+    {
+     "mes": "2026-10",
+     "valor": 42.0,
+     "desc": "Consulta · clínico geral",
+     "em": "2026-10-20T12:00:00.000Z"
+    },
+    {
+     "mes": "2026-11",
+     "valor": 87.6,
+     "desc": "Exames laboratoriais",
+     "em": "2026-11-12T12:00:00.000Z"
+    }
+   ],
+   "criadoEm": "2020-01-15T12:00:00.000Z"
+  },
+  "pa-a0007": {
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "planoId": "pl-essencial",
+   "vidas": [
+    {
+     "nome": "Fernanda Rocha Batista",
+     "par": "Titular",
+     "nasc": "1986-07-15",
+     "titular": true,
+     "valor": 348.9
+    },
+    {
+     "nome": "Sofia Batista",
+     "par": "Filho(a)",
+     "nasc": "2015-03-08",
+     "titular": false,
+     "valor": 189.9
+    }
+   ],
+   "total": 538.8,
+   "desde": "2024-03-01",
+   "status": "ativo",
+   "copart": [],
+   "criadoEm": "2024-03-01T12:00:00.000Z"
+  }
+ },
+ "cartao_mov": {
+  "cm-exemplo-1": {
+   "associadoId": "a0001",
+   "data": "2026-11-03",
+   "estab": "Farmácia Vida (exemplo)",
+   "valor": 86.4,
+   "parcela": "",
+   "mes": "2026-11",
+   "conferido": false,
+   "criadoEm": "2026-11-03T12:00:00.000Z"
+  },
+  "cm-exemplo-2": {
+   "associadoId": "a0001",
+   "data": "2026-11-14",
+   "estab": "Ótica Central (exemplo)",
+   "valor": 120.0,
+   "parcela": "1/3",
+   "mes": "2026-11",
+   "conferido": false,
+   "criadoEm": "2026-11-14T12:00:00.000Z"
+  },
+  "cm-exemplo-3": {
+   "associadoId": "a0001",
+   "data": "2026-11-14",
+   "estab": "Ótica Central (exemplo)",
+   "valor": 120.0,
+   "parcela": "2/3",
+   "mes": "2026-12",
+   "conferido": false,
+   "criadoEm": "2026-11-14T12:00:00.000Z"
+  },
+  "cm-exemplo-4": {
+   "associadoId": "a0001",
+   "data": "2026-11-14",
+   "estab": "Ótica Central (exemplo)",
+   "valor": 120.0,
+   "parcela": "3/3",
+   "mes": "2027-01",
+   "conferido": false,
+   "criadoEm": "2026-11-14T12:00:00.000Z"
+  },
+  "cm-exemplo-5": {
+   "associadoId": "a0002",
+   "data": "2026-11-08",
+   "estab": "Supermercado Bom Preço (exemplo)",
+   "valor": 412.9,
+   "parcela": "",
+   "mes": "2026-11",
+   "conferido": false,
+   "criadoEm": "2026-11-08T12:00:00.000Z"
+  },
+  "cm-exemplo-6": {
+   "associadoId": "a0004",
+   "data": "2026-11-02",
+   "estab": "Farmácia Vida (exemplo)",
+   "valor": 54.3,
+   "parcela": "",
+   "mes": "2026-11",
+   "conferido": false,
+   "criadoEm": "2026-11-02T12:00:00.000Z"
+  },
+  "cm-exemplo-7": {
+   "associadoId": "a0007",
+   "data": "2026-10-18",
+   "estab": "Academia Força (exemplo)",
+   "valor": 89.9,
+   "parcela": "",
+   "mes": "2026-10",
+   "conferido": true,
+   "criadoEm": "2026-10-18T12:00:00.000Z"
+  },
+  "cm-exemplo-8": {
+   "associadoId": "a0007",
+   "data": "2026-11-18",
+   "estab": "Academia Força (exemplo)",
+   "valor": 89.9,
+   "parcela": "",
+   "mes": "2026-11",
+   "conferido": false,
+   "criadoEm": "2026-11-18T12:00:00.000Z"
+  }
+ },
+ "beneficios": {
+  "bn-gas-2026-10-a0001": {
+   "tipo": "gas",
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "mes": "2026-10",
+   "valor": 110,
+   "status": "entregue",
+   "criadoEm": "2026-10-05T12:00:00.000Z",
+   "entregueEm": "2026-10-08"
+  },
+  "bn-gas-2026-10-a0002": {
+   "tipo": "gas",
+   "associadoId": "a0002",
+   "nome": "Juliana Ferreira Lima",
+   "mat": "0002-20",
+   "mes": "2026-10",
+   "valor": 110,
+   "status": "entregue",
+   "criadoEm": "2026-10-05T12:00:00.000Z",
+   "entregueEm": "2026-10-08"
+  },
+  "bn-gas-2026-10-a0005": {
+   "tipo": "gas",
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "mes": "2026-10",
+   "valor": 110,
+   "status": "entregue",
+   "criadoEm": "2026-10-05T12:00:00.000Z",
+   "entregueEm": "2026-10-08"
+  },
+  "bn-gas-2026-10-a0007": {
+   "tipo": "gas",
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "mes": "2026-10",
+   "valor": 110,
+   "status": "entregue",
+   "criadoEm": "2026-10-05T12:00:00.000Z",
+   "entregueEm": "2026-10-08"
+  },
+  "bn-gas-2026-11-a0001": {
+   "tipo": "gas",
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "mes": "2026-11",
+   "valor": 110,
+   "status": "lancado",
+   "criadoEm": "2026-11-05T12:00:00.000Z"
+  },
+  "bn-gas-2026-11-a0002": {
+   "tipo": "gas",
+   "associadoId": "a0002",
+   "nome": "Juliana Ferreira Lima",
+   "mat": "0002-20",
+   "mes": "2026-11",
+   "valor": 110,
+   "status": "lancado",
+   "criadoEm": "2026-11-05T12:00:00.000Z"
+  },
+  "bn-gas-2026-11-a0005": {
+   "tipo": "gas",
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "mes": "2026-11",
+   "valor": 110,
+   "status": "lancado",
+   "criadoEm": "2026-11-05T12:00:00.000Z"
+  },
+  "bn-gas-2026-11-a0007": {
+   "tipo": "gas",
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "mes": "2026-11",
+   "valor": 110,
+   "status": "lancado",
+   "criadoEm": "2026-11-05T12:00:00.000Z"
+  },
+  "bn-combustivel-2026-11-a0004": {
+   "tipo": "combustivel",
+   "associadoId": "a0004",
+   "nome": "Antônio Carlos Moura",
+   "mat": "0004-14",
+   "mes": "2026-11",
+   "valor": 150,
+   "status": "lancado",
+   "criadoEm": "2026-11-05T12:00:00.000Z"
+  }
+ },
+ "fin_faturas": {
+  "fat-uniforme-a0001": {
+   "assocId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "desc": "Uniforme de gala",
+   "tipo": "Equipamento ou compra",
+   "forma": "Desconto em folha",
+   "total": 360,
+   "parcelas": [
+    {
+     "n": 1,
+     "venc": "2026-10-10",
+     "valor": 120,
+     "status": "pago",
+     "pagoEm": "2026-10-10",
+     "forma": "Desconto em folha"
+    },
+    {
+     "n": 2,
+     "venc": "2026-11-10",
+     "valor": 120,
+     "status": "aberto",
+     "pagoEm": null
+    },
+    {
+     "n": 3,
+     "venc": "2026-12-10",
+     "valor": 120,
+     "status": "aberto",
+     "pagoEm": null
+    }
+   ],
+   "obs": "",
+   "cancelada": false,
+   "criadoEm": "2026-09-28T10:00:00.000Z"
+  },
+  "fat-caminhao-a0004": {
+   "assocId": "a0004",
+   "nome": "Antônio Carlos Moura",
+   "mat": "0004-14",
+   "desc": "Aluguel do caminhão (mudança)",
+   "tipo": "Reserva ou aluguel",
+   "forma": "PIX",
+   "total": 250,
+   "parcelas": [
+    {
+     "n": 1,
+     "venc": "2026-11-20",
+     "valor": 125,
+     "status": "aberto",
+     "pagoEm": null
+    },
+    {
+     "n": 2,
+     "venc": "2026-12-20",
+     "valor": 125,
+     "status": "aberto",
+     "pagoEm": null
+    }
+   ],
+   "obs": "Combinado em duas vezes.",
+   "cancelada": false,
+   "criadoEm": "2026-11-12T14:30:00.000Z"
   }
  }
 }
