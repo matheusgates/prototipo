@@ -1003,6 +1003,25 @@ details.mais.exp{margin-left:0}
 .tm label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;color:var(--muted)}
 @media (prefers-reduced-motion:reduce){.cw{animation:none}}
 @media (max-width:760px){.cw-n b{font-size:18px}.ctrow{grid-template-columns:1fr 1fr}}
+/* ---- v33 · onda 2: cobrança ---- */
+.o2-passos{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:8px;margin-bottom:16px}
+.o2-p{display:flex;gap:10px;align-items:center;background:var(--surface);border:1px solid var(--line);border-radius:12px;padding:10px 12px;min-width:0}
+.o2-p i{flex:none;width:28px;height:28px;border-radius:50%;display:grid;place-items:center;background:var(--surface-2);color:var(--muted);font-style:normal;font-weight:700;font-size:13px}
+.o2-p b{display:block;font-size:13.5px;line-height:1.25}.o2-p small{display:block;color:var(--muted);font-size:12px;overflow:hidden;text-overflow:ellipsis}
+.o2-p.feito i{background:var(--ok-soft);color:var(--ok)}.o2-p.agora{border-color:var(--accent);box-shadow:inset 0 0 0 1px var(--accent)}.o2-p.agora i{background:var(--accent);color:var(--surface)}
+.o2-op{font:700 12px var(--f-mono);background:var(--surface-2);border-radius:5px;padding:1px 6px}
+.o2-rj{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:10px 0;border-bottom:1px solid var(--line);flex-wrap:wrap}
+.o2-rj:last-child{border-bottom:0}.o2-rj .t{flex:1;min-width:180px;display:flex;flex-direction:column;line-height:1.35}.o2-rj .t small{color:var(--muted);font-size:13px}
+.o2-btn{width:100%;background:none;border:0;border-bottom:1px solid var(--line);text-align:left;cursor:pointer;color:var(--fg);font:inherit}.o2-btn:hover .t b{color:var(--accent)}
+.o2-mg{display:flex;flex-direction:column;align-items:flex-end;gap:3px}.o2-mg small{color:var(--muted);font-size:12px}
+.o2-2{grid-template-columns:minmax(0,1.3fr) minmax(0,1fr)}
+.o2-org{max-height:420px;overflow-y:auto;padding-right:4px}
+.o2-lj{width:100%;min-height:260px;font:12px/1.45 var(--f-mono);background:var(--bg);color:var(--fg);border:1px solid var(--line-2);border-radius:10px;padding:10px}
+.o2-ano{display:grid;grid-template-columns:repeat(auto-fill,minmax(118px,1fr));gap:8px}
+.o2-m{border:1px solid var(--line);border-radius:10px;padding:8px 10px;display:flex;flex-direction:column;gap:3px;background:var(--bg);min-width:0}
+.o2-m small{color:var(--muted);font-size:12px;text-transform:capitalize}.o2-m b{font-variant-numeric:tabular-nums}.o2-m em{font-style:normal;font-size:11.5px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.o2-m.atr{border-color:color-mix(in srgb,var(--bad) 45%,var(--line))}.o2-m.pg{border-color:color-mix(in srgb,var(--ok) 35%,var(--line))}
+@media (max-width:860px){.o2-passos{grid-template-columns:repeat(2,minmax(0,1fr))}.o2-2{grid-template-columns:1fr}}
 </style>
 
 <div class="app">
@@ -1016,6 +1035,7 @@ details.mais.exp{margin-left:0}
       </div>
       <div class="stage"><h4>Gestão</h4>
         <a class="nav" href="#financeiro"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><circle cx="12" cy="12" r="9"/><path d="M15 9.5c-.5-1-1.6-1.5-3-1.5-1.7 0-3 .8-3 2s1.3 1.8 3 2 3 .8 3 2-1.3 2-3 2c-1.4 0-2.5-.5-3-1.5M12 6.5v11"/></svg><span>Financeiro</span><span class="badge" id="nav-fin" hidden></span></a>
+        <a class="nav" href="#cobranca"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M7 3h7l5 5v13H7z"/><path d="M14 3v5h5"/><path d="M4 7v14h11"/><path d="M10 13h6M10 17h4"/></svg><span>Cobrança</span><span class="badge" id="nav-cob" hidden></span></a>
         <a class="nav" href="#relatorios"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 20V10M10 20V4M16 20v-7M21 20H3"/></svg><span>Relatórios</span></a>
         <a class="nav" href="#eventos"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5" width="18" height="16" rx="2"/><path d="M3 10h18M8 3v4M16 3v4"/></svg><span>Eventos</span></a>
         <a class="nav" href="#comunicados"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 10v4a1 1 0 0 0 1 1h3l6 4V5L7 9H4a1 1 0 0 0-1 1z"/><path d="M17 8.5a5 5 0 0 1 0 7"/></svg><span>Comunicados</span></a>
@@ -1153,7 +1173,7 @@ async function iniciar(){
   db.doc("app_config/ofertas").onSnapshot(d=>{ofCfg=d.exists?d.data():{};refresh()},()=>{});
   sub("reservas",s=>{portal.res=s.docs.map(d=>Object.assign({id:d.id},d.data()))});
   db.doc("fin_config/geral").onSnapshot(d=>{fin.cfg=d.exists?d.data():{};refresh()},()=>{});
-  iniciarLgpd();iniciarApp();iniciarOnda1();
+  iniciarLgpd();iniciarApp();iniciarOnda1();iniciarOnda2();
 }
 
 /* ---------- interface ---------- */
@@ -1265,7 +1285,7 @@ function renderFicha(id,anim){
   const aba=fichaUI.aba||"dados";
   const rasc=fichaUI.serv&&$("#sv-desde")?{desde:$("#sv-desde").value,valor:$("#sv-valor").value,ref:$("#sv-ref").value}:null;
   const nServ=SERVICOS.filter(s=>servAtivo(a,s.k)).length;
-  const tabs=`<div class="tabs" role="tablist">${[["dados","Dados"],["servicos",`Serviços (${nServ})`],["documentos",`Documentos (${docsOk(a)}/${DOCS.length})`],["historico","Histórico"]].filter(([k])=>k!=="documentos"||dadosCompletos()).map(([k,n])=>`<button class="tab" role="tab" aria-selected="${aba===k}" data-aba="${k}">${n}</button>`).join("")}</div>`;
+  const tabs=`<div class="tabs" role="tablist">${[["dados","Dados"],["servicos",`Serviços (${nServ})`],["financeiro","Financeiro"],["documentos",`Documentos (${docsOk(a)}/${DOCS.length})`],["historico","Histórico"]].filter(([k])=>(k!=="documentos"||dadosCompletos())&&(k!=="financeiro"||podeVer("financeiro")||podeVer("cobranca"))).map(([k,n])=>`<button class="tab" role="tab" aria-selected="${aba===k}" data-aba="${k}">${n}</button>`).join("")}</div>`;
   const servCard=s=>{
     const x=a.servicos&&a.servicos[s.k],ativo=servAtivo(a,s.k);
     let h=`<div class="panel"><div class="serv-h"><div><h3>${s.n}</h3><p class="rank" style="margin:0">${s.desc}</p></div><span class="pill ${ativo?"ok":"neutral"}">${ativo?"Contratado":x?"Cancelado":"Não contratado"}</span></div>`;
@@ -1301,6 +1321,7 @@ function renderFicha(id,anim){
    ${o1FichaContatos(a)}${painelAppFicha(a,ed)}${painelLgpdFicha(a)}<div class="panel"><h3>Dependentes (${dep.length})</h3>${dep.length?`<div class="list">${dep.map(d=>`<div class="tile"><span>${esc(d.nome)}<br><span class="rank">${esc(d.par)}${d.nasc?" · "+fmtData(d.nasc)+idade(d.nasc):""}</span></span></div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhum dependente cadastrado.</p>`}</div>
    ${a.obs?`<div class="panel"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(a.obs)}</p></div>`:""}`:""}
    ${aba==="servicos"?servicosHTML:""}
+   ${aba==="financeiro"?o2FichaFin(a,o2Pode()):""}
    ${aba==="documentos"?`<div class="panel"><h3>Documentos (${docsOk(a)}/${DOCS.length})</h3><div class="docs">${DOCS.map(docRow).join("")}</div>${ed&&!assets?`<p class="sample">Anexar arquivos fica disponível para quem é editor da página. Você pode marcar o que foi recebido em papel.</p>`:""}</div>`:""}
    ${aba==="historico"?`<div class="panel"><h3>Histórico</h3>${(a.hist||[]).length?`<ul class="hist">${a.hist.slice(0,12).map(h=>`<li><span class="mono">${new Date(h.em).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}</span> · ${esc(h.t)}</li>`).join("")}</ul>`:`<p class="rank" style="margin:0">Sem registros.</p>`}</div>`:""}
   </div></div>`;
@@ -1347,6 +1368,7 @@ function abrirForm(id){
    <div class="fp" data-p="4"><h4>${a?"Associação e privacidade":"Associação e acesso ao app"}</h4>
    ${o1FormMens(v,!a)}
    <label for="f-formaPag">Forma de pagamento<select id="f-formaPag">${opts(FORMAS_MENS,v.formaPag||"Desconto em folha")}</select></label>
+   ${o2FormCob(v)}
    ${fld("ing","Associado desde",'type="date"')}
    ${o1FormAssoc(v,!a)}
    ${camposLgpdForm(v)}
@@ -1364,7 +1386,7 @@ function abrirForm(id){
   $("#adddep").addEventListener("click",()=>{$("#deps").insertAdjacentHTML("beforeend",depRow());$("#deps").lastElementChild.querySelector("input").focus()});
   $("#deps").addEventListener("click",e=>{const b=e.target.closest("[data-rmdep]");if(b)b.closest(".deprow").remove()});
   $("#fn").addEventListener("submit",e=>{e.preventDefault();if(!a&&fpUI.p<4){fpIr(fpUI.p+1);return}salvarForm(a)});
-  o1LigarForm();
+  o1LigarForm();o2LigarForm();
   if(!a){fpUI.p=1;fpIr(1,true);$("#fp-prox").addEventListener("click",()=>fpIr(fpUI.p+1));$("#fp-voltar").addEventListener("click",()=>fpIr(fpUI.p-1))}
   $("#f-nome").focus();
 }
@@ -1378,7 +1400,7 @@ function validar(a,so){
   if(val("email")&&!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(val("email")))erros.email="E-mail inválido.";
   if(val("nasc")&&val("nasc")>hoje())erros.nasc="Data no futuro.";
   if(!a&&!erros.email&&!val("email")&&document.querySelector('input[name="f-acesso"]:checked')?.value==="convite")erros.email="Para enviar o convite, informe o e-mail (ou escolha outra forma de acesso).";
-  o1Validar(erros);
+  o1Validar(erros);o2Validar(erros);
   if(so)Object.keys(erros).forEach(k=>{if(!so.includes(k))delete erros[k]});
   ["nome","cpf","om","tel","email","nasc","tel2","email2","indic","mensVal"].forEach(k=>{if(!$("#f-"+k))return;$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""});
   const first=Object.keys(erros)[0];if(first){const det=$("#f-"+first).closest("details");if(det)det.open=true;const st=$("#f-"+first).closest(".fp");if(!so&&st&&$("#fn.passos"))fpIr(+st.dataset.p,true);$("#f-"+first).focus()}
@@ -1390,7 +1412,7 @@ async function salvarForm(a){
   const val=k=>($("#f-"+k).value||"").trim();
   const deps=[...document.querySelectorAll(".deprow:not(.ctrow)")].map(r=>({nome:r.querySelector("[data-dn]").value.trim(),par:r.querySelector("[data-dp]").value,nasc:r.querySelector("[data-dd]").value})).filter(d=>d.nome);
   const dados={nome:val("nome"),cpf:maskCPF(val("cpf")),rg:val("rg"),nasc:val("nasc"),forca:val("forca"),posto:val("posto"),sitMil:val("sitMil"),idMil:val("idMil"),om:val("om"),tel:val("tel"),email:val("email"),end:val("end"),cidade:val("cidade"),cep:val("cep"),formaPag:val("formaPag"),ing:val("ing")||hoje(),deps,obs:$("#f-obs").value.trim()};
-  Object.assign(dados,o1DadosForm(),dadosLgpdForm(a,deps));
+  Object.assign(dados,o1DadosForm(),o2DadosForm(),dadosLgpdForm(a,deps));
   $("#salvar").disabled=true;
   let ok,id;
   if(a){id=a.id;ok=await escrever(id,ref=>ref.update({...dados,atualizadoEm:new Date().toISOString(),hist:hist(a,"Dados atualizados")}),"Alterações salvas");if(ok)registrar("Alterou dados da ficha",a)}
@@ -1471,8 +1493,8 @@ async function upload(inp){
 /* ---------- Etapa 2 · financeiro ---------- */
 const CAT_IN=["Mensalidades","Aluguel do salão","Eventos","Convênios","Doações","Outras receitas"];
 const CAT_OUT=["Manutenção do clube","Energia elétrica","Água","Internet e telefone","Funcionários","Encargos trabalhistas","Contabilidade","Limpeza e materiais","Impostos e taxas","Eventos","Outras despesas"];
-const FORMAS_MENS=["Desconto em folha","PIX","Boleto","Dinheiro"];
-const FORMAS=["PIX","Transferência","Boleto","Dinheiro","Cartão","Desconto em folha"];
+const FORMAS_MENS=["Desconto em folha","Débito em conta","PIX","Boleto","Dinheiro"];
+const FORMAS=["PIX","Transferência","Boleto","Dinheiro","Cartão","Desconto em folha","Débito em conta"];
 const MESES=["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
 let fin={mens:{},lanc:[],fixas:[],cfg:{}};
 let finUI={mes:hoje().slice(0,7),aba:"resumo",q:"",st:"",tipo:"",confFolha:false,rec:null,mot:""};
@@ -2668,7 +2690,7 @@ const POL_VER="1.0",POL_DATA="2026-11-12";
 let lgpd={cfg:{},ped:[],log:[],inc:[]},quem={id:null,owner:false,user:null},nomesU={},buscandoU=new Set();
 let lUI={aba:"painel",st:"aberto",q:"",so:"",papelSim:null,f:{},resp:null,anon:null,novoPed:false,busca:[],cfgMsg:""};
 const PAPEIS={admin:{n:"Administrador",d:"Tudo, inclusive papéis e configurações de privacidade."},secretaria:{n:"Secretaria",d:"Cadastro, documentos, portal, solicitações, eventos, comunicados, convênios, relatórios, arquivo da associação e pedidos LGPD."},tesouraria:{n:"Tesouraria",d:"Financeiro, relatórios e arquivo da associação. Vê a lista de associados com CPF mascarado, sem documentos nem endereço."},diretoria:{n:"Diretoria",d:"Visão geral, relatórios, eventos, comunicados, convênios e arquivo da associação. Sem acesso às fichas."}};
-const ACESSO={admin:"*",secretaria:["visao","associados","documentos","carteiras","portal","solicitacoes","eventos","comunicados","relatorios","privacidade","arquivo","convenios"],tesouraria:["visao","associados","carteiras","financeiro","relatorios","arquivo"],diretoria:["visao","relatorios","eventos","comunicados","arquivo","convenios"]};
+const ACESSO={admin:"*",secretaria:["visao","associados","documentos","carteiras","portal","solicitacoes","eventos","comunicados","relatorios","privacidade","arquivo","convenios"],tesouraria:["visao","associados","carteiras","financeiro","cobranca","relatorios","arquivo"],diretoria:["visao","relatorios","eventos","comunicados","arquivo","convenios"]};
 const TIPOS_PED={correcao:"Correção de dados",exclusao:"Exclusão / anonimização",acesso:"Acesso aos dados",revogacao:"Revogação de consentimento",info:"Informação sobre uso e compartilhamento",outro:"Outro"};
 const papelReal=()=>quem.owner?"admin":((lgpd.cfg.papeis||{})[quem.id]||"secretaria");
 const papel=()=>(papelReal()==="admin"&&lUI.papelSim)||papelReal();
@@ -3193,7 +3215,7 @@ async function gerarAcesso(a,modo){
   if(aberto&&aberto.tipo==="ficha"&&aberto.id===a.id){renderFicha(a.id);$(".acc-novo")?.scrollIntoView({block:"center",behavior:"smooth"})}
 }
 async function copiarTexto(t){try{await navigator.clipboard.writeText(t);toast("Mensagem copiada. Cole no e-mail ou no WhatsApp.")}catch{const x=document.createElement("textarea");x.value=t;document.body.append(x);x.select();let ok=false;try{ok=document.execCommand("copy")}catch{}x.remove();toast(ok?"Mensagem copiada.":"Não foi possível copiar. Selecione e copie manualmente.")}}
-const VERBO={documentos:"Conferir",solicitacoes:"Responder",privacidade:"Responder",financeiro:"Ver"};
+const VERBO={cobranca:"Resolver",documentos:"Conferir",solicitacoes:"Responder",privacidade:"Responder",financeiro:"Ver"};
 const DIVISA=`<svg class="divisa" viewBox="0 0 150 130" aria-hidden="true"><g fill="none" stroke="var(--gold)" stroke-width="10"><path d="M12 58 75 22l63 36"/><path d="M12 90 75 54l63 36" opacity=".6"/><path d="M12 122 75 86l63 36" opacity=".32"/></g></svg>`;
 const NAV_ALIAS={documentos:"associados",carteiras:"associados",app:"portal"};
 const navInfo=v=>{const n=document.querySelector(`.nav[href="#${NAV_ALIAS[v]||v}"]`);return{ic:n?.querySelector("svg")?.outerHTML||"",n:n?.querySelector("span")?.textContent||""}};
@@ -3212,6 +3234,7 @@ function pendencias(){
   const av=arqs.filter(x=>["vencido","vence"].includes(stArq(x))).length;add("arquivo",av,pl(av,"documento da associação vencido ou vencendo em 30 dias","documentos da associação vencidos ou vencendo em 30 dias"),"#arquivo");
   const sa=lista.filter(a=>a.sit==="Ativo"&&!a.anonimizadoEm&&!contas[a.id]).length;add("associados",sa,pl(sa,"associado ativo ainda sem acesso ao app","associados ativos ainda sem acesso ao app"),"#associados","neutral");
   const sg=gestAtivos().length?naCarteira(null).length:0;add("carteiras",sg,pl(sg,"associado sem responsável na equipe","associados sem responsável na equipe"),"#carteiras","neutral");
+  o2Pend(add,pl);
   const lp=lgpd.ped.filter(p=>p.status==="aberto").length;add("privacidade",lp,pl(lp,"pedido de privacidade (LGPD) em aberto","pedidos de privacidade (LGPD) em aberto"),"#privacidade");
   return it;
 }
@@ -3740,6 +3763,353 @@ function ligarOnda1(){
     if(ruim)return toast("Confira os valores: use números iguais ou maiores que zero.");
     if(await escrever("geral",r=>r.set(Object.assign({},fin.cfg,{tabela})),"Tabela de mensalidades salva","fin_config"))registrar("Alterou a tabela de mensalidades")});
 }
+/* ---------- v33 · onda 2: cobrança (desconto em folha SEAD/SEPLAG, débito em conta BANESE, faturas com parcelas, ficha financeira) ---------- */
+/* Fluxo igual ao do sistema antigo: gerar remessa do mês → baixar o arquivo e enviar → ler o arquivo de retorno → baixa automática do que foi descontado;
+   o que não foi descontado na folha pode ir para o débito em conta, e o que o banco não debitou volta para a folha.
+   Os layouts dos arquivos ficam em configuração (app_config/cobranca.layouts) e começam "provisórios" até chegar o layout oficial. */
+const FORMA_FOLHA="Desconto em folha",FORMA_DEB="Débito em conta";
+const TIPOS_FAT=["Acordo de dívida","Equipamento ou compra","Convênio","Reserva ou aluguel","Plano de saúde","Outros"];
+const RUB_PADRAO={mens:{cod:"1200123001",n:"Mensalidade"},benef:{cod:"1200124012",n:"Benefícios"}};
+const LAYOUT_PADRAO={
+  folhaRem:{n:"Remessa para a folha (SEAD/SEPLAG)",provisorio:true,tipo:"csv",sep:";",cab:true,soAlteracoes:false,campos:[{c:"registro",fmt:"digitos"},{c:"cpf",fmt:"digitos"},{c:"matFunc"},{c:"orgao"},{c:"rubrica"},{c:"inicio",fmt:"DDMMAAAA"},{c:"parcelas"},{c:"valor",fmt:"decimal"},{c:"op"}]},
+  folhaRet:{n:"Retorno da folha (o que foi descontado)",provisorio:true,tipo:"csv",sep:";",cab:true,campos:[{c:"cpf",fmt:"digitos"},{c:"rubrica"},{c:"valor",fmt:"decimal"},{c:"situacao"},{c:"motivo"}],ok:["D"],motivos:{N:"Não descontado",M:"Margem consignável insuficiente",S:"Servidor não localizado no órgão",A:"Afastado ou em licença",F:"Falecido",X:"Desligado do órgão"}},
+  banRem:{n:"Remessa de débito em conta (BANESE)",provisorio:true,tipo:"fixo",tam:150,campos:[{c:"reg",i:1,t:1,fix:"E"},{c:"idCliente",i:2,t:25},{c:"agencia",i:27,t:4,fmt:"digitos"},{c:"conta",i:31,t:14,fmt:"digitos"},{c:"venc",i:45,t:8,fmt:"AAAAMMDD"},{c:"valor",i:53,t:15,fmt:"centavos"},{c:"moeda",i:68,t:2,fix:"03"},{c:"uso",i:70,t:60},{c:"mov",i:150,t:1,fix:"0"}]},
+  banRet:{n:"Retorno do débito em conta (BANESE)",provisorio:true,tipo:"fixo",tam:150,tipoReg:"F",campos:[{c:"reg",i:1,t:1,fix:"F"},{c:"idCliente",i:2,t:25},{c:"agencia",i:27,t:4,fmt:"digitos"},{c:"conta",i:31,t:14,fmt:"digitos"},{c:"venc",i:45,t:8,fmt:"AAAAMMDD"},{c:"valor",i:53,t:15,fmt:"centavos"},{c:"retorno",i:68,t:2,fmt:"digitos"},{c:"uso",i:70,t:60}],ok:["00"],motivos:{"01":"Saldo insuficiente","02":"Conta não cadastrada","04":"Outras restrições","10":"Agência em encerramento","12":"Valor inválido","14":"Agência inválida","15":"Conta inválida","30":"Sem autorização de débito","97":"Cancelado: não encontrado"}}
+};
+let cobCfg={},o2Rem=[],o2Fats=[];
+let cobUI={aba:"folha",mes:hoje().slice(0,7),fst:"aberto",fq:"",lay:null,ocNovo:false,lote:false};
+function iniciarOnda2(){
+  db.doc("app_config/cobranca").onSnapshot(d=>{cobCfg=d.exists?d.data():{};refresh()},()=>{});
+  db.collection("cob_remessas").onSnapshot(s=>{o2Rem=s.docs.map(d=>Object.assign({id:d.id},d.data()));refresh()},()=>{});
+  db.collection("fin_faturas").onSnapshot(s=>{o2Fats=s.docs.map(d=>Object.assign({id:d.id},d.data()));refresh()},()=>{});
+}
+const o2Pode=()=>editavel()&&["admin","secretaria","tesouraria"].includes(papel());
+const o2Orgaos=()=>(cobCfg.orgaos||[]).slice().sort((a,b)=>String(a.cod).localeCompare(String(b.cod)));
+const o2OrgNome=c=>{const o=(cobCfg.orgaos||[]).find(x=>x.cod===c);return o?o.nome:""};
+const o2Rub=k=>Object.assign({},RUB_PADRAO[k],(cobCfg.rubricas||{})[k]);
+const o2Lay=k=>Object.assign({},LAYOUT_PADRAO[k],(cobCfg.layouts||{})[k]);
+const cpfDig=s=>String(s||"").replace(/\D/g,"");
+const semAcento=s=>String(s??"").normalize("NFD").replace(/[̀-ͯ]/g,"");
+const o2Banco=a=>a&&a.banco||{};
+const o2TemBanco=a=>!!(o2Banco(a).ag&&o2Banco(a).conta);
+const o2ContaMask=a=>{const b=o2Banco(a);if(!b.conta)return"—";const c=String(b.conta);return`Ag. ${esc(b.ag||"—")} · conta ••••${esc(c.slice(-3))}`};
+const o2SalvarCfg=(patch,msg)=>escrever("cobranca",r=>r.set(Object.assign({},cobCfg,patch)),msg,"app_config");
+const o2Limpo=o=>JSON.parse(JSON.stringify(o));
+
+/* ---- motor de arquivos: CSV ou posições fixas, conforme o layout ---- */
+function o2Fmt(v,f,fixo){
+  if(f.fix!=null)v=f.fix;
+  if(f.fmt==="centavos")v=String(Math.round((+v||0)*100));
+  else if(f.fmt==="decimal")v=(+v||0).toFixed(2).replace(".",",");
+  else if(f.fmt==="AAAAMMDD")v=String(v||"").replace(/-/g,"").slice(0,8);
+  else if(f.fmt==="DDMMAAAA"){const s=String(v||"");v=s?s.slice(8,10)+s.slice(5,7)+s.slice(0,4):""}
+  else if(f.fmt==="digitos")v=String(v??"").replace(/\D/g,"");
+  v=semAcento(v);
+  if(fixo){const n=+f.t;v=/^(centavos|digitos)$/.test(f.fmt)?v.replace(/\D/g,"").padStart(n,"0").slice(-n):v.toUpperCase().padEnd(n," ").slice(0,n)}
+  return v}
+function o2Parse(v,f){if(f.fmt==="centavos")return(parseInt(v.replace(/\D/g,""),10)||0)/100;if(f.fmt==="decimal")return parseFloat(v.replace(/\./g,"").replace(",","."))||0;
+  if(f.fmt==="AAAAMMDD")return v.length===8?`${v.slice(0,4)}-${v.slice(4,6)}-${v.slice(6,8)}`:"";if(f.fmt==="DDMMAAAA")return v.length===8?`${v.slice(4,8)}-${v.slice(2,4)}-${v.slice(0,2)}`:"";return v}
+function o2GerarTexto(L,rows){
+  if(L.tipo==="csv"){const sep=L.sep||";";const lin=rows.map(r=>L.campos.map(f=>o2Fmt(r[f.c],f,false).split(sep).join(" ")).join(sep));return(L.cab?[L.campos.map(f=>f.c).join(sep)]:[]).concat(lin).join("\r\n")+"\r\n"}
+  const tam=+L.tam||Math.max(...L.campos.map(f=>+f.i+ +f.t-1));
+  return rows.map(r=>{const s=Array(tam).fill(" ");L.campos.forEach(f=>{const v=o2Fmt(r[f.c],f,true);for(let k=0;k<+f.t;k++)s[+f.i-1+k]=v[k]||" "});return s.join("")}).join("\r\n")+"\r\n"}
+function o2LerTexto(L,txt){
+  const lin=String(txt||"").replace(/^﻿/,"").split(/\r?\n/).filter(l=>l.trim());
+  if(L.tipo==="csv"){const sep=L.sep||";";return(L.cab?lin.slice(1):lin).map(l=>{const p=l.split(sep),o={};L.campos.forEach((f,i)=>o[f.c]=o2Parse(String(p[i]||"").trim(),f));return o})}
+  return lin.filter(l=>!L.tipoReg||l[0]===L.tipoReg).map(l=>{const o={};L.campos.forEach(f=>o[f.c]=o2Parse(l.substr(+f.i-1,+f.t).trim(),f));return o})}
+function o2Linha(it,c){return{registro:it.registro,cpf:it.cpf,matFunc:it.matFunc,orgao:it.orgao,rubrica:it.rubrica,inicio:(it.comp||c)+"-01",parcelas:it.origem==="parc"?1:0,valor:it.valor,op:it.op==="N"?"":it.op,
+  idCliente:cpfDig(it.mat),agencia:it.ag,conta:it.conta,venc:c+"-"+pad2(diaVenc()),uso:it.k}}
+
+/* ---- o que entra na remessa do mês ---- */
+function o2Coletar(tipo,c){
+  const forma=tipo==="folha"?FORMA_FOLHA:FORMA_DEB,flag=tipo==="folha"?"cobrarFolha":"cobrarBanco",out=[];
+  (itensMes(c)||[]).forEach(i=>{if(i.status==="pago"||i.status==="informado")return;
+    if((i.forma===forma&&!i[tipo==="folha"?"cobrarBanco":"cobrarFolha"])||i[flag])out.push({k:"m-"+i.id,assocId:i.id,origem:"mens",comp:c,valor:+i.valor||0,rub:"mens",desc:"Mensalidade de "+mesSo(c)})});
+  Object.keys(fin.mens).filter(m=>m<c).forEach(m=>(itensMes(m)||[]).forEach(i=>{if(i.status!=="pago"&&i[flag])out.push({k:`x-${m}-${i.id}`,assocId:i.id,origem:"mens",comp:m,valor:+i.valor||0,rub:"mens",desc:`Mensalidade de ${curtoMes(m)} (reenvio)`})}));
+  o2Fats.filter(f=>!f.cancelada&&f.forma===forma).forEach(f=>(f.parcelas||[]).forEach(p=>{if(p.status!=="pago"&&String(p.venc).slice(0,7)===c)out.push({k:`p-${f.id}-${p.n}`,assocId:f.assocId,origem:"parc",fat:f.id,n:p.n,comp:c,valor:+p.valor||0,rub:"benef",desc:`${f.desc} · parcela ${p.n}/${f.parcelas.length}`})}));
+  return out.map(it=>{const a=lista.find(x=>x.id===it.assocId)||{},b=o2Banco(a);return Object.assign(it,{nome:a.nome||"",mat:a.mat||"",cpf:a.cpf||"",orgao:a.orgao||"",matFunc:a.matFunc||"",ag:b.ag||"",conta:b.conta||"",autor:!!b.autorizadoEm})});
+}
+function o2Analisar(tipo,c){
+  const col=o2Coletar(tipo,c),fora=[],ok=[];
+  col.forEach(it=>{let m="";if(tipo==="folha"){if(!cpfDig(it.cpf))m="sem CPF";else if(!it.orgao)m="sem órgão de origem";else if(!it.matFunc)m="sem matrícula funcional"}
+    else{if(!it.ag||!it.conta)m="sem agência e conta";else if(!it.autor)m="sem autorização de débito assinada"}(m?fora:ok).push(Object.assign(it,m?{motivo:m}:{}))});
+  if(tipo==="folha"){const por={};ok.forEach(i=>por[i.assocId]=(por[i.assocId]||0)+i.valor);ok.forEach(i=>{const a=lista.find(x=>x.id===i.assocId);if(a&&+a.margem>0&&por[i.assocId]>+a.margem+0.001)i.aviso=`acima da margem (${brl(a.margem)})`})}
+  const prev=o2Rem.filter(r=>r.tipo===tipo&&r.comp<c).sort((a,b)=>b.comp.localeCompare(a.comp))[0];
+  const chave=i=>i.assocId+"|"+i.rub+(i.origem==="parc"?"|"+i.fat:"");
+  const pm={};if(prev)Object.values(prev.itens||{}).forEach(i=>{if(i.op!=="E")pm[chave(i)]=i});
+  ok.forEach(i=>{const p=pm[chave(i)];i.op=!p?"I":Math.abs((+p.valor||0)-i.valor)>0.009?"A":"N"});
+  const atuais=new Set(ok.map(chave)),exc=tipo==="folha"&&prev?Object.values(prev.itens||{}).filter(i=>i.op!=="E"&&i.origem==="mens"&&!atuais.has(chave(i))&&!(lista.find(a=>a.id===i.assocId&&a.sit==="Ativo"&&a.formaPag===FORMA_FOLHA))).map(i=>Object.assign({},i,{k:"e-"+i.assocId,op:"E",valor:0,desc:"Fim do desconto (saiu da folha)",ret:null})):[];
+  return{ok:ok.concat(exc),fora,total:soma(ok),prev};
+}
+const OPN={I:"Inclusão",A:"Alteração",N:"Sem mudança",E:"Exclusão"};
+function o2Resolvido(it){
+  if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur)return"removido";if(cur.status==="pago")return"pago";if(cur.cobrarBanco)return"banco";if(cur.cobrarFolha)return"folha";return""}
+  const f=o2Fats.find(x=>x.id===it.fat);if(!f)return"removido";if(f.cancelada)return"cancelada";const p=(f.parcelas||[]).find(x=>x.n===it.n);return p&&p.status==="pago"?"pago":""}
+const o2RejPend=()=>o2Rem.flatMap(r=>Object.entries(r.itens||{}).filter(([,i])=>i.ret&&i.ret.st==="rej").map(([k,i])=>Object.assign({k,rem:r.id,tipo:r.tipo},i))).filter(i=>!o2Resolvido(i));
+const RESOLV={pago:"Recebido",banco:"Vai para o débito em conta",folha:"Vai para a folha",cancelada:"Fatura cancelada",removido:"Mensalidade removida"};
+
+/* ---- tela Cobrança ---- */
+views.cobranca=function(){
+  const c=cobUI.mes,ed=o2Pode(),mesAba=cobUI.aba==="folha"||cobUI.aba==="banco";
+  const nav=mesAba?`<div class="mesnav"><button class="btn ghost sm" data-o2mes="-1" aria-label="Mês anterior">‹</button><b>${nomeMes(c)}</b><button class="btn ghost sm" data-o2mes="1" aria-label="Próximo mês">›</button>${c!==hoje().slice(0,7)?`<button class="btn ghost sm" data-o2mes="0">Mês atual</button>`:""}</div>`:"";
+  const nRej=o2RejPend().length,abas=[["folha","Desconto em folha"],["banco","Débito em conta"],["faturas","Faturas e parcelas"],["orgaos","Órgãos e margens"],["layouts","Layouts dos arquivos"]];
+  return cabecalho("Gestão","Cobrança","Remessa para a folha e para o banco, retorno com baixa automática e faturas parceladas.",nav)+aviso()+
+   `<div class="tabs" role="tablist" style="margin-bottom:16px">${abas.map(([k,n])=>`<button class="tab" role="tab" aria-selected="${cobUI.aba===k}" data-o2aba="${k}">${n}${k==="folha"||k==="banco"?(()=>{const q=o2RejPend().filter(i=>i.tipo===k).length;return q?` <span class="pill bad">${q}</span>`:""})():""}</button>`).join("")}</div>`+
+   ({folha:()=>o2Remessa("folha",c,ed),banco:()=>o2Remessa("banco",c,ed),faturas:()=>o2Faturas(ed),orgaos:()=>o2OrgMarg(ed),layouts:()=>o2Layouts(ed)}[cobUI.aba]||(()=>""))(); 
+};
+function o2Remessa(tipo,c,ed){
+  const id=`${tipo}-${c}`,rem=o2Rem.find(r=>r.id===id),folha=tipo==="folha",nomeT=folha?"folha":"banco";
+  const lay=o2Lay(folha?"folhaRem":"banRem");
+  if(!fin.mens[c]&&!rem)return `<div class="panel empty"><b>As mensalidades de ${nomeMes(c)} ainda não foram geradas.</b><span>A remessa sai das mensalidades do mês ${folha?"com desconto em folha":"com débito em conta"} e das parcelas de faturas que vencem no mês.</span><a class="btn" href="#financeiro">Ir para o Financeiro</a></div>`;
+  const an=rem?null:o2Analisar(tipo,c),itens=rem?Object.entries(rem.itens||{}).map(([k,i])=>Object.assign({k},i)):an.ok;
+  const rej=itens.filter(i=>i.ret&&i.ret.st==="rej"),pend=rej.filter(i=>!o2Resolvido(i)),ret=rem&&rem.retorno;
+  const passo=(n,t,s,feito,agora)=>`<div class="o2-p${feito?" feito":""}${agora?" agora":""}"><i>${feito?"✓":n}</i><span><b>${t}</b><small>${s}</small></span></div>`;
+  const passos=`<div class="o2-passos">${passo(1,"Gerar remessa",rem?"gerada em "+fmtData(rem.geradaEm):"ainda não",!!rem,!rem)}${passo(2,folha?"Enviar ao órgão":"Enviar ao banco",rem&&rem.enviadaEm?"enviada em "+fmtData(rem.enviadaEm):"baixe o arquivo e envie",!!(rem&&rem.enviadaEm),rem&&!rem.enviadaEm)}${passo(3,"Ler o retorno",ret?`${ret.ok} ${folha?"descontados":"debitados"}`:"arquivo que volta",!!ret,rem&&rem.enviadaEm&&!ret)}${passo(4,"Resolver o que faltou",ret?(pend.length?`${pend.length} em aberto`:"nada pendente"):"depois do retorno",!!ret&&!pend.length,!!ret&&pend.length>0)}</div>`;
+  const linha=i=>{const r=i.ret,res=r&&r.st==="rej"?o2Resolvido(i):"";return `<tr><td>${esc(i.nome)}<div class="rank mono">${esc(i.mat)}</div></td><td>${esc(i.desc)}${i.aviso?`<div><span class="pill warn">${esc(i.aviso)}</span></div>`:""}</td><td>${folha?`<span class="mono">${esc(i.orgao)}</span><div class="rank">${esc(o2OrgNome(i.orgao)||"")}</div>`:`<span class="mono">Ag. ${esc(i.ag)}</span><div class="rank">conta ••••${esc(String(i.conta).slice(-3))}</div>`}</td><td class="num">${brl(i.valor)}</td>${folha?`<td><span class="o2-op">${i.op}</span> <span class="rank">${OPN[i.op]||""}</span></td>`:""}<td>${!r?`<span class="rank">${rem&&ret?"não veio no retorno":"aguardando"}</span>`:r.st==="ok"?`<span class="pill ok">${folha?"Descontado":"Debitado"}</span>`:`<span class="pill ${res?"neutral":"bad"}">${esc(r.motivo)}</span>${res?`<div class="rank">${RESOLV[res]}</div>`:""}`}</td></tr>`};
+  const tabela=l=>`<div class="tablewrap"><table><thead><tr><th>Associado</th><th>Lançamento</th><th>${folha?"Órgão":"Conta"}</th><th class="num">Valor</th>${folha?"<th>Operação</th>":""}<th>Retorno</th></tr></thead><tbody>${l.map(linha).join("")||`<tr><td colspan="6" style="color:var(--muted)">Nada para ${folha?"descontar na folha":"debitar"} neste mês.</td></tr>`}</tbody></table></div>`;
+  const nOp=o=>itens.filter(i=>i.op===o).length;
+  if(!rem){
+    const vazio=!an.ok.length&&!an.fora.length;
+    return passos+`<p class="resumo-l"><b>${an.ok.filter(i=>i.op!=="E").length}</b> ${folha?"descontos":"débitos"} · <b>${brl(an.total)}</b>${folha?` · ${nOp("I")} inclusões · ${nOp("A")} alterações · ${nOp("E")} exclusões`:""}${an.prev?` · comparado com ${curtoMes(an.prev.comp)}`:""}</p>`+
+     (an.fora.length?`<div class="callout" style="margin-bottom:14px"><span><b>${an.fora.length} ${an.fora.length===1?"lançamento fica":"lançamentos ficam"} de fora</b> por falta de dados: ${an.fora.slice(0,6).map(i=>`<button class="lnk" data-open="${i.assocId}">${esc(i.nome.split(" ")[0])}</button> (${i.motivo})`).join(", ")}${an.fora.length>6?"…":""}. Complete a ficha e a remessa inclui.</span></div>`:"")+
+     (vazio?`<div class="panel empty"><b>Nada para ${folha?"descontar na folha":"debitar em conta"} em ${nomeMes(c)}.</b><span>${folha?"Associados com forma de pagamento “Desconto em folha” entram aqui.":"Associados com forma de pagamento “Débito em conta” entram aqui. Também os não descontados na folha que você mandar para o banco."}</span></div>`:
+      tabela(an.ok)+(ed&&an.ok.length?`<div class="actions" style="margin-top:14px"><button class="btn" data-o2gerar="${tipo}" ${cobUI.lote?"disabled":""}>Gerar remessa de ${mesSo(c)}</button><span class="rank">Layout ${esc(lay.tipo==="csv"?"CSV":"posições fixas")}${lay.provisorio?" · provisório":""}</span></div>`:""));
+  }
+  const novos=o2Analisar(tipo,c).ok.filter(i=>i.op!=="E"&&!rem.itens[i.k]).length;
+  return passos+`<div class="panel o2-rem"><div class="serv-h"><div><h3>Remessa ${folha?"da folha":"do débito em conta"} · ${nomeMes(c)}</h3><p class="rank" style="margin:0">Nº ${esc(rem.seq||"—")} · ${itens.filter(i=>i.op!=="E").length} lançamentos · ${brl(soma(itens.filter(i=>i.op!=="E")))}${folha?` · ${nOp("I")} inclusões, ${nOp("A")} alterações, ${nOp("E")} exclusões`:""}</p></div><span class="pill ${ret?"ok":rem.enviadaEm?"warn":"neutral"}">${ret?"Retorno lido":rem.enviadaEm?"Aguardando retorno":"Gerada"}</span></div>
+   ${ed?`<div class="actions" style="margin-top:12px"><button class="btn${rem.enviadaEm?" ghost":""}" data-o2baixar="${id}">Baixar arquivo</button>${!rem.enviadaEm?`<button class="btn ghost" data-o2enviada="${id}">Marquei como enviada</button>`:""}
+    ${!ret?`<label class="btn${rem.enviadaEm?"":" ghost"}" style="cursor:pointer">Ler arquivo de retorno<input type="file" hidden accept=".txt,.csv,.ret,text/plain" data-o2ret="${id}"></label><button class="btn ghost" data-o2simular="${id}" title="Cria um retorno de teste com alguns recusados, para ver o fluxo">Simular retorno (teste)</button>`:""}
+    ${!ret?`<button class="btn ghost" data-o2refazer="${id}">Gerar de novo</button>`:""}</div>`:""}
+   ${novos&&!ret?`<p class="rank" style="margin:10px 0 0">${novos} ${novos===1?"lançamento novo apareceu":"lançamentos novos apareceram"} depois da geração. Use “Gerar de novo” para incluir.</p>`:""}
+   ${ret?`<p class="resumo-l" style="margin:12px 0 0">Retorno lido em ${new Date(ret.lidoEm).toLocaleString("pt-BR",{dateStyle:"short",timeStyle:"short"})}${ret.simulado?" (simulação)":""}: <b>${ret.ok}</b> ${folha?"descontados":"debitados"} (${brl(ret.valorOk)}) · <b>${ret.rej}</b> não ${folha?"descontados":"debitados"}${ret.naoAchados?` · ${ret.naoAchados} linhas do arquivo sem par na remessa`:""}</p>`:""}</div>`+
+   (rej.length?`<div class="panel" style="margin-top:14px"><h3>Não ${folha?"descontados na folha":"debitados"} (${pend.length} em aberto)</h3><div class="lista-l o2-rej">${rej.map(i=>{const res=o2Resolvido(i),a=lista.find(x=>x.id===i.assocId);return `<div class="o2-rj"><span class="t"><b>${esc(i.nome)}</b><small>${esc(i.desc)} · ${brl(i.valor)} · ${esc(i.ret.motivo)}</small></span>${res?`<span class="pill neutral">${RESOLV[res]}</span>`:ed?`<span class="actions">${i.origem==="mens"?(folha?(o2TemBanco(a)?`<button class="btn sm" data-o2acao="${id}|${i.k}|banco">Mandar para o débito em conta</button>`:`<button class="btn ghost sm" data-open="${i.assocId}" title="Cadastre agência, conta e autorização">Sem conta no banco</button>`):`<button class="btn sm" data-o2acao="${id}|${i.k}|folha">Mandar para a folha</button>`):""}<button class="btn ghost sm" data-o2acao="${id}|${i.k}|pago">Recebi de outra forma</button></span>`:""}</div>`}).join("")}</div><p class="rank" style="margin:10px 0 0">${folha?"Mandar para o débito em conta inclui o valor na próxima remessa do banco.":"Mandar para a folha inclui o valor na próxima remessa da folha (reenvio ao SEAD)."}</p></div>`:"")+
+   `<div style="margin-top:14px">${tabela(itens)}</div>`;
+}
+async function o2Gerar(tipo,c){
+  if(cobUI.lote)return;const an=o2Analisar(tipo,c),id=`${tipo}-${c}`;if(!an.ok.length)return toast("Nada para incluir na remessa.");
+  cobUI.lote=true;let reg=+(cobCfg.regSeq||1000);const itens={};
+  an.ok.forEach(i=>{const r=o2Rub(i.rub);itens[i.k]=o2Limpo({assocId:i.assocId,nome:i.nome,mat:i.mat,cpf:i.cpf,orgao:i.orgao,matFunc:i.matFunc,ag:i.ag,conta:i.conta,origem:i.origem,comp:i.comp,fat:i.fat||null,n:i.n||null,valor:i.valor,rub:i.rub,rubrica:r.cod,desc:i.desc,op:i.op,registro:String(++reg).padStart(11,"0"),aviso:i.aviso||null,ret:null})});
+  const seq=o2Rem.filter(r=>r.tipo===tipo).length+1;
+  const ok=await escrever(id,r=>r.set({tipo,comp:c,seq,geradaEm:new Date().toISOString(),enviadaEm:null,retorno:null,status:"gerada",itens}),`Remessa ${tipo==="folha"?"da folha":"do banco"} gerada: ${Object.keys(itens).length} lançamentos`,"cob_remessas");
+  if(ok){await o2SalvarCfg({regSeq:reg},null);registrar("Gerou remessa de cobrança",null,`${tipo} · ${c} · ${Object.keys(itens).length} lançamentos`)}
+  cobUI.lote=false;rerender();
+}
+async function o2Baixar(id){const rem=o2Rem.find(r=>r.id===id);if(!rem)return;if(!downloads)return toast("Baixar arquivos não está disponível nesta visualização.");
+  const folha=rem.tipo==="folha",L=o2Lay(folha?"folhaRem":"banRem"),its=Object.entries(rem.itens||{}).map(([k,i])=>Object.assign({k},i)).filter(i=>!(L.soAlteracoes&&i.op==="N"));
+  const txt=o2GerarTexto(L,its.map(i=>o2Linha(i,rem.comp)));
+  try{await downloads.save({filename:`remessa-${folha?"folha":"banese"}-${rem.comp}${L.tipo==="csv"?".csv":".txt"}`,data:txt});toast("Arquivo da remessa salvo");registrar("Baixou arquivo de remessa",null,`${rem.tipo} · ${rem.comp}`)}
+  catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast("Não foi possível salvar o arquivo.")}}
+function o2SimularTexto(rem){const folha=rem.tipo==="folha",L=o2Lay(folha?"folhaRet":"banRet"),cods=Object.keys(L.motivos||{}),h=s=>[...s].reduce((x,ch)=>(x*31+ch.charCodeAt(0))>>>0,7);
+  const rows=Object.entries(rem.itens||{}).filter(([,i])=>i.op!=="E").map(([k,i])=>{const ruim=h(k+rem.comp)%7===0,cod=ruim?cods[h(k)%cods.length]:(L.ok||[])[0];
+    return Object.assign(o2Linha(Object.assign({k},i),rem.comp),folha?{situacao:cod,motivo:ruim?(L.motivos[cod]||""):""}:{retorno:cod})});
+  return o2GerarTexto(L,rows)}
+async function o2LerRetorno(id,txt,arq,simulado){
+  const rem=o2Rem.find(r=>r.id===id);if(!rem||cobUI.lote)return;const folha=rem.tipo==="folha",L=o2Lay(folha?"folhaRet":"banRet"),rows=o2LerTexto(L,txt);
+  if(!rows.length)return toast("O arquivo está vazio ou não segue o layout de retorno configurado.");
+  const itens=Object.entries(rem.itens||{}).map(([k,i])=>Object.assign({k},i)).filter(i=>i.op!=="E"),usados=new Set(),res={};let naoAchados=0;
+  rows.forEach(r=>{let it;
+    if(folha){const cpf=cpfDig(r.cpf),cand=itens.filter(i=>!usados.has(i.k)&&cpfDig(i.cpf)===cpf&&(!r.rubrica||String(i.rubrica)===String(r.rubrica)));it=cand.find(i=>Math.abs(i.valor-(+r.valor||0))<0.01)||cand[0]}
+    else it=itens.find(i=>!usados.has(i.k)&&i.k===String(r.uso||"").trim())||itens.find(i=>!usados.has(i.k)&&cpfDig(i.mat)===cpfDig(r.idCliente)&&Math.abs(i.valor-(+r.valor||0))<0.01);
+    if(!it){naoAchados++;return}usados.add(it.k);
+    const cod=String(folha?r.situacao:r.retorno).trim().toUpperCase(),ok=(L.ok||[]).map(x=>String(x).toUpperCase()).includes(cod);
+    res[it.k]={st:ok?"ok":"rej",cod,motivo:ok?"":((L.motivos||{})[cod]||r.motivo||"Código "+cod),em:hoje()}});
+  if(!Object.keys(res).length)return toast("Nenhuma linha do arquivo bate com esta remessa. Confira o mês e o layout.");
+  cobUI.lote=true;rerender();
+  const forma=folha?FORMA_FOLHA:FORMA_DEB,mensUpd={},fatUpd={},lancs=[];let nOk=0,nRej=0,valorOk=0;
+  Object.entries(res).forEach(([k,r])=>{const it=rem.itens[k];if(r.st==="ok"){nOk++;valorOk+=+it.valor||0}else nRej++;
+    if(it.origem==="mens"){const cur=fin.mens[it.comp]&&fin.mens[it.comp].itens&&fin.mens[it.comp].itens[it.assocId];if(!cur||cur.status==="pago")return;
+      (mensUpd[it.comp]||(mensUpd[it.comp]={}))[it.assocId]=r.st==="ok"?{status:"pago",pagoEm:hoje(),pagForma:forma,recusaCob:null,cobrarFolha:null,cobrarBanco:null}:{recusaCob:{tipo:rem.tipo,motivo:r.motivo,em:hoje()},cobrarFolha:null,cobrarBanco:null}}
+    else{const f=o2Fats.find(x=>x.id===it.fat);if(!f)return;const ps=fatUpd[f.id]||(fatUpd[f.id]=(f.parcelas||[]).map(p=>Object.assign({},p))),p=ps.find(x=>x.n===it.n);if(!p||p.status==="pago")return;
+      if(r.st==="ok"){p.status="pago";p.pagoEm=hoje();p.forma=forma;p.recusa=null;lancs.push(o2LancParc(f,p))}else p.recusa=r.motivo}});
+  for(const [comp,m] of Object.entries(mensUpd))await escrever(comp,r=>r.update({itens:m}),null,"fin_mens");
+  for(const [fid,ps] of Object.entries(fatUpd))await escrever(fid,r=>r.update({parcelas:ps}),null,"fin_faturas");
+  for(const l of lancs)await escrever(l.id,r=>r.set(l.d),null,"fin_lanc");
+  const upd={};Object.entries(res).forEach(([k,v])=>upd[k]={ret:v});
+  await escrever(id,r=>r.update({itens:upd,retorno:{lidoEm:new Date().toISOString(),arquivo:arq||"",ok:nOk,rej:nRej,valorOk:Math.round(valorOk*100)/100,naoAchados,simulado:!!simulado},status:"retornada"}),null,"cob_remessas");
+  cobUI.lote=false;toast(`Retorno lido: ${nOk} ${folha?"descontados":"debitados"} com baixa feita, ${nRej} não ${folha?"descontados":"debitados"}`);
+  registrar("Leu retorno de cobrança",null,`${rem.tipo} · ${rem.comp} · ${nOk} ok · ${nRej} recusados${simulado?" · simulação":""}`);rerender();
+}
+async function o2Acao(id,k,acao){
+  const rem=o2Rem.find(r=>r.id===id),it=rem&&rem.itens[k];if(!it)return;
+  if(it.origem==="mens"){const flag={banco:{cobrarBanco:true},folha:{cobrarFolha:true},pago:{status:"pago",pagoEm:hoje(),pagForma:"Baixa manual"}}[acao];
+    const msg={banco:"Vai na próxima remessa do débito em conta",folha:"Vai na próxima remessa da folha",pago:"Mensalidade recebida"}[acao];
+    await comDesfazer(it.comp,r=>r.update({itens:{[it.assocId]:flag}}),msg,r=>r.update({itens:{[it.assocId]:acao==="pago"?{status:"aberto",pagoEm:null,pagForma:null}:{cobrarBanco:null,cobrarFolha:null}}}),"fin_mens");return}
+  if(acao==="pago")o2ReceberParc(it.fat,it.n,"Baixa manual");
+}
+
+/* ---- faturas com parcelas ---- */
+const o2StFat=f=>{if(f.cancelada)return"Cancelada";const ps=f.parcelas||[];if(ps.length&&ps.every(p=>p.status==="pago"))return"Quitada";return ps.some(p=>p.status!=="pago"&&p.venc<hoje())?"Em atraso":"Em aberto"};
+const FAT_CLS={"Quitada":"ok","Em atraso":"bad","Em aberto":"neutral","Cancelada":"neutral"};
+function o2Parcelas(total,n,venc1){total=Math.round((+total||0)*100);n=Math.max(1,Math.min(60,+n||1));const base=Math.floor(total/n),resto=total-base*n,[y,m,d]=String(venc1).split("-").map(Number);
+  return Array.from({length:n},(_,i)=>{const c=somaMes(`${y}-${pad2(m)}`,i);return{n:i+1,venc:`${c}-${pad2(Math.min(d||10,28))}`,valor:(base+(i<resto?1:0))/100,status:"aberto",pagoEm:null}})}
+function o2LancParc(f,p){return{id:`fat-${f.id}-${p.n}`,d:{tipo:"entrada",desc:`${f.desc} · parcela ${p.n}/${(f.parcelas||[]).length} · ${String(f.nome||"").split(" ")[0]}`,cat:"Outras receitas",valor:+p.valor,venc:p.venc,comp:hoje().slice(0,7),status:"pago",pagoEm:hoje(),forma:p.forma||f.forma||"",obs:"",origem:"fatura",faturaId:f.id,criadoEm:new Date().toISOString()}}}
+async function o2ReceberParc(fid,n,forma){const f=o2Fats.find(x=>x.id===fid);if(!f)return;const ps=(f.parcelas||[]).map(p=>Object.assign({},p)),p=ps.find(x=>x.n===n);if(!p||p.status==="pago")return;
+  p.status="pago";p.pagoEm=hoje();p.forma=forma||f.forma;p.recusa=null;const l=o2LancParc(f,p);
+  if(await escrever(fid,r=>r.update({parcelas:ps}),null,"fin_faturas")){await escrever(l.id,r=>r.set(l.d),null,"fin_lanc");
+    toast(`Parcela ${n} recebida`,{desfazer:async()=>{const f2=o2Fats.find(x=>x.id===fid),ps2=(f2.parcelas||[]).map(x=>x.n===n?Object.assign({},x,{status:"aberto",pagoEm:null}):x);await escrever(fid,r=>r.update({parcelas:ps2}),null,"fin_faturas");await escrever(l.id,r=>r.delete(),"Desfeito","fin_lanc")}})}}
+function o2Faturas(ed){
+  const q=cobUI.fq.toLowerCase().trim(),st=cobUI.fst,todas=o2Fats.slice().sort((a,b)=>String(b.criadoEm).localeCompare(String(a.criadoEm)));
+  const l=todas.filter(f=>(!st||({aberto:["Em aberto","Em atraso"],atraso:["Em atraso"],quitada:["Quitada"],cancelada:["Cancelada"]}[st]||[]).includes(o2StFat(f)))&&(!q||[f.nome,f.mat,f.desc,f.tipo].join(" ").toLowerCase().includes(q)));
+  const ab=todas.filter(f=>["Em aberto","Em atraso"].includes(o2StFat(f))),saldo=soma(ab.flatMap(f=>(f.parcelas||[]).filter(p=>p.status!=="pago")));
+  const prox=f=>(f.parcelas||[]).find(p=>p.status!=="pago");
+  return `<p class="resumo-l"><b>${ab.length}</b> ${ab.length===1?"fatura em aberto":"faturas em aberto"} · <b>${brl(saldo)}</b> a receber em parcelas · ${todas.filter(f=>o2StFat(f)==="Em atraso").length} com parcela atrasada</p>
+   <div class="toolbar"><input id="o2-fq" type="search" placeholder="Buscar por associado ou descrição" value="${esc(cobUI.fq)}" aria-label="Buscar faturas"><select id="o2-fst" aria-label="Situação">${[["aberto","Em aberto"],["atraso","Com parcela atrasada"],["quitada","Quitadas"],["cancelada","Canceladas"],["","Todas"]].map(([v,n])=>`<option value="${v}" ${v===st?"selected":""}>${n}</option>`).join("")}</select>${ed?`<button class="btn" data-o2novafat="">+ Nova fatura</button>`:""}</div>
+   <div class="tablewrap"><table><thead><tr><th>Associado</th><th>Descrição</th><th>Parcelas</th><th>Próximo vencimento</th><th class="num">Total</th><th>Situação</th></tr></thead><tbody>${l.map(f=>{const ps=f.parcelas||[],pg=ps.filter(p=>p.status==="pago").length,px=prox(f),s=o2StFat(f);
+    return `<tr data-o2fat="${f.id}" tabindex="0" style="cursor:pointer"><td>${esc(f.nome)}<div class="rank mono">${esc(f.mat||"")}</div></td><td>${esc(f.desc)}<div class="rank">${esc(f.tipo||"")} · ${esc(f.forma||"")}</div></td><td>${pg}/${ps.length} pagas</td><td>${px&&!f.cancelada?`${fmtData(px.venc)} · ${brl(px.valor)}`:"—"}</td><td class="num">${brl(f.total)}</td><td><span class="pill ${FAT_CLS[s]}">${s}</span></td></tr>`}).join("")||`<tr><td colspan="6" style="color:var(--muted)">${todas.length?"Nenhuma fatura com esses filtros.":"Nenhuma fatura ainda. Use para acordos de dívida, compras parceladas, reservas e outros valores cobrados em parcelas."}</td></tr>`}</tbody></table></div>`;
+}
+function o2FormFat(assocId){
+  const a=assocId?lista.find(x=>x.id===assocId):null,v1=somaMes(hoje().slice(0,7),hoje().slice(8,10)>pad2(diaVenc())?1:0)+"-"+pad2(diaVenc());
+  gaveta("Nova fatura","Cobrança",`<form class="form" id="o2-ff" novalidate>
+   <label class="full" for="o2-fa">Associado *<input id="o2-fa" list="o2-dla" autocomplete="off" value="${a?esc(a.nome+" · "+a.mat):""}" placeholder="Comece a digitar o nome"><datalist id="o2-dla">${lista.filter(x=>x.sit!=="Inativo"&&!x.anonimizadoEm).sort(porNome).map(x=>`<option value="${esc(x.nome+" · "+x.mat)}">`).join("")}</datalist><span class="err" id="o2-e-fa"></span></label>
+   <label class="full" for="o2-fd">Descrição *<input id="o2-fd" placeholder="Ex.: Acordo das mensalidades de jun. a set."><span class="err" id="o2-e-fd"></span></label>
+   <label for="o2-ft">Tipo<select id="o2-ft">${opts(TIPOS_FAT,TIPOS_FAT[0])}</select></label>
+   <label for="o2-fp">Forma de pagamento<select id="o2-fp">${opts(FORMAS_MENS,a&&a.formaPag||FORMA_FOLHA)}</select></label>
+   <label for="o2-fv">Valor total (R$) *<input id="o2-fv" type="number" min="0.01" step="0.01" inputmode="decimal"><span class="err" id="o2-e-fv"></span></label>
+   <label for="o2-fn">Parcelas<input id="o2-fn" type="number" min="1" max="60" value="1"></label>
+   <label for="o2-f1">Primeiro vencimento<input id="o2-f1" type="date" value="${v1}"></label>
+   <label class="full" for="o2-fo">Observações<textarea id="o2-fo" rows="2"></textarea></label>
+   <div class="full" id="o2-prev"></div>
+   <div class="full actions"><button class="btn" type="submit">Criar fatura</button><button class="btn ghost" type="button" data-fechar>Cancelar</button></div></form>`);
+  aberto={tipo:"o2fat"};
+  const prev=()=>{const v=parseFloat($("#o2-fv").value),n=+$("#o2-fn").value||1;$("#o2-prev").innerHTML=v>0?`<div class="lista-l o2-pv">${o2Parcelas(v,n,$("#o2-f1").value||hoje()).map(p=>`<div class="o2-rj"><span class="t"><b>Parcela ${p.n}</b><small>vence ${fmtData(p.venc)}</small></span><b>${brl(p.valor)}</b></div>`).join("")}</div>`:""};
+  ["o2-fv","o2-fn","o2-f1"].forEach(i=>$("#"+i).addEventListener("input",prev));
+  $("#o2-ff").addEventListener("submit",async e=>{e.preventDefault();const nomeV=$("#o2-fa").value.trim(),x=lista.find(y=>y.nome+" · "+y.mat===nomeV),d=$("#o2-fd").value.trim(),v=parseFloat($("#o2-fv").value),n=Math.max(1,Math.min(60,+$("#o2-fn").value||1));
+    const er={fa:!x&&"Escolha um associado da lista.",fd:!d&&"Escreva a descrição.",fv:!(v>0)&&"Informe o valor."};Object.entries(er).forEach(([k,m])=>{$("#o2-e-"+k).textContent=m||""});if(Object.values(er).some(Boolean))return;
+    const id=db.collection("fin_faturas").doc().id,f={assocId:x.id,nome:x.nome,mat:x.mat,desc:d,tipo:$("#o2-ft").value,forma:$("#o2-fp").value,total:Math.round(v*100)/100,parcelas:o2Parcelas(v,n,$("#o2-f1").value||hoje()),obs:$("#o2-fo").value.trim(),cancelada:false,criadoEm:new Date().toISOString()};
+    if(await escrever(id,r=>r.set(f),`Fatura criada em ${n} ${n===1?"parcela":"parcelas"}`,"fin_faturas")){await escrever(x.id,r=>r.update({hist:hist(x,`Fatura: ${d} · ${brl(f.total)} em ${n}x`)}),null);registrar("Criou fatura",x,`${d} · ${brl(f.total)} em ${n}x`);o2FichaFat(id)}});
+  $("#o2-fa").focus();
+}
+function o2FichaFat(id){
+  const f=o2Fats.find(x=>x.id===id);if(!f){setTimeout(()=>{if(o2Fats.find(x=>x.id===id))o2FichaFat(id)},400);return}
+  aberto={tipo:"o2fat",id};const ed=o2Pode(),s=o2StFat(f),ps=f.parcelas||[];
+  gaveta(f.desc,"Fatura · "+esc(f.nome),`<div class="r2" style="flex-wrap:wrap"><span class="pill ${FAT_CLS[s]}">${s}</span><span class="rank">${esc(f.tipo||"")} · ${esc(f.forma||"")} · criada em ${fmtData(f.criadoEm)}</span></div>
+   <div class="panel"><h3>Parcelas (${ps.filter(p=>p.status==="pago").length}/${ps.length} pagas)</h3><div class="lista-l">${ps.map(p=>{const at=p.status!=="pago"&&p.venc<hoje();return `<div class="o2-rj"><span class="t"><b>Parcela ${p.n} · ${brl(p.valor)}</b><small>${p.status==="pago"?`paga em ${fmtData(p.pagoEm)}${p.forma?" · "+esc(p.forma):""}`:`${at?"venceu":"vence"} ${fmtData(p.venc)}${p.recusa?" · "+esc(p.recusa):""}`}</small></span>${p.status==="pago"?`<span class="pill ok">Paga</span>`:f.cancelada?`<span class="pill neutral">Cancelada</span>`:ed?`<button class="btn sm" data-o2recparc="${f.id}|${p.n}">Receber</button>`:`<span class="pill ${at?"bad":"neutral"}">${at?"Em atraso":"Em aberto"}</span>`}</div>`}).join("")}</div>
+    <p class="rank" style="margin:10px 0 0">Total ${brl(f.total)} · recebido ${brl(soma(ps.filter(p=>p.status==="pago")))} · falta ${brl(soma(ps.filter(p=>p.status!=="pago")))}. ${[FORMA_FOLHA,FORMA_DEB].includes(f.forma)?"As parcelas entram sozinhas na remessa do mês em que vencem.":""}</p></div>
+   ${f.obs?`<div class="panel"><h3>Observações</h3><p style="margin:0;white-space:pre-wrap">${esc(f.obs)}</p></div>`:""}
+   <div class="actions"><button class="btn ghost" data-o2abrirass="${f.assocId}">Abrir ficha do associado</button>${ed&&!f.cancelada&&s!=="Quitada"?`<button class="btn ghost" data-o2cancfat="${f.id}">Cancelar parcelas em aberto</button>`:""}</div><div id="o2-fconf"></div>`);
+}
+
+/* ---- órgãos de origem e margem consignável ---- */
+function o2OrgMarg(ed){
+  const org=o2Orgaos(),naFolha=lista.filter(a=>a.sit!=="Inativo"&&!a.anonimizadoEm&&a.formaPag===FORMA_FOLHA).sort(porNome),c=hoje().slice(0,7);
+  const desc=a=>(+a.mens||0)+soma(o2Fats.filter(f=>!f.cancelada&&f.assocId===a.id&&f.forma===FORMA_FOLHA).flatMap(f=>(f.parcelas||[]).filter(p=>p.status!=="pago"&&String(p.venc).slice(0,7)===c)));
+  const usados=k=>lista.filter(a=>a.orgao===k).length;
+  return `<div class="grid o2-2">
+   <div class="panel"><h3>Margem consignável</h3><p class="rank" style="margin:0 0 12px">Quanto cada associado ainda pode ter descontado na folha. Desconto acima da margem costuma voltar recusado.</p>
+    ${naFolha.length?`<div class="lista-l">${naFolha.map(a=>{const d=desc(a),m=+a.margem||0,folga=m-d;return `<div class="o2-rj"><span class="t"><b><button class="lnk" data-open="${a.id}">${esc(a.nome)}</button></b><small>${a.orgao?esc(a.orgao)+" · "+esc(o2OrgNome(a.orgao)||""):"sem órgão"}${a.matFunc?" · mat. "+esc(a.matFunc):""}</small></span><span class="o2-mg"><small>desconto ${brl(d)}</small>${m?`<span class="pill ${folga<0?"bad":folga<20?"warn":"ok"}">${folga<0?"falta "+brl(-folga):"folga "+brl(folga)}</span>`:`<span class="pill neutral">margem não informada</span>`}</span></div>`}).join("")}</div>`:`<p class="rank">Nenhum associado com desconto em folha.</p>`}
+    ${ed?`<div class="actions" style="margin-top:12px"><label class="btn ghost" style="cursor:pointer">Importar arquivo de margens<input type="file" hidden accept=".csv,.txt,text/plain" data-o2marg></label><span class="rank">CSV com <span class="mono">cpf;margem</span> por linha (layout provisório).</span></div>`:""}</div>
+   <div class="panel"><h3>Órgãos de origem (${org.length})</h3><p class="rank" style="margin:0 0 12px">Código do órgão que faz o desconto. Vai em cada linha da remessa da folha.</p>
+    ${org.length?`<div class="o2-org">${org.map(o=>`<div class="o2-rj"><span class="t"><b class="mono">${esc(o.cod)}</b><small>${esc(o.nome)}${usados(o.cod)?` · ${usados(o.cod)} ${usados(o.cod)===1?"associado":"associados"}`:""}</small></span>${ed&&!usados(o.cod)?`<button class="btn ghost sm" data-o2orgrm="${esc(o.cod)}" aria-label="Remover órgão ${esc(o.cod)}">Remover</button>`:""}</div>`).join("")}</div>`:`<p class="rank">Nenhum órgão cadastrado.</p>`}
+    ${ed?`<div class="o1-row" style="margin-top:12px"><input id="o2-oc" placeholder="Código" style="max-width:110px" inputmode="numeric" aria-label="Código do órgão"><input id="o2-on" placeholder="Nome do órgão" aria-label="Nome do órgão"><button class="btn" data-o2orgadd>Adicionar</button></div>
+     <details class="saiba" style="margin-top:10px"><summary>Colar lista de órgãos</summary><textarea id="o2-ol" rows="5" style="width:100%;margin-top:8px" placeholder="Uma linha por órgão: código;nome"></textarea><button class="btn ghost sm" data-o2orglote style="margin-top:6px">Adicionar da lista</button></details>`:""}</div></div>
+   <div class="panel" style="margin-top:14px"><h3>Rubricas da folha</h3><p class="rank" style="margin:0 0 12px">Código de cada tipo de desconto no contracheque.</p>${ed?`<form class="form" id="o2-rf" style="max-width:640px"><label>Mensalidade<input id="o2-r-mens" value="${esc(o2Rub("mens").cod)}" inputmode="numeric"></label><label>Benefícios e parcelas<input id="o2-r-benef" value="${esc(o2Rub("benef").cod)}" inputmode="numeric"></label><div class="full"><button class="btn ghost" type="submit">Salvar rubricas</button></div></form>`:`<p class="mono">Mensalidade ${esc(o2Rub("mens").cod)} · Benefícios ${esc(o2Rub("benef").cod)}</p>`}</div>`;
+}
+
+/* ---- layouts dos arquivos (configuração) ---- */
+function o2Layouts(ed){
+  return `<p class="o1-lead">Cada arquivo segue um layout: em CSV (colunas separadas) ou em posições fixas (cada campo começa numa coluna). Os layouts abaixo são <b>provisórios</b>: quando chegar o layout oficial do SEAD/SEPLAG e do BANESE, ajuste aqui, sem mexer no sistema.</p>`+
+   Object.keys(LAYOUT_PADRAO).map(k=>{const L=o2Lay(k),fixo=L.tipo==="fixo",ab=cobUI.lay===k;
+    return `<div class="panel" style="margin-top:14px"><div class="serv-h"><div><h3>${esc(L.n)}</h3><p class="rank" style="margin:0">${fixo?`Posições fixas · ${L.tam||"?"} caracteres por linha`:`CSV · separador “${esc(L.sep||";")}”${L.cab?" · com cabeçalho":""}`}${L.ok?` · aceito: ${esc((L.ok||[]).join(", "))}`:""}${L.soAlteracoes?" · envia só inclusões, alterações e exclusões":""}</p></div><span class="pill ${L.provisorio?"warn":"ok"}">${L.provisorio?"Provisório":"Oficial"}</span></div>
+     <div class="tablewrap" style="margin-top:12px"><table class="mini"><thead><tr><th>Campo</th>${fixo?"<th class=\"num\">Início</th><th class=\"num\">Tamanho</th>":"<th class=\"num\">Coluna</th>"}<th>Formato</th></tr></thead><tbody>${L.campos.map((f,i)=>`<tr><td class="mono">${esc(f.c)}</td>${fixo?`<td class="num">${f.i}</td><td class="num">${f.t}</td>`:`<td class="num">${i+1}</td>`}<td>${f.fix!=null?`fixo “${esc(f.fix)}”`:esc(f.fmt||"texto")}</td></tr>`).join("")}</tbody></table></div>
+     ${L.motivos?`<p class="rank" style="margin:10px 0 0">Códigos de recusa: ${Object.entries(L.motivos).map(([c,m])=>`<span class="mono">${esc(c)}</span> ${esc(m)}`).join(" · ")}</p>`:""}
+     ${ed?(ab?`<div style="margin-top:12px"><textarea id="o2-lj" class="o2-lj" spellcheck="false" aria-label="Layout em JSON">${esc(JSON.stringify(L,null,1))}</textarea><div class="actions" style="margin-top:8px"><button class="btn" data-o2laysalvar="${k}">Salvar layout</button><button class="btn ghost" data-o2laypadrao="${k}">Voltar ao padrão</button><button class="btn ghost" data-o2laycanc>Cancelar</button></div><p class="rank" style="margin:6px 0 0">Campos: <span class="mono">c</span> nome, <span class="mono">i</span> início, <span class="mono">t</span> tamanho, <span class="mono">fmt</span> (digitos, centavos, decimal, AAAAMMDD, DDMMAAAA), <span class="mono">fix</span> valor fixo. Marque <span class="mono">"provisorio": false</span> quando for o oficial.</p></div>`:
+      `<div class="actions" style="margin-top:12px"><button class="btn ghost sm" data-o2layed="${k}">Editar layout</button><button class="btn ghost sm" data-o2layex="${k}">Baixar arquivo de exemplo</button></div>`):""}</div>`}).join("");
+}
+async function o2LayExemplo(k){if(!downloads)return toast("Baixar arquivos não está disponível nesta visualização.");const L=o2Lay(k),ex=[{k:"m-exemplo1",registro:"00000001001",cpf:"52998224725",matFunc:"1234567",orgao:"21300",rubrica:o2Rub("mens").cod,inicio:hoje().slice(0,7)+"-01",parcelas:0,valor:94.5,op:"I",idCliente:"00012",agencia:"0021",conta:"0012345678",venc:hoje().slice(0,7)+"-10",uso:"m-exemplo1",situacao:"D",retorno:"00",motivo:""},{k:"m-exemplo2",registro:"00000001002",cpf:"16899535009",matFunc:"7654321",orgao:"21340",rubrica:o2Rub("mens").cod,inicio:hoje().slice(0,7)+"-01",parcelas:0,valor:134,op:"A",idCliente:"00034",agencia:"0021",conta:"0087654321",venc:hoje().slice(0,7)+"-10",uso:"m-exemplo2",situacao:"M",retorno:"01",motivo:"Margem consignável insuficiente"}];
+  try{await downloads.save({filename:`exemplo-${k}${L.tipo==="csv"?".csv":".txt"}`,data:o2GerarTexto(L,ex)});toast("Arquivo de exemplo salvo (dados fictícios)")}catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast("Não foi possível salvar.")}}
+
+/* ---- ficha do associado: dados de cobrança no formulário e aba Financeiro ---- */
+function o2FormCob(v){const b=v.banco||{},fp=v.formaPag||FORMA_FOLHA;
+  return `<label for="f-orgao" data-o2f="folha" ${fp===FORMA_FOLHA?"":"hidden"}>Órgão de origem (folha)<select id="f-orgao"><option value="">Não informado</option>${o2Orgaos().map(o=>`<option value="${esc(o.cod)}" ${o.cod===v.orgao?"selected":""}>${esc(o.cod)} · ${esc(o.nome)}</option>`).join("")}</select></label>
+   <label for="f-matFunc" data-o2f="folha" ${fp===FORMA_FOLHA?"":"hidden"}>Matrícula funcional<input id="f-matFunc" value="${esc(v.matFunc||"")}" inputmode="numeric" placeholder="Matrícula no órgão"></label>
+   <label for="f-margem" data-o2f="folha" ${fp===FORMA_FOLHA?"":"hidden"}>Margem consignável (R$)<input id="f-margem" type="number" min="0" step="0.01" inputmode="decimal" value="${esc(v.margem??"")}" placeholder="Opcional"></label>
+   <label for="f-bAg" data-o2f="banco" ${fp===FORMA_DEB?"":"hidden"}>Agência (BANESE)<input id="f-bAg" value="${esc(b.ag||"")}" inputmode="numeric" maxlength="4" placeholder="0000"><span class="err" id="e-bAg"></span></label>
+   <label for="f-bConta" data-o2f="banco" ${fp===FORMA_DEB?"":"hidden"}>Conta com dígito<input id="f-bConta" value="${esc(b.conta||"")}" inputmode="numeric" placeholder="Só números"><span class="err" id="e-bConta"></span></label>
+   <label for="f-bAut" data-o2f="banco" ${fp===FORMA_DEB?"":"hidden"}>Autorização de débito assinada em<input id="f-bAut" type="date" value="${esc(b.autorizadoEm||"")}"></label>`}
+function o2LigarForm(){const fp=$("#f-formaPag");if(!fp)return;const upd=()=>document.querySelectorAll("[data-o2f]").forEach(l=>l.hidden=l.dataset.o2f!==(fp.value===FORMA_FOLHA?"folha":fp.value===FORMA_DEB?"banco":"-"));fp.addEventListener("change",upd);upd()}
+function o2Validar(erros){const fp=$("#f-formaPag")?.value;if(fp!==FORMA_DEB)return;const ag=($("#f-bAg")?.value||"").replace(/\D/g,""),ct=($("#f-bConta")?.value||"").replace(/\D/g,"");
+  if(ag&&ag.length!==4)erros.bAg="A agência tem 4 números.";if(ct&&ct.length<5)erros.bConta="Confira o número da conta.";
+  ["bAg","bConta"].forEach(k=>{if(!$("#f-"+k))return;$("#f-"+k).setAttribute("aria-invalid",erros[k]?"true":"false");$("#e-"+k).textContent=erros[k]||""})}
+function o2DadosForm(){const v=k=>($("#f-"+k)?.value||"").trim(),m=parseFloat(v("margem"));
+  return{orgao:v("orgao"),matFunc:v("matFunc"),margem:m>=0?Math.round(m*100)/100:null,banco:{ag:v("bAg").replace(/\D/g,""),conta:v("bConta").replace(/\D/g,""),autorizadoEm:v("bAut")||null}}}
+function o2FichaFin(a,ed){
+  const ano=fichaUI.o2ano||hoje().slice(0,4),meses=Array.from({length:12},(_,i)=>`${ano}-${pad2(i+1)}`),fts=o2Fats.filter(f=>f.assocId===a.id).sort((x,y)=>String(y.criadoEm).localeCompare(String(x.criadoEm)));
+  const mens=meses.map(c=>{const d=fin.mens[c],i=d&&d.itens&&d.itens[a.id];return i?Object.assign({comp:c,venc:d.venc},i):{comp:c}});
+  const parcAno=fts.filter(f=>!f.cancelada).flatMap(f=>(f.parcelas||[]).filter(p=>String(p.venc).slice(0,4)===ano).map(p=>Object.assign({f},p)));
+  const pago=soma(mens.filter(i=>i.status==="pago"))+soma(parcAno.filter(p=>p.status==="pago")),aberto=soma(mens.filter(i=>i.valor&&i.status!=="pago"))+soma(parcAno.filter(p=>p.status!=="pago"));
+  const anos=[...new Set([hoje().slice(0,4),...Object.keys(fin.mens).map(c=>c.slice(0,4))])].sort();
+  const f2=a.formaPag||FORMA_FOLHA;
+  return `<div class="panel"><h3>Cobrança</h3><dl class="dl"><dt>Forma de pagamento</dt><dd>${esc(f2)}</dd>
+    ${f2===FORMA_FOLHA?`<dt>Órgão de origem</dt><dd>${a.orgao?`<span class="mono">${esc(a.orgao)}</span> · ${esc(o2OrgNome(a.orgao)||"")}`:`<span class="pill warn">Não informado</span>`}</dd><dt>Matrícula funcional</dt><dd class="mono">${esc(a.matFunc||"—")}</dd><dt>Margem consignável</dt><dd>${+a.margem?brl(a.margem)+(a.margemEm?` <span class="rank">· em ${fmtData(a.margemEm)}</span>`:""):"Não informada"}</dd>`:""}
+    ${f2===FORMA_DEB?`<dt>Conta para débito</dt><dd>${o2TemBanco(a)?o2ContaMask(a):`<span class="pill warn">Não informada</span>`}</dd><dt>Autorização de débito</dt><dd>${o2Banco(a).autorizadoEm?"Assinada em "+fmtData(o2Banco(a).autorizadoEm):`<span class="pill warn">Falta a autorização</span>`}</dd>`:""}</dl></div>
+   <div class="panel"><div class="serv-h"><h3>Ficha financeira de ${ano}</h3><div class="mesnav">${anos.indexOf(ano)>0?`<button class="btn ghost sm" data-o2ano="${anos[anos.indexOf(ano)-1]}" aria-label="Ano anterior">‹</button>`:""}${anos.indexOf(ano)<anos.length-1?`<button class="btn ghost sm" data-o2ano="${anos[anos.indexOf(ano)+1]}" aria-label="Próximo ano">›</button>`:""}</div></div>
+    <p class="resumo-l" style="margin:4px 0 12px">Pago no ano <b>${brl(pago)}</b> · em aberto <b class="${aberto?"neg":""}">${brl(aberto)}</b></p>
+    <div class="o2-ano">${mens.map(i=>{const s=i.valor!=null&&i.status?stItem(i):"";return `<div class="o2-m${s==="Em atraso"?" atr":s==="Paga"?" pg":""}"><small>${MESES[+i.comp.slice(5)-1].slice(0,3)}</small><b>${i.valor!=null&&i.status?brl(i.valor):"—"}</b><span>${s?`<span class="pill ${stCls[s]||"neutral"}">${s}</span>`:`<span class="rank">sem cobrança</span>`}</span>${i.pagoEm?`<em>${fmtData(i.pagoEm)}${i.pagForma?" · "+esc(i.pagForma):""}</em>`:i.recusaCob?`<em>${esc(i.recusaCob.motivo)}</em>`:""}</div>`}).join("")}</div>
+    <div class="actions" style="margin-top:12px">${downloads?`<button class="btn ghost sm" data-o2extrato="${a.id}">Extrato de ${ano} em PDF</button>`:""}</div></div>
+   <div class="panel"><div class="serv-h"><h3>Faturas (${fts.length})</h3>${ed?`<button class="btn sm" data-o2novafat="${a.id}">+ Nova fatura</button>`:""}</div>${fts.length?`<div class="lista-l" style="margin-top:8px">${fts.map(f=>{const ps=f.parcelas||[],s=o2StFat(f);return `<button type="button" class="o2-rj o2-btn" data-o2fat="${f.id}"><span class="t"><b>${esc(f.desc)}</b><small>${brl(f.total)} em ${ps.length}x · ${ps.filter(p=>p.status==="pago").length} pagas · ${esc(f.forma||"")}</small></span><span class="pill ${FAT_CLS[s]}">${s}</span></button>`}).join("")}</div>`:`<p class="rank" style="margin:8px 0 0">Nenhuma fatura. Use para acordos e compras parceladas.</p>`}</div>`;
+}
+async function o2Extrato(id){const a=lista.find(x=>x.id===id);if(!a)return;const ano=fichaUI.o2ano||hoje().slice(0,4),rows=[];
+  for(let m=1;m<=12;m++){const c=`${ano}-${pad2(m)}`,d=fin.mens[c],i=d&&d.itens&&d.itens[a.id];if(i)rows.push([curtoMes(c),"Mensalidade",+i.valor||0,stItem(Object.assign({venc:d.venc},i)),i.pagoEm?fmtData(i.pagoEm):"",i.pagForma||i.forma||""])}
+  o2Fats.filter(f=>f.assocId===a.id&&!f.cancelada).forEach(f=>(f.parcelas||[]).filter(p=>String(p.venc).slice(0,4)===ano).forEach(p=>rows.push([curtoMes(String(p.venc).slice(0,7)),`${f.desc} (${p.n}/${f.parcelas.length})`,+p.valor||0,p.status==="pago"?"Paga":p.venc<hoje()?"Em atraso":"Aberta",p.pagoEm?fmtData(p.pagoEm):"",p.forma||f.forma||""])));
+  rows.sort((x,y)=>String(x[0]).localeCompare(String(y[0])));const pago=rows.filter(r=>r[3]==="Paga").reduce((s,r)=>s+r[2],0);
+  await exportarTabela({nome:`extrato-${a.mat}-${ano}`,titulo:`Extrato financeiro ${ano}`,sub:`${a.nome} · matrícula ${a.mat} · pago no ano ${brl(pago)}`,cols:["Mês","Lançamento","Valor","Situação","Pago em","Forma"],rows,formato:"pdf",log:["Gerou extrato financeiro",a,ano]})}
+
+/* ---- Ordem do dia ---- */
+function o2Pend(add,pl){
+  const c=hoje().slice(0,7);
+  if(fin.mens[c])["folha","banco"].forEach(t=>{if(!o2Rem.find(r=>r.id===`${t}-${c}`)&&o2Coletar(t,c).length)add("cobranca","!",`Remessa ${t==="folha"?"da folha":"do débito em conta"} de ${mesSo(c)} ainda não gerada`,"#cobranca","neutral")});
+  const rj=o2RejPend().length;add("cobranca",rj,pl(rj,"lançamento não descontado (folha ou banco) para resolver","lançamentos não descontados (folha ou banco) para resolver"),"#cobranca","warn");
+  const sb=lista.filter(a=>a.sit==="Ativo"&&a.formaPag===FORMA_DEB&&(!o2TemBanco(a)||!o2Banco(a).autorizadoEm)).length;add("cobranca",sb,pl(sb,"associado no débito em conta sem conta ou autorização","associados no débito em conta sem conta ou autorização"),"#cobranca","neutral");
+}
+
+/* ---- cliques, arquivos e ligação ---- */
+function o2Click(e){const b=s=>e.target.closest(s);let x;
+  if(x=b("[data-o2novafat]")){o2FormFat(x.dataset.o2novafat||null);return true}
+  if(x=b("[data-o2fat]")){o2FichaFat(x.dataset.o2fat);return true}
+  if(x=b("[data-o2ano]")){fichaUI.o2ano=x.dataset.o2ano;if(aberto&&aberto.tipo==="ficha")renderFicha(aberto.id);return true}
+  if(x=b("[data-o2extrato]")){o2Extrato(x.dataset.o2extrato);return true}
+  if(x=b("[data-o2abrirass]")){fichaUI={inativar:false,excluir:false,enviando:null,aba:"financeiro"};renderFicha(x.dataset.o2abrirass,true);return true}
+  if(x=b("[data-o2recparc]")){const[f,n]=x.dataset.o2recparc.split("|");x.disabled=true;o2ReceberParc(f,+n).then(()=>setTimeout(()=>{if(aberto&&aberto.tipo==="o2fat")o2FichaFat(f)},350));return true}
+  if(x=b("[data-o2cancfat]")){$("#o2-fconf").innerHTML=`<div class="inline bad"><span>Cancelar as parcelas em aberto? As pagas continuam registradas.</span><button class="btn danger" data-o2cancok="${x.dataset.o2cancfat}">Cancelar parcelas</button></div>`;return true}
+  if(x=b("[data-o2cancok]")){const f=o2Fats.find(y=>y.id===x.dataset.o2cancok);if(f)escrever(f.id,r=>r.update({cancelada:true,canceladaEm:hoje()}),"Parcelas em aberto canceladas","fin_faturas").then(ok=>{if(ok){registrar("Cancelou fatura",null,f.desc);setTimeout(()=>o2FichaFat(f.id),300)}});return true}
+  if(viewAtual!=="cobranca"||!$("#view").contains(e.target))return false;
+  if(x=b("[data-o2aba]")){cobUI.aba=x.dataset.o2aba;cobUI.lay=null;route();return true}
+  if(x=b("[data-o2mes]")){const n=+x.dataset.o2mes;cobUI.mes=n?somaMes(cobUI.mes,n):hoje().slice(0,7);rerender();return true}
+  if(x=b("[data-o2gerar]")){o2Gerar(x.dataset.o2gerar,cobUI.mes);return true}
+  if(x=b("[data-o2refazer]")){const id=x.dataset.o2refazer,r=o2Rem.find(y=>y.id===id);if(r)escrever(id,ref=>ref.delete(),null,"cob_remessas").then(ok=>{if(ok)setTimeout(()=>o2Gerar(r.tipo,r.comp),300)});return true}
+  if(x=b("[data-o2baixar]")){o2Baixar(x.dataset.o2baixar);return true}
+  if(x=b("[data-o2enviada]")){comDesfazer(x.dataset.o2enviada,r=>r.update({enviadaEm:hoje(),status:"enviada"}),"Remessa marcada como enviada",r=>r.update({enviadaEm:null,status:"gerada"}),"cob_remessas");return true}
+  if(x=b("[data-o2simular]")){const r=o2Rem.find(y=>y.id===x.dataset.o2simular);if(r)o2LerRetorno(r.id,o2SimularTexto(r),"simulação",true);return true}
+  if(x=b("[data-o2acao]")){const[id,k,ac]=x.dataset.o2acao.split("|");x.disabled=true;o2Acao(id,k,ac);return true}
+  if(b("[data-o2orgadd]")){const c=$("#o2-oc").value.trim(),n=$("#o2-on").value.trim();if(!c||!n)return toast("Informe código e nome."),true;if((cobCfg.orgaos||[]).some(o=>o.cod===c))return toast("Já existe um órgão com esse código."),true;
+    o2SalvarCfg({orgaos:[...(cobCfg.orgaos||[]),{cod:c,nome:n}]},"Órgão adicionado");return true}
+  if(b("[data-o2orglote]")){const l=($("#o2-ol").value||"").split(/\r?\n/).map(s=>s.split(/[;\t]/)).filter(p=>p[0]&&p[1]).map(p=>({cod:p[0].trim(),nome:p.slice(1).join(" ").trim()}));if(!l.length)return toast("Cole linhas no formato código;nome."),true;
+    const m=new Map((cobCfg.orgaos||[]).map(o=>[o.cod,o]));l.forEach(o=>m.set(o.cod,o));o2SalvarCfg({orgaos:[...m.values()]},`${l.length} ${l.length===1?"órgão":"órgãos"} da lista`);return true}
+  if(x=b("[data-o2orgrm]")){o2SalvarCfg({orgaos:(cobCfg.orgaos||[]).filter(o=>o.cod!==x.dataset.o2orgrm)},"Órgão removido");return true}
+  if(x=b("[data-o2layed]")){cobUI.lay=x.dataset.o2layed;rerender();$("#o2-lj")?.focus();return true}
+  if(b("[data-o2laycanc]")){cobUI.lay=null;rerender();return true}
+  if(x=b("[data-o2layex]")){o2LayExemplo(x.dataset.o2layex);return true}
+  if(x=b("[data-o2laypadrao]")){const k=x.dataset.o2laypadrao,l=Object.assign({},cobCfg.layouts||{});delete l[k];cobUI.lay=null;o2SalvarCfg({layouts:l},"Layout voltou ao padrão provisório");return true}
+  if(x=b("[data-o2laysalvar]")){const k=x.dataset.o2laysalvar;let L;try{L=JSON.parse($("#o2-lj").value)}catch{return toast("O texto não é um JSON válido. Confira vírgulas e aspas."),true}
+    if(!["csv","fixo"].includes(L.tipo)||!Array.isArray(L.campos)||!L.campos.length||L.campos.some(f=>!f.c||(L.tipo==="fixo"&&!(+f.i>0&&+f.t>0))))return toast("Layout incompleto: precisa de tipo (csv ou fixo) e campos com c (e i, t no fixo)."),true;
+    cobUI.lay=null;o2SalvarCfg({layouts:Object.assign({},cobCfg.layouts||{},{[k]:L})},"Layout salvo");registrar("Alterou layout de arquivo",null,k);return true}
+  return false;
+}
+async function o2Change(e){const t=e.target;
+  if(t.matches("input[data-o2ret]")){const f=t.files&&t.files[0];if(!f)return true;if(f.size>5*1024*1024){toast("Arquivo maior que 5 MB.");return true}
+    let txt=await f.text();if(txt.includes("�")){try{txt=new TextDecoder("latin1").decode(await f.arrayBuffer())}catch{}}o2LerRetorno(t.dataset.o2ret,txt,f.name,false);return true}
+  if(t.matches("input[data-o2marg]")){const f=t.files&&t.files[0];if(!f)return true;const linhas=(await f.text()).split(/\r?\n/).map(l=>l.split(/[;,\t]/)).filter(p=>cpfDig(p[0]).length===11);
+    let ok=0,nao=0;cobUI.lote=true;for(const p of linhas){const a=lista.find(x=>cpfDig(x.cpf)===cpfDig(p[0])),v=parseFloat(String(p[1]||"").replace(/\./g,"").replace(",","."));if(!a||!(v>=0)){nao++;continue}
+      if(await escrever(a.id,r=>r.update({margem:Math.round(v*100)/100,margemEm:hoje()}),null))ok++}
+    cobUI.lote=false;toast(`Margem atualizada de ${ok} ${ok===1?"associado":"associados"}${nao?` · ${nao} linhas sem associado`:""}`);registrar("Importou margens consignáveis",null,`${ok} associados`);rerender();return true}
+  return false}
+function ligarOnda2(){
+  if(viewAtual!=="cobranca")return;
+  $("#o2-fq")?.addEventListener("input",e=>{cobUI.fq=e.target.value;const p=e.target.selectionStart;rerender();const n=$("#o2-fq");if(n){n.focus();n.setSelectionRange(p,p)}});
+  $("#o2-fst")?.addEventListener("change",e=>{cobUI.fst=e.target.value;rerender()});
+  $("#o2-rf")?.addEventListener("submit",e=>{e.preventDefault();o2SalvarCfg({rubricas:{mens:{cod:$("#o2-r-mens").value.trim(),n:"Mensalidade"},benef:{cod:$("#o2-r-benef").value.trim(),n:"Benefícios"}}},"Rubricas salvas")});
+  document.querySelectorAll("#view tr[data-o2fat]").forEach(r=>r.addEventListener("keydown",e=>{if(e.key==="Enter")o2FichaFat(r.dataset.o2fat)}));
+}
 /* ---------- navegação ---------- */
 const SEC_FECHADAS=["Privacidade","Dependentes","Acesso ao app"];
 function secoesFicha(){document.querySelectorAll(".sheet .panel>h3:first-child").forEach(h=>{const p=h.parentElement,t=h.textContent.trim().replace(/\s*\(.*$/,"");p.classList.add("sec");h.dataset.sec=t;h.tabIndex=0;h.setAttribute("role","button");
@@ -3770,7 +4140,7 @@ function route(){
   if(viewAtual==="privacidade")ligarPriv();
   if(viewAtual==="app"){ligarApp();ligarPortal()}
   if(viewAtual==="associados")$("#csv2")?.addEventListener("click",()=>exportarCSV(true));
-  ligarOnda1();
+  ligarOnda1();ligarOnda2();
 }
 function refresh(){
   if(viewAtual==="associados"&&$("#rows")){const t=$(".top");const tmp=document.createElement("div");tmp.innerHTML=views.associados();const nt=tmp.querySelector(".top");if(t&&nt){t.replaceWith(nt);$("#csv")?.addEventListener("click",()=>exportarCSV(false));$("#csv2")?.addEventListener("click",()=>exportarCSV(true))}const na=$(".notice");if(na)na.remove();const av=aviso();if(av)$(".top").insertAdjacentHTML("afterend",av);{const tb=$("#view nav.tabs"),t2=document.createElement("div");t2.innerHTML=abasAss("associados");if(tb&&t2.firstElementChild)tb.replaceWith(t2.firstElementChild)}renderRows()}
@@ -3963,7 +4333,7 @@ document.addEventListener("click",e=>{
   if(e.target.closest("[data-gbusca]")){abrirBusca();return}
   if(secClick(e))return;
   if(v29Click(e))return;
-  if(o1Click(e)||o1ClickFin(e))return;
+  if(o1Click(e)||o1ClickFin(e)||o2Click(e))return;
   {const bx=$("#bx");if(bx&&bx.contains(e.target)){const r=e.target.closest("[data-bx]");if(r)bxAbrir(+r.dataset.bx);else if(e.target===bx)fecharBusca();return}}
   if(e.target.closest("[data-vfechar]")||e.target.id==="viewer"){fecharViewer();return}
   const tb=e.target.closest("[data-tema]");if(tb){escolherTema(tb.dataset.tema);return}
@@ -3978,7 +4348,7 @@ document.addEventListener("click",e=>{
   const o=e.target.closest("[data-open]");if(o){fichaUI={inativar:false,excluir:false,enviando:null,aba:o.dataset.k?"documentos":"dados"};renderFicha(o.dataset.open,true);return}
   const t=e.target.closest("[data-toast]");if(t)toast(t.dataset.toast);
 });
-document.addEventListener("change",e=>{if(o1Change(e))return;if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
+document.addEventListener("change",e=>{if(o1Change(e))return;if(e.target.matches("input[data-o2ret],input[data-o2marg]")){o2Change(e);return}if(e.target.matches("#imp-arq"))lerPlanilha(e.target.files[0]);if(e.target.matches("input[data-up]"))upload(e.target);if(e.target.matches("input[data-pup]"))uploadPortal(e.target);if(e.target.matches("input[data-pfoto]"))enviarFotoPerfil(e.target);if(e.target.matches("input[data-pcons]"))mudarConsent(e.target);if(e.target.matches("input[data-pcomp]")){const f=e.target.files&&e.target.files[0];if(f&&f.size>10*1024*1024){toast("Comprovante maior que 10 MB.");return}pUI.compFile=f||null;rerender()}});
 document.addEventListener("keydown",e=>{
   if(bxTecla(e))return;
   if(e.key==="Escape"&&document.body.classList.contains("menu-on")){menuMais(false);$("[data-menu]")?.focus();return}
