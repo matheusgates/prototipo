@@ -1,0 +1,43 @@
+- id: "1"
+  title: Agenda de atendimento
+  description: >-
+    CAP-1: rota #atendimento com agenda por dia/semana, marcar, remarcar, cancelar e
+    registrar resultado; cadastro de atendentes, tipos e horário em app_config/atendimento.
+  invoke_dev_with: >-
+    Coleção atendimentos, id at-<atendente>-<AAAA-MM-DD>-<HHMM> com acquire. Atendimentos de
+    hoje na Ordem do dia; resultado entra no histórico da ficha.
+- id: "2"
+  title: Jurídico na agenda
+  description: >-
+    CAP-2: tipo jurídico com advogado(a), assunto restrito por papel e lista própria
+    (seção Jurídico na tela de atendimento).
+  invoke_dev_with: >-
+    Assunto visível só para o atendente e o admin; "Ver assunto" chama registrar() no lgpd_log.
+- id: "3"
+  title: Pedido de atendimento pelo app
+  description: >-
+    CAP-3: associado escolhe tipo e horário livre no app; vira solicitação tipo
+    "atendimento"; aprovar confirma, recusar libera; aviso no sino do app.
+- id: "4"
+  title: Agenda do caminhão
+  description: >-
+    CAP-4: calendário do mês com reservas do caminhão (associado, origem, cidade,
+    início, término, valor), sem sobreposição; valor padrão em app_config/caminhao.
+- id: "5"
+  title: Caminhão pelo app e cobrança do uso
+  description: >-
+    CAP-5 e CAP-6: pedido pelo app aprovado em Solicitações; uso confirmado gera
+    cm-<reserva> em fin_lanc, que entra na remessa e tem baixa pelo retorno.
+- id: "6"
+  title: Telefonia · linhas cedidas
+  description: >-
+    CAP-7: cadastro de linhas (número, aparelho, operadora, plano, valor, custo),
+    inclusão e exclusão por associado com histórico; linhas na ficha.
+- id: "7"
+  title: Cobrança da telefonia e relatório
+  description: >-
+    CAP-8: linha ativa gera tl-<linha>-<mês> ao gerar/incluir mensalidades e por botão;
+    relatório Telefonia com custo, cobrado e diferença.
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com exemplos da Onda 5, regerar apresentacao-assomise, teste de ponta a
+    ponta do sinal de sucesso do SPEC, commit e push.

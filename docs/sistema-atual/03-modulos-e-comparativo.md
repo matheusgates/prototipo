@@ -63,9 +63,9 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Informe de IRPF | ❌ |
 | Assomise Card (adesão, extrato, conferência) | 🟡 "Cartão da associação" simples |
 | Benefícios (vale gás/combustível, lançamentos padrões) | ❌ |
-| Telefonia | ❌ |
-| Agenda de atendimento / jurídico | ❌ |
-| Caminhão | ❌ (reservas tem salão e quadra) |
+| Telefonia | ✅ linhas cedidas, cobrança mensal e relatório (Onda 5) |
+| Agenda de atendimento / jurídico | ✅ agenda com tipos, jurídico com assunto restrito, pedido pelo app (Onda 5) |
+| Caminhão | ✅ agenda, pedido pelo app e cobrança do uso (Onda 5) |
 | Indicações com pagamento | ❌ |
 | Sorteio | ❌ |
 | Termos/contratos editáveis e impressos | 🟡 ficha de filiação em PDF |

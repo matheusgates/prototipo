@@ -2016,6 +2016,56 @@
    "origem": "acordo",
    "associadoId": "a0007",
    "criadoEm": "2026-10-19T12:00:00.000Z"
+  },
+  "cm-cam-2026-11-28": {
+   "tipo": "entrada",
+   "desc": "Uso do caminhão · Carlos Eduardo Ramos",
+   "cat": "Caminhão",
+   "valor": 200,
+   "venc": "2026-11-10",
+   "comp": "2026-11",
+   "status": "aberto",
+   "pagoEm": null,
+   "forma": "Desconto em folha",
+   "obs": "28/11/2026 · Rua das Acácias, 120, Centro → Lagarto",
+   "origem": "caminhao",
+   "assocId": "a0001",
+   "reservaId": "cam-2026-11-28",
+   "criadoEm": "2026-11-19T11:00:00.000Z"
+  },
+  "tl-ln1-2026-11": {
+   "tipo": "entrada",
+   "desc": "Telefone (00) 9 8101-2201 · Antônio Carlos Moura",
+   "cat": "Telefonia",
+   "valor": 59.9,
+   "venc": "2026-11-10",
+   "comp": "2026-11",
+   "status": "aberto",
+   "pagoEm": null,
+   "forma": "Desconto em folha",
+   "obs": "Claro · 20 GB",
+   "origem": "telefonia",
+   "assocId": "a0004",
+   "linhaId": "ln1",
+   "custo": 49.9,
+   "criadoEm": "2026-11-01T12:00:00.000Z"
+  },
+  "tl-ln2-2026-11": {
+   "tipo": "entrada",
+   "desc": "Telefone (00) 9 8101-2202 · Fernanda Rocha Batista",
+   "cat": "Telefonia",
+   "valor": 45,
+   "venc": "2026-11-10",
+   "comp": "2026-11",
+   "status": "aberto",
+   "pagoEm": null,
+   "forma": "Desconto em folha",
+   "obs": "Claro · 10 GB",
+   "origem": "telefonia",
+   "assocId": "a0007",
+   "linhaId": "ln2",
+   "custo": 39.9,
+   "criadoEm": "2026-11-01T12:00:00.000Z"
   }
  },
  "fin_mens": {
@@ -2476,6 +2526,28 @@
    "respostaEm": "2026-11-03",
    "status": "aprovada",
    "tipo": "salao"
+  },
+  "sol-o5-at1": {
+   "tipo": "atendimento",
+   "tipoAt": "juridico",
+   "atendimentoId": "at-t2-2026-11-27-1430",
+   "data": "2026-11-27",
+   "hora": "14:30",
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "status": "pendente",
+   "criadoEm": "2026-11-24T20:10:00.000Z"
+  },
+  "sol-o5-cm1": {
+   "tipo": "caminhao",
+   "reservaId": "cam-2026-12-05",
+   "data": "2026-12-05",
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "status": "pendente",
+   "criadoEm": "2026-11-24T18:30:00.000Z"
   }
  },
  "app_config": {
@@ -2572,6 +2644,74 @@
     }
    },
    "regSeq": 1000
+  },
+  "atendimento": {
+   "tipos": [
+    {
+     "k": "secretaria",
+     "n": "Secretaria"
+    },
+    {
+     "k": "financeiro",
+     "n": "Financeiro e cobrança"
+    },
+    {
+     "k": "juridico",
+     "n": "Jurídico"
+    },
+    {
+     "k": "beneficios",
+     "n": "Planos e benefícios"
+    }
+   ],
+   "atendentes": [
+    {
+     "id": "t1",
+     "nome": "Ana Paula Menezes",
+     "tipos": [
+      "secretaria",
+      "beneficios"
+     ],
+     "ativo": true
+    },
+    {
+     "id": "t2",
+     "nome": "Dra. Helena Duarte",
+     "tipos": [
+      "juridico"
+     ],
+     "ativo": true
+    },
+    {
+     "id": "t3",
+     "nome": "Bruno Teles",
+     "tipos": [
+      "financeiro"
+     ],
+     "ativo": true
+    }
+   ],
+   "horario": {
+    "ini": "08:00",
+    "fim": "17:00",
+    "dur": 30,
+    "dias": [
+     1,
+     2,
+     3,
+     4,
+     5
+    ]
+   },
+   "atualizadoEm": "2026-11-25T09:00:00.000Z"
+  },
+  "caminhao": {
+   "valor": 200,
+   "ini": "07:00",
+   "fim": "18:00",
+   "ante": 2,
+   "regras": "Mudanças dentro do estado, com motorista da associação",
+   "atualizadoEm": "2026-11-25T09:00:00.000Z"
   }
  },
  "fin_acordos": {
@@ -3050,6 +3190,181 @@
    "obs": "Combinado em duas vezes.",
    "cancelada": false,
    "criadoEm": "2026-11-12T14:30:00.000Z"
+  }
+ },
+ "atendimentos": {
+  "at-t1-2026-11-25-0900": {
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "tipo": "secretaria",
+   "atendenteId": "t1",
+   "data": "2026-11-25",
+   "hora": "09:00",
+   "canal": "Presencial",
+   "obs": "Atualizar comprovante de residência",
+   "status": "marcado",
+   "origem": "equipe",
+   "criadoEm": "2026-11-18T12:00:00.000Z"
+  },
+  "at-t2-2026-11-26-1000": {
+   "associadoId": "a0004",
+   "nome": "Antônio Carlos Moura",
+   "mat": "0004-14",
+   "tipo": "juridico",
+   "atendenteId": "t2",
+   "data": "2026-11-26",
+   "hora": "10:00",
+   "canal": "Presencial",
+   "obs": "Dúvida sobre processo administrativo disciplinar",
+   "status": "marcado",
+   "origem": "equipe",
+   "criadoEm": "2026-11-18T12:00:00.000Z"
+  },
+  "at-t3-2026-11-24-1430": {
+   "associadoId": "a0002",
+   "nome": "Juliana Ferreira Lima",
+   "mat": "0002-20",
+   "tipo": "financeiro",
+   "atendenteId": "t3",
+   "data": "2026-11-24",
+   "hora": "14:30",
+   "canal": "Presencial",
+   "obs": "Mudar a data do débito",
+   "status": "feito",
+   "origem": "equipe",
+   "criadoEm": "2026-11-18T12:00:00.000Z",
+   "resultado": "Resolvido",
+   "nota": "Débito passa para o dia 10",
+   "feitoEm": "2026-11-24T15:00:00.000Z"
+  },
+  "at-t1-2026-11-20-1000": {
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "tipo": "beneficios",
+   "atendenteId": "t1",
+   "data": "2026-11-20",
+   "hora": "10:00",
+   "canal": "Telefone",
+   "obs": "Adesão ao plano odontológico",
+   "status": "faltou",
+   "origem": "equipe",
+   "criadoEm": "2026-11-18T12:00:00.000Z",
+   "feitoEm": "2026-11-20T10:40:00.000Z"
+  },
+  "at-t2-2026-11-27-1430": {
+   "associadoId": "a0007",
+   "nome": "Fernanda Rocha Batista",
+   "mat": "0007-18",
+   "tipo": "juridico",
+   "atendenteId": "t2",
+   "data": "2026-11-27",
+   "hora": "14:30",
+   "canal": "Presencial",
+   "obs": "Orientação sobre promoção por tempo de serviço",
+   "status": "pendente",
+   "origem": "app",
+   "criadoEm": "2026-11-24T20:10:00.000Z",
+   "solicitacaoId": "sol-o5-at1"
+  }
+ },
+ "caminhao_res": {
+  "cam-2026-11-28": {
+   "data": "2026-11-28",
+   "hIni": "07:00",
+   "hFim": "13:00",
+   "origem": "Rua das Acácias, 120, Centro",
+   "destino": "Lagarto",
+   "obs": "Mudança de apartamento",
+   "valor": 200,
+   "associadoId": "a0001",
+   "nome": "Carlos Eduardo Ramos",
+   "mat": "0001-19",
+   "status": "confirmada",
+   "origemPedido": "equipe",
+   "criadoEm": "2026-11-19T11:00:00.000Z"
+  },
+  "cam-2026-12-05": {
+   "data": "2026-12-05",
+   "hIni": "08:00",
+   "hFim": "16:00",
+   "origem": "Av. Beira Mar, 900",
+   "destino": "Estância",
+   "obs": "",
+   "valor": 200,
+   "associadoId": "a0005",
+   "nome": "Patrícia Gomes Alencar",
+   "mat": "0005-22",
+   "status": "pendente",
+   "origemPedido": "app",
+   "solicitacaoId": "sol-o5-cm1",
+   "criadoEm": "2026-11-24T18:30:00.000Z"
+  }
+ },
+ "tel_linhas": {
+  "ln1": {
+   "numero": "(00) 9 8101-2201",
+   "operadora": "Claro",
+   "plano": "20 GB",
+   "aparelho": "",
+   "custo": 49.9,
+   "valor": 59.9,
+   "associadoId": "a0004",
+   "desde": "2026-03-01",
+   "hist": [
+    {
+     "em": "2026-03-01",
+     "t": "Cedida a Antônio Carlos Moura"
+    },
+    {
+     "em": "2026-02-20",
+     "t": "Cadastrada"
+    }
+   ],
+   "criadoEm": "2026-02-20T12:00:00.000Z"
+  },
+  "ln2": {
+   "numero": "(00) 9 8101-2202",
+   "operadora": "Claro",
+   "plano": "10 GB",
+   "aparelho": "Moto G24",
+   "custo": 39.9,
+   "valor": 45,
+   "associadoId": "a0007",
+   "desde": "2026-08-10",
+   "hist": [
+    {
+     "em": "2026-08-10",
+     "t": "Cedida a Fernanda Rocha Batista"
+    },
+    {
+     "em": "2026-02-20",
+     "t": "Cadastrada"
+    }
+   ],
+   "criadoEm": "2026-02-20T12:00:00.000Z"
+  },
+  "ln3": {
+   "numero": "(00) 9 8101-2203",
+   "operadora": "Vivo",
+   "plano": "15 GB",
+   "aparelho": "",
+   "custo": 44.9,
+   "valor": 52,
+   "associadoId": null,
+   "desde": null,
+   "hist": [
+    {
+     "em": "2026-09-30",
+     "t": "Excluída de Raimundo Nonato Silva: desligado da associação"
+    },
+    {
+     "em": "2026-02-20",
+     "t": "Cadastrada"
+    }
+   ],
+   "criadoEm": "2026-02-20T12:00:00.000Z"
   }
  }
 }
