@@ -23,7 +23,8 @@ troca_anexos(seed)
 mock=open("banco-simulado.js",encoding="utf-8").read()
 idx=open("index.html",encoding="utf-8").read()   # nome e brasão da ASSOMISE já vêm no próprio index.html (const MARCA)
 ico="data:image/png;base64,"+base64.b64encode(open("favicon-assomise.png","rb").read()).decode()
-idx=idx.replace('href="favicon-assomise.png"','href="'+ico+'"')   # ícone da aba embutido, para o arquivo offline
+import re
+idx=re.sub(r'href="favicon[^"]*"','href="'+ico+'"',idx)   # ícones da aba embutidos, para o arquivo offline
 troca=[('ok:["on",modoDemo?"Demonstração: nada é salvo":podeEscrever?"Dados salvos online":"Somente leitura"]','ok:["on","Modo apresentação: nada é salvo"]')]
 for a,b in troca:
     assert idx.count(a)==1,a; idx=idx.replace(a,b)
