@@ -3531,8 +3531,8 @@ const FAIXAS_ANS=[[0,18],[19,23],[24,28],[29,33],[34,38],[39,43],[44,48],[49,53]
 const TIPOS_PLANO=["Enfermaria","Apartamento","Odontológico","Ambulatorial"];
 const o34Id=p=>p+Date.now().toString(36)+Math.random().toString(36).slice(2,5);
 const o34Pl=(n,s,p)=>n===1?s:p;
-ACESSO.secretaria.push("cobranca","beneficios");ACESSO.tesouraria.push("cobranca","beneficios");
-VERBO.cobranca="Ver";VERBO.beneficios="Ver";stCls["Em acordo"]="neutral";
+ACESSO.secretaria.push("inadimplencia","beneficios");ACESSO.tesouraria.push("inadimplencia","beneficios");
+VERBO.inadimplencia="Ver";VERBO.beneficios="Ver";stCls["Em acordo"]="neutral";
 REL.push({id:"o3acordos",t:"Acordos de cobrança",d:"Acordos de dívida feitos, valores negociados, parcelas pagas e em aberto.",mes:false,g(){const l=o3.acordos.slice().sort((x,y)=>String(y.criadoEm).localeCompare(String(x.criadoEm)));
   const pg=ac=>(ac.parcelas||[]).filter(p=>p.status==="pago");
   return{res:[["Acordos",l.length],["Ativos",l.filter(x=>x.status==="ativo").length],["Negociado",brl(soma(l,x=>x.total))],["Recebido",brl(soma(l,x=>soma(pg(x))))]],cols:["Associado","Matrícula","Feito em","Meses","Total","Parcelas pagas","Situação"],
@@ -3555,7 +3555,7 @@ function iniciarOnda34(){
 (function(){
   const ic=p=>`<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">${p}</svg>`;
   const fin=document.querySelector('.nav[href="#financeiro"]'),cv=document.querySelector('.nav[href="#convenios"]');
-  if(fin)fin.insertAdjacentHTML("afterend",`<a class="nav" href="#cobranca">${ic('<path d="M4 7h16v10H4z"/><path d="M4 11h16M8 15h3"/><path d="M17 3v4M7 3v4"/>')}<span>Cobrança</span><span class="badge" id="nav-o3" hidden></span></a>`);
+  if(fin)fin.insertAdjacentHTML("afterend",`<a class="nav" href="#inadimplencia">${ic('<path d="M4 7h16v10H4z"/><path d="M4 11h16M8 15h3"/><path d="M17 3v4M7 3v4"/>')}<span>Inadimplência</span><span class="badge" id="nav-o3" hidden></span></a>`);
   if(cv)cv.insertAdjacentHTML("afterend",`<a class="nav" href="#beneficios">${ic('<path d="M12 21s-7-4.4-7-10a4 4 0 0 1 7-2.6A4 4 0 0 1 19 11c0 5.6-7 10-7 10z"/><path d="M9.5 12h5M12 9.5v5"/>')}<span>Planos e benefícios</span></a>`);
   const gb=document.querySelector(".side .gbusca");
   if(gb)gb.insertAdjacentHTML("afterend",`<button class="o3-sino" type="button" data-o3sino aria-label="Avisos da equipe" aria-expanded="false">${ic('<path d="M6 8a6 6 0 1 1 12 0c0 7 3 8 3 8H3s3-1 3-8"/><path d="M10 20a2 2 0 0 0 4 0"/>')}<span>Avisos da equipe</span><i class="o3-n" id="o3-n" hidden></i></button>`);
@@ -3606,7 +3606,7 @@ const o3NegHoje=()=>o3.negoc.filter(n=>!n.feito&&n.data<=hoje());
 function o3Msg(a,d){const t=soma(d),ch=fin.cfg.chavePix;
   return `Olá, ${String(a.nome).split(" ")[0]}! Aqui é da secretaria da ${MARCA.nome}. Consta em aberto ${d.length===1?`a mensalidade de ${nomeMes(d[0].comp)}`:`${d.length} mensalidades (${d.map(i=>curtoMes(i.comp)).join(", ")})`}, total de ${brl(t)}.${ch?` Você pode pagar por PIX pela chave ${ch} ou pelo app da associação.`:" Você pode pagar pelo app da associação."} Se preferir, fazemos um acordo de parcelamento. Se já pagou, pode desconsiderar. Obrigado!`}
 const o3Ab=()=>`<nav class="tabs" role="tablist" style="margin-bottom:16px">${[["inad",`Inadimplentes (${o3Inad().length})`],["acordos",`Acordos (${o3.acordos.filter(x=>x.status==="ativo").length})`],["agenda",`Agenda de negociação${o3NegHoje().length?` (${o3NegHoje().length})`:""}`]].map(([k,n])=>`<button class="tab" role="tab" aria-selected="${o3UI.aba===k}" data-o3aba="${k}">${n}</button>`).join("")}</nav>`;
-views.cobranca=function(){
+views.inadimplencia=function(){
   const sub=location.hash.split("/")[1];if(sub&&sub!==o3UI.sub&&["inad","acordos","agenda"].includes(sub))o3UI.aba=sub;o3UI.sub=sub||null;
   const ed=editavel(),inad=o3Inad(),tot=soma(inad.flatMap(x=>x.d)),pv=o3ParcVenc();
   const res=`<p class="resumo-l"><b>${inad.length}</b> ${o34Pl(inad.length,"associado em atraso","associados em atraso")} · <b>${brl(tot)}</b> em aberto · <b>${o3.acordos.filter(x=>x.status==="ativo").length}</b> ${o34Pl(o3.acordos.filter(x=>x.status==="ativo").length,"acordo em andamento","acordos em andamento")}${pv.length?` · <b class="neg">${pv.length}</b> ${o34Pl(pv.length,"parcela vencida","parcelas vencidas")}`:""}</p>`;
@@ -3614,7 +3614,7 @@ views.cobranca=function(){
   if(o3UI.aba==="inad")corpo=o3InadHTML(ed);
   if(o3UI.aba==="acordos")corpo=o3AcordosHTML(ed);
   if(o3UI.aba==="agenda")corpo=o3AgendaHTML(ed);
-  return cabecalho("Gestão","Cobrança","Quem está em atraso, acordos de parcelamento, agenda de negociação e cobrança em lote.")+aviso()+res+o3Ab()+(o3UI.acordo?o3FormAcordo():"")+(o3UI.agendar!=null?o3FormAgendar():"")+corpo;
+  return cabecalho("Gestão","Inadimplência","Quem está em atraso, acordos de parcelamento, agenda de negociação e cobrança em lote.")+aviso()+res+o3Ab()+(o3UI.acordo?o3FormAcordo():"")+(o3UI.agendar!=null?o3FormAgendar():"")+corpo;
 };
 function o3InadHTML(ed){
   const l=o3Filtrados(),sel=l.filter(x=>o3UI.sel[x.a.id]),fila=o3UI.fila;
@@ -3720,7 +3720,7 @@ async function o3Cartas(ids){if(!downloads)return toast("Baixar arquivos não es
       pdf.line(W/2-40,y,W/2+40,y);pdf.setFontSize(9.5);pdf.text("Tesouraria",W/2,y+5,{align:"center"});
       registrar("Gerou carta de cobrança",a,brl(soma(d)))}
     if(!pg)return toast("Nenhuma mensalidade em atraso para essa carta.");
-    await downloads.save({filename:ids.length===1?`carta-cobranca-${(lista.find(x=>x.id===ids[0])||{}).mat||"associado"}.pdf`:`cartas-cobranca-${hoje()}.pdf`,data:pdf.output("blob")});toast(pg===1?"Carta salva":`${pg} cartas salvas em um PDF`);
+    await downloads.save({filename:ids.length===1?`carta-inadimplencia-${(lista.find(x=>x.id===ids[0])||{}).mat||"associado"}.pdf`:`cartas-inadimplencia-${hoje()}.pdf`,data:pdf.output("blob")});toast(pg===1?"Carta salva":`${pg} cartas salvas em um PDF`);
   }catch(e){if(!e||(e.code!=="declined"&&e.code!=="dismissed"))toast(e&&e.msg||"Não foi possível gerar a carta.")}}
 
 /* ---- sino da equipe: pendências novas desde a última olhada (por aparelho) ---- */
@@ -3728,16 +3728,16 @@ const o3SinoKey=x=>x.v+"|"+x.txt;
 const o3Lidos=()=>{try{return JSON.parse(localStorage.getItem("sino_equipe")||"{}")}catch{return{}}};
 const o3NovasPend=()=>{const l=o3Lidos();return pendencias().filter(x=>x.n!=="!"&&(!(o3SinoKey(x) in l)||+x.n>+l[o3SinoKey(x)]))};
 function o3Sino(){const b=$("#o3-n");if(!b)return;const n=viewAtual==="app"?0:o3NovasPend().length;b.hidden=!n;b.textContent=n;
-  const nb=$("#nav-o3");if(nb){const k=o3NegHoje().length+o3ParcVenc().length;nb.hidden=!k||!podeVer("cobranca");nb.textContent=k}}
+  const nb=$("#nav-o3");if(nb){const k=o3NegHoje().length+o3ParcVenc().length;nb.hidden=!k||!podeVer("inadimplencia");nb.textContent=k}}
 function o3AbrirSino(){o3UI.sino=true;const l=pendencias(),novas=new Set(o3NovasPend().map(o3SinoKey)),m={};l.forEach(x=>m[o3SinoKey(x)]=x.n);try{localStorage.setItem("sino_equipe",JSON.stringify(m))}catch{}
   $("#o3-pop")?.remove();document.body.insertAdjacentHTML("beforeend",`<div class="o3-pop" id="o3-pop" role="dialog" aria-label="Avisos da equipe"><div class="serv-h"><div><h3>Avisos da equipe</h3><p class="rank" style="margin:0 0 10px">${novas.size?`${novas.size} ${o34Pl(novas.size,"novo desde a última vez","novos desde a última vez")}`:"Nada novo desde a última vez."}</p></div><button class="btn ghost sm" data-o3sinofim aria-label="Fechar">✕</button></div>
    ${l.length?`<div class="tk-list">${l.map(x=>{const mi=navInfo(x.v);return `<a class="tk" href="${x.href}" data-o3sinofim><span class="tk-ic ${x.cls}">${mi.ic}</span><span class="tk-t"><b>${x.n==="!"?"":x.n+" "}${esc(x.txt)}${novas.has(o3SinoKey(x))?`<span class="o3-novo">novo</span>`:""}</b><small>${esc(mi.n)}</small></span></a>`}).join("")}</div>`:`<div class="tk-vazio"><b>Tudo em dia.</b><br>Nenhuma pendência para a equipe agora.</div>`}</div>`);
   document.querySelector("[data-o3sino]")?.setAttribute("aria-expanded","true");o3Sino()}
 function o3FecharSino(){o3UI.sino=false;$("#o3-pop")?.remove();document.querySelector("[data-o3sino]")?.setAttribute("aria-expanded","false")}
 const o3PendBase=pendencias;
-pendencias=function(){const it=o3PendBase();if(!podeVer("cobranca"))return it;
-  const ng=o3NegHoje().length;if(ng)it.push({v:"cobranca",n:ng,txt:o34Pl(ng,"contato de negociação marcado para hoje ou atrasado","contatos de negociação marcados para hoje ou atrasados"),href:"#cobranca/agenda",cls:"warn"});
-  const pv=o3ParcVenc().length;if(pv)it.push({v:"cobranca",n:pv,txt:o34Pl(pv,"parcela de acordo vencida","parcelas de acordo vencidas"),href:"#cobranca/acordos",cls:"bad"});
+pendencias=function(){const it=o3PendBase();if(!podeVer("inadimplencia"))return it;
+  const ng=o3NegHoje().length;if(ng)it.push({v:"inadimplencia",n:ng,txt:o34Pl(ng,"contato de negociação marcado para hoje ou atrasado","contatos de negociação marcados para hoje ou atrasados"),href:"#inadimplencia/agenda",cls:"warn"});
+  const pv=o3ParcVenc().length;if(pv)it.push({v:"inadimplencia",n:pv,txt:o34Pl(pv,"parcela de acordo vencida","parcelas de acordo vencidas"),href:"#inadimplencia/acordos",cls:"bad"});
   return it};
 
 /* ---------- onda 4 · planos de saúde ---------- */
@@ -3938,8 +3938,8 @@ function o34Click(e){const b=s=>e.target.closest(s);let x;
   if(viewAtual==="relatorios"&&b("[data-o4irrel]")){const v=($("#o4-ira").value||"").trim(),ano=+$("#o4-irano2").value;
     if(!v)return o4Informe(lista.filter(a=>!a.anonimizadoEm).sort(porNome).map(a=>a.id),ano),true;const a=lista.find(y=>y.nome+" · "+y.mat===v);if(!a)return toast("Escolha o associado na lista."),true;o4Informe([a.id],ano);return true}
   if(!$("#view").contains(e.target))return false;
-  if(viewAtual==="cobranca"){
-    if(x=b("[data-o3aba]")){o3UI.aba=x.dataset.o3aba;o3UI.acordo=o3UI.agendar=null;if(location.hash!=="#cobranca")history.replaceState(null,"","#cobranca");o3UI.sub=null;route();return true}
+  if(viewAtual==="inadimplencia"){
+    if(x=b("[data-o3aba]")){o3UI.aba=x.dataset.o3aba;o3UI.acordo=o3UI.agendar=null;if(location.hash!=="#inadimplencia")history.replaceState(null,"","#inadimplencia");o3UI.sub=null;route();return true}
     if(x=b("[data-o3sel]")){o3UI.sel[x.dataset.o3sel]=x.checked;rerender();return true}
     if(b("[data-o3todos]")){const l=o3Filtrados(),all=l.every(y=>o3UI.sel[y.a.id]);l.forEach(y=>o3UI.sel[y.a.id]=!all);rerender();return true}
     if(x=b("[data-o3acordo]")){o3UI.acordo=x.dataset.o3acordo;o3UI.agendar=null;rerender();window.scrollTo({top:0,behavior:"smooth"});return true}
@@ -3980,13 +3980,13 @@ function o34Click(e){const b=s=>e.target.closest(s);let x;
   return false}
 function o34Change(e){const t=e.target;
   if(t.matches("[data-o4ap]")&&o4UI.fAderir){o4UI.fAderir.plano=t.value;const a=o4Aberto();if(a)renderFicha(a.id);return true}
-  if(viewAtual==="cobranca"){if(t.id==="o3-min"){o3UI.min=+t.value;rerender();return true}if(t.id==="o3-gest"){o3UI.gest=t.value;rerender();return true}if(t.id==="o3-forma"){o3UI.forma=t.value;rerender();return true}}
+  if(viewAtual==="inadimplencia"){if(t.id==="o3-min"){o3UI.min=+t.value;rerender();return true}if(t.id==="o3-gest"){o3UI.gest=t.value;rerender();return true}if(t.id==="o3-forma"){o3UI.forma=t.value;rerender();return true}}
   if(viewAtual==="beneficios"&&t.id==="o4-vt"){const tb=TIPOS_BEN.find(x=>x.k===t.value);if(tb&&$("#o4-vv"))$("#o4-vv").value=tb.v;return true}
   return false}
 function ligarOnda34(){
   o3Sino();if(o3UI.sino&&viewAtual==="app")o3FecharSino();
   $(".o3-sino")&&($(".o3-sino").hidden=viewAtual==="app");
-  if(viewAtual==="cobranca"){const f=$("#o3-fa");if(f){f.addEventListener("input",o3Prev);f.addEventListener("change",o3Prev);f.addEventListener("submit",e=>{e.preventDefault();o3SalvarAcordo()});o3Prev()}
+  if(viewAtual==="inadimplencia"){const f=$("#o3-fa");if(f){f.addEventListener("input",o3Prev);f.addEventListener("change",o3Prev);f.addEventListener("submit",e=>{e.preventDefault();o3SalvarAcordo()});o3Prev()}
     $("#o3-fg")?.addEventListener("submit",e=>{e.preventDefault();o3SalvarAgenda()})}
   if(viewAtual==="beneficios"){$("#o4-fp")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarPlano()});$("#o4-fv")?.addEventListener("submit",e=>{e.preventDefault();o4LancarVales()});$("#o4-fm")?.addEventListener("submit",e=>{e.preventDefault();o4SalvarMov()})}
   if(viewAtual==="relatorios"&&!rUI.id&&!$("#o4-irrel")){const p=$("#view .prest");if(p)p.insertAdjacentHTML("afterend",o4IRRel())}
