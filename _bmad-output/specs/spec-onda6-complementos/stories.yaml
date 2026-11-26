@@ -1,0 +1,41 @@
+- id: "1"
+  title: Indicações com pagamento
+  description: >-
+    CAP-1: aba Indicações em Associados; app_config/indicacoes (valor, quando); status aguardando/a pagar/paga/sem direito;
+    pagar vira fin_lanc ind-<indicado> saída categoria Indicações; ranking; REL o40indic.
+- id: "2"
+  title: Sorteio
+  description: >-
+    CAP-2: tela Sorteios; prêmios e público; bilhetes numerados em ordem aleatória; PDF dos bilhetes;
+    sortear com crypto sem repetir; cancelar com motivo; publicar comunicado; tela sorteios no app.
+- id: "3"
+  title: Termos e contratos editáveis
+  description: >-
+    CAP-3: tela Termos e carteirinhas, aba Modelos (O40_TERMOS editáveis em app_config/termos);
+    imprimir da ficha (Mais ações) com campos preenchidos, CPF mascarado sem dadosCompletos;
+    marcar assinado (associados.termos + hist); termo de funcionário com dados digitados sem gravar.
+- id: "4"
+  title: Carteirinha de não sócio
+  description: >-
+    CAP-4: aba Carteirinhas de não sócio (contribuinte ativo, filtro por tipo, validade em meses);
+    PDF individual e em lote; associados.cartNS; pCarteira reatribuída mostra a de não sócio no app.
+- id: "5"
+  title: Grupos, permissão por tela e acessos
+  description: >-
+    CAP-5: tela Equipe (só admin); matriz telas x papéis e grupos; grupo novo com dados completos;
+    PAPEL_DC e fallback do papelReal; equipe_acessos com a última entrada.
+  invoke_dev_with: >-
+    Ajustar dadosCompletos e papelReal no módulo LGPD antes; telas vêm dos links .nav mais NAV_ALIAS.
+- id: "6"
+  title: Avisos da equipe
+  description: >-
+    CAP-6: equipe_avisos para todos, grupo ou pessoa, com validade, link e etiquetas; sino mostra os recebidos
+    (o3Sino e o3AbrirSino embrulhados); lidos por pessoa; caixa de saída com leituras; aba Avisos na tela Equipe.
+- id: "7"
+  title: Empresas da Prefeitura, relatórios e fechamento
+  description: >-
+    CAP-7: tela Empresas (Prefeitura de Aracaju) com CNPJ validado, importar CSV e vínculo na ficha e filtro;
+    REL o40sorteio, o40empresas.
+  invoke_dev_with: >-
+    Ao fim: dados-exemplo com os campos novos, regerar apresentacao-assomise, teste do sinal de sucesso,
+    atualizar 03-modulos, commit e push.

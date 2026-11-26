@@ -131,7 +131,13 @@
      "arq": "margens-ativos-mar.csv",
      "em": "2026-03-03T12:00:00.000Z"
     }
-   ]
+   ],
+   "termos": {
+    "oficiais": {
+     "em": "2026-03-02",
+     "por": "equipe"
+    }
+   }
   },
   "a0002": {
    "cep": "",
@@ -248,7 +254,8 @@
    "mensModo": "tabela",
    "profissao": "Servidor público",
    "uf": "PI",
-   "pend": "Falta assinar a autorização de débito do BANESE."
+   "pend": "Falta assinar a autorização de débito do BANESE.",
+   "empresaId": "emp-ex-1"
   },
   "a0003": {
    "cep": "",
@@ -674,7 +681,13 @@
    "matFunc": "4410023",
    "margem": 90,
    "margemEm": "2026-11-05",
-   "mensModo": "tabela"
+   "mensModo": "tabela",
+   "cat": "contribuinte",
+   "nsTipo": "Academia",
+   "cartNS": {
+    "em": "2026-11-10",
+    "validade": "2027-10-31"
+   }
   },
   "a0008": {
    "cep": "",
@@ -2795,6 +2808,30 @@
    "regras": "Mudanças dentro do estado, com motorista da associação",
    "atualizadoEm": "2026-11-25T09:00:00.000Z",
    "limiteAno": 1
+  },
+  "indicacoes": {
+   "valor": 50,
+   "quando": "aprovacao",
+   "editadoEm": "2026-11-26T09:00:00.000Z"
+  },
+  "carteira_ns": {
+   "meses": 12,
+   "texto": "Carteira de não sócio: dá acesso só à modalidade indicada. Pessoal e intransferível; vale junto com um documento oficial com foto."
+  },
+  "equipe": {
+   "grupos": {
+    "g-recepcao-ex": {
+     "n": "Recepção (exemplo)",
+     "d": "Atende na portaria: consulta associados e eventos.",
+     "telas": [
+      "visao",
+      "associados",
+      "eventos",
+      "mensagens"
+     ],
+     "dc": false
+    }
+   }
   }
  },
  "fin_acordos": {
@@ -3573,6 +3610,68 @@
     "a0002"
    ],
    "criadoEm": "2026-01-10T12:00:00.000Z"
+  }
+ },
+ "empresas": {
+  "emp-ex-1": {
+   "cnpj": "11222333000181",
+   "razao": "Empresa Exemplo Serviços Ltda",
+   "fantasia": "Exemplo Serviços",
+   "contato": "Contato fictício",
+   "tel": "",
+   "email": "",
+   "end": "",
+   "obs": "Dado fictício",
+   "ativa": true,
+   "criadoEm": "2026-11-26T09:00:00.000Z"
+  },
+  "emp-ex-2": {
+   "cnpj": "11444777000161",
+   "razao": "Alfa Manutenção Predial Ltda",
+   "fantasia": "Alfa Manutenção",
+   "contato": "Contato fictício",
+   "tel": "",
+   "email": "",
+   "end": "",
+   "obs": "Dado fictício",
+   "ativa": true,
+   "criadoEm": "2026-11-26T09:00:00.000Z"
+  }
+ },
+ "sorteios": {
+  "sor-ex-1": {
+   "titulo": "Sorteio do Dia do Associado (exemplo)",
+   "data": "2026-12-12",
+   "publico": "ativos",
+   "premios": [
+    "Smart TV 50\"",
+    "Fim de semana no hotel de trânsito"
+   ],
+   "desc": "",
+   "bilhetes": {},
+   "resultado": [],
+   "status": "rascunho",
+   "criadoEm": "2026-11-26T09:00:00.000Z",
+   "por": "equipe"
+  }
+ },
+ "equipe_avisos": {
+  "msg-ex-1": {
+   "titulo": "Remessa da folha até sexta (exemplo)",
+   "msg": "Fechar a remessa da folha até sexta-feira para entrar no mês.",
+   "link": "#cobranca",
+   "validade": "2026-12-31",
+   "tags": [
+    "cobrança"
+   ],
+   "para": {
+    "tipo": "todos",
+    "v": null
+   },
+   "em": "2026-11-26T09:00:00.000Z",
+   "por": "equipe",
+   "porNome": "Tesouraria",
+   "lidos": {}
   }
  }
 }

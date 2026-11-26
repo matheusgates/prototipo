@@ -66,15 +66,15 @@ A receita vem quase toda de **cobrança fora do sistema**: desconto em folha do 
 | Telefonia | ✅ linhas cedidas, cobrança mensal e relatório (Onda 5) |
 | Agenda de atendimento / jurídico | ✅ agenda com tipos, jurídico com assunto restrito, pedido pelo app (Onda 5) |
 | Caminhão | ✅ agenda, pedido pelo app e cobrança do uso (Onda 5) |
-| Indicações com pagamento | ❌ |
-| Sorteio | ❌ |
-| Termos/contratos editáveis e impressos | 🟡 ficha de filiação em PDF |
-| Carteirinha de não sócio (alunos) | ❌ |
-| Prefeitura de Aracaju | ❌ |
+| Indicações com pagamento | ✅ regra de bonificação, a pagar/paga, pagamento vira despesa, ranking (Onda 6) |
+| Sorteio | ✅ bilhetes numerados em PDF, sorteio prêmio a prêmio registrado, resultado no app e nos comunicados (Onda 6) |
+| Termos/contratos editáveis e impressos | ✅ modelos editáveis (oficiais, praças, BANESE, não sócio, funcionários), impressos da ficha, marcar assinado (Onda 6) |
+| Carteirinha de não sócio (alunos) | ✅ emissão individual ou em lote em PDF, validade configurável, no app (Onda 6) |
+| Prefeitura de Aracaju | 🟡 cadastro de empresas com CNPJ, importação e vínculo do associado; uso real a confirmar (Onda 6) |
 | Pesquisa com filtros salvos; exportar Excel/PDF | ✅ ~20 filtros, buscas salvas, Excel/PDF/CSV, listagem de dependentes, ficha em PDF |
 | Painel gráfico, extrato de contas | ✅ resumo, gráfico, prestação de contas |
-| Notificações para a equipe | 🟡 sino só no app do associado |
-| Usuários, grupos e permissão por tela | 🟡 papéis só na interface |
+| Notificações para a equipe | ✅ mensagens para todos, papel/grupo ou pessoa, com validade, link, etiquetas, caixa de saída e quem leu (Onda 6) |
+| Usuários, grupos e permissão por tela | 🟡 grupos e telas por papel editáveis, quem entrou; ainda só na interface, sem servidor (Onda 6) |
 
 **O que o protótipo já tem e o sistema atual não tem:** app do associado com login, autocadastro, carteirinha digital com QR, PIX, reservas de salão e quadra, eventos com inscrição, comunicados no app, vitrine de convênios, arquivo da entidade, adequação à LGPD, importar planilha, desfazer, visual de celular.
 
