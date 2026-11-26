@@ -6356,6 +6356,18 @@ async function o40RegAcesso(){if(!editavel()||!quem.id)return;try{await db.colle
   if(pv)pv.insertAdjacentHTML("beforebegin",`<div class="stage"><h4>Equipe</h4><a class="nav" href="#mensagens">${ic('<path d="M4 5h16v11H8l-4 4z"/><path d="M8 9h8M8 12h5"/>')}<span>Mensagens da equipe</span><span class="badge" id="nav-o40m" hidden></span></a><a class="nav" href="#equipe">${ic('<circle cx="9" cy="8" r="3"/><path d="M3 20c.6-3 3-5 6-5s5.4 2 6 5"/><path d="M16 4.5a3 3 0 0 1 0 6M18 15c1.6.6 2.7 2.4 3 5"/>')}<span>Equipe e permissões</span></a></div>`);
 })();
 
+/* menu lateral: cada grupo (Cadastro, Gestão...) abre e fecha no título; a escolha fica no aparelho. Fechado, o grupo mostra só a tela aberta e a soma dos avisos */
+const o40MenuFech=()=>{try{return JSON.parse(localStorage.getItem("menu_fechado")||"{}")}catch{return{}}};
+function o40MenuPrep(){const f=o40MenuFech();document.querySelectorAll(".stages .stage").forEach(g=>{const h=g.querySelector(":scope>h4");if(!h)return;
+  const t=h.dataset.grp||h.textContent.trim();if(!h.dataset.grp){h.dataset.grp=t;h.innerHTML=`<span>${esc(t)}</span><i class="o40-gn" hidden></i><svg class="o40-chev" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="m6 9 6 6 6-6"/></svg>`;h.setAttribute("role","button");h.tabIndex=0}
+  g.classList.toggle("o40-fechado",!!f[t]);h.setAttribute("aria-expanded",String(!f[t]))});o40MenuSoma()}
+function o40MenuSoma(){document.querySelectorAll(".stages .stage").forEach(g=>{const i=g.querySelector(":scope>h4 .o40-gn");if(!i)return;
+  const n=g.classList.contains("o40-fechado")?[...g.querySelectorAll(".nav:not([hidden]):not(.on) .badge:not([hidden])")].reduce((s,b)=>s+(parseInt(b.textContent)||0),0):0;i.hidden=!n;i.textContent=n})}
+function o40MenuTog(h){const t=h.dataset.grp,f=o40MenuFech();if(f[t])delete f[t];else f[t]=1;try{localStorage.setItem("menu_fechado",JSON.stringify(f))}catch{}o40MenuPrep()}
+document.addEventListener("click",e=>{const h=e.target.closest(".stages .stage>h4[data-grp]");if(h){e.preventDefault();o40MenuTog(h)}});
+document.addEventListener("keydown",e=>{const h=e.target.closest&&e.target.closest(".stages .stage>h4[data-grp]");if(h&&(e.key==="Enter"||e.key===" ")){e.preventDefault();o40MenuTog(h)}});
+o40MenuPrep();
+
 /* ---------- story 1 · indicações com pagamento ---------- */
 const o40IndCfg=()=>Object.assign({valor:0,quando:"aprovacao"},o40.ind||{});
 const o40IndLanc=a=>fin.lanc.find(l=>l.id==="ind-"+a.id);
@@ -6578,7 +6590,7 @@ async function o40Enviar(){const t=$("#o40-mt")?.value.trim(),m=$("#o40-mm")?.va
   if(await escrever(db.collection("equipe_avisos").doc().id,r=>r.set(d),"Mensagem enviada","equipe_avisos")){o40UI.mAba="enviadas";registrar("Enviou mensagem para a equipe",null,`${t} · ${o40ParaTxt(d)}`);rerender()}}
 async function o40MarcarLidas(){if(!editavel())return;const uid=o40Uid(),em=new Date().toISOString();for(const m of o40Novas())await escrever(m.id,r=>r.update({lidos:Object.assign({},m.lidos,{[uid]:em})}),null,"equipe_avisos")}
 {const baseS=o3Sino;o3Sino=function(){baseS();const b=$("#o3-n");if(b&&viewAtual!=="app"){const n=(b.hidden?0:+b.textContent||0)+o40Novas().length;b.hidden=!n;b.textContent=n}
-  const nm=$("#nav-o40m");if(nm){const k=o40Novas().length;nm.hidden=!k;nm.textContent=k}};
+  const nm=$("#nav-o40m");if(nm){const k=o40Novas().length;nm.hidden=!k;nm.textContent=k}o40MenuSoma()};
  const baseA=o3AbrirSino;o3AbrirSino=function(){const nv=new Set(o40Novas().map(m=>m.id)),l=o40Recebidas().slice(0,6);baseA();const h=$("#o3-pop .serv-h");
   if(h)h.insertAdjacentHTML("afterend",`<div class="o40-sino"><div class="serv-h"><b>Mensagens da equipe</b><a class="lnk" href="#mensagens/enviar" data-o3sinofim>Escrever</a></div>${l.length?`<div class="lista-l">${l.map(m=>`<div class="li${nv.has(m.id)?" nova":""}"><div><b>${esc(m.titulo)}</b>${nv.has(m.id)?`<span class="o3-novo">nova</span>`:""}<div class="rank">${esc(String(m.msg).slice(0,140))}</div></div>${o40Link(m.link)}</div>`).join("")}</div>`:`<p class="rank" style="margin:0">Nenhuma mensagem para você.</p>`}<a class="lnk" href="#mensagens" data-o3sinofim>Ver todas</a><h4 class="o40-pend">Pendências</h4></div>`);
   o40MarcarLidas()}}
@@ -6735,6 +6747,12 @@ function ligarOnda40(){
 .o39-chips .chip{border:0;cursor:pointer;font:inherit}.o39-chips .chip.on{background:var(--accent);color:var(--btn-fg)}
 .o40-sino{border-bottom:1px solid var(--line);padding-bottom:10px;margin-bottom:8px;display:grid;gap:6px}.o40-sino .li{padding:6px 0}.o40-sino .li.nova b{color:var(--accent)}.o40-pend{margin:6px 0 0;font-size:13px;color:var(--muted);font-weight:600}
 .o40-empf{margin:-4px 0 10px}
+.stages .stage>h4[data-grp]{display:flex;align-items:center;gap:8px;cursor:pointer;user-select:none;border-radius:6px}
+.stages .stage>h4[data-grp]:hover{opacity:1;color:#fff}.stages .stage>h4[data-grp]:focus-visible{outline:2px solid var(--gold);outline-offset:2px}
+.stages .stage>h4 span{flex:1}.o40-chev{width:14px;height:14px;flex:none;transition:transform .2s}.o40-fechado>h4 .o40-chev{transform:rotate(-90deg)}
+.o40-gn{font-style:normal;background:var(--gold);color:#1a1f33;border-radius:999px;font-size:11px;font-weight:700;line-height:17px;padding:0 6px;letter-spacing:0}
+.stage.o40-fechado .nav:not(.on){display:none}
+@media (prefers-reduced-motion:reduce){.o40-chev{transition:none}}
 `;document.head.append(st)})();
 
 /* ---------- navegação ---------- */
